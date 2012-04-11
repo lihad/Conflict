@@ -1,0 +1,37 @@
+name: Conflict
+main: Lihad.Conflict.Conflict
+version: 1.14
+commands:
+  abatton:
+    description: Invalid Command
+    usage: Invalid Command
+  oceian:
+    description: Invalid Command
+    usage: Invalid Command
+  savania:
+    description: Invalid Command
+    usage: Invalid Command
+  point:
+    description: Invalid Command
+    usage: Invalid Command
+  purchase:
+    description: Invalid Command
+    usage: Invalid Command
+  spawn:
+    description: Invalid Command
+    usage: Invalid Command
+  setspawn:
+    description: Invalid Command
+    usage: Invalid Command
+  rarity:
+    description: Invalid Command
+    usage: Invalid Command
+  post:
+    description: Invalid Command
+    usage: Invalid Command
+  gear:
+    description: Invalid Command
+    usage: Invalid Command
+  look:
+    description: Invalid Command
+    usage: Invalid Command
