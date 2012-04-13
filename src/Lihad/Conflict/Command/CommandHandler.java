@@ -37,8 +37,82 @@ public class CommandHandler implements CommandExecutor {
 			if(BeyondUtil.rarity(((Player)sender).getItemInHand()) >= 60)((Player)sender).sendMessage("The Rarity Index of your "+ChatColor.BLUE.toString()+((Player)sender).getItemInHand().getType().name()+" is "+BeyondUtil.getColorOfRarity(BeyondUtil.rarity(((Player)sender).getItemInHand()))+BeyondUtil.rarity(((Player)sender).getItemInHand()));
 			else ((Player)sender).sendMessage("This item has no Rarity Index");
 			return true;
-		}
-		else if(cmd.getName().equalsIgnoreCase("post") && arg.length == 0){
+		}else if(cmd.getName().equalsIgnoreCase("cadmin") && ((Player)sender).isOp()){
+			if(arg.length == 1 && arg[0].equalsIgnoreCase("count")){
+				((Player)sender).sendMessage("Counts - [AB - "+Conflict.ABATTON_PLAYERS.size()+" OC - "+Conflict.OCEIAN_PLAYERS.size()+" SA - "+Conflict.SAVANIA_PLAYERS.size()+"]");
+			}else if(arg.length == 3 && arg[0].equalsIgnoreCase("gassign")){
+				if(plugin.getServer().getPlayer(arg[2]) != null){
+					if(arg[1].equalsIgnoreCase("abatton")){
+						Conflict.ABATTON_GENERALS.add(plugin.getServer().getPlayer(arg[2]).getName());
+						((Player)sender).sendMessage("Player "+plugin.getServer().getPlayer(arg[2]).getName()+" is now a General of Abatton");
+					}
+					else if(arg[1].equalsIgnoreCase("oceian")){
+						Conflict.OCEIAN_GENERALS.add(plugin.getServer().getPlayer(arg[2]).getName());
+						((Player)sender).sendMessage("Player "+plugin.getServer().getPlayer(arg[2]).getName()+" is now a General of Oceian");
+					}
+					else if(arg[1].equalsIgnoreCase("savania")){
+						Conflict.SAVANIA_GENERALS.add(plugin.getServer().getPlayer(arg[2]).getName());
+						((Player)sender).sendMessage("Player "+plugin.getServer().getPlayer(arg[2]).getName()+" is now a General of Savania");
+					}else{
+						((Player)sender).sendMessage("Invalid City.  Try, abatton, oceian or savania");
+					}
+				}else{
+					((Player)sender).sendMessage("Player not online or invalid. Safety Enabled. Upgrade denied.");
+				}
+			}else if(arg.length == 3 && arg[0].equalsIgnoreCase("gremove")){
+				if(Conflict.ABATTON_GENERALS.contains(arg[2]) && arg[1].equalsIgnoreCase("abatton")){
+					Conflict.ABATTON_GENERALS.remove(plugin.getServer().getPlayer(arg[2]).getName());
+					((Player)sender).sendMessage("Player "+plugin.getServer().getPlayer(arg[2]).getName()+" is no longer a General of Abatton");
+				}
+				else if(Conflict.OCEIAN_GENERALS.contains(arg[2]) && arg[1].equalsIgnoreCase("oceian")){
+					Conflict.OCEIAN_GENERALS.remove(plugin.getServer().getPlayer(arg[2]).getName());
+					((Player)sender).sendMessage("Player "+plugin.getServer().getPlayer(arg[2]).getName()+" is no longer a General of Oceian");
+				}
+				else if(Conflict.SAVANIA_GENERALS.contains(arg[2]) && arg[1].equalsIgnoreCase("savania")){
+					Conflict.SAVANIA_GENERALS.remove(plugin.getServer().getPlayer(arg[2]).getName());
+					((Player)sender).sendMessage("Player "+plugin.getServer().getPlayer(arg[2]).getName()+" is no longer a General of Savania");
+				}else{
+					((Player)sender).sendMessage("Invalid City or Player isn't a General");
+				}
+			}else if(arg.length == 1 && arg[0].equalsIgnoreCase("worth")){
+				((Player)sender).sendMessage("Worth - [AB - "+Conflict.ABATTON_WORTH+" OC - "+Conflict.OCEIAN_WORTH+" SA - "+Conflict.SAVANIA_WORTH+"]");
+			}else if(arg.length == 4 && arg[0].equalsIgnoreCase("worth") && arg[1].equalsIgnoreCase("modify")){
+				if(arg[2].equalsIgnoreCase("abatton")){
+					Conflict.ABATTON_WORTH = Conflict.ABATTON_WORTH + Integer.parseInt(arg[3]);
+					((Player)sender).sendMessage("Abatton Worth = "+Conflict.ABATTON_WORTH);
+				}
+				else if(arg[2].equalsIgnoreCase("oceian")){
+					Conflict.OCEIAN_WORTH = Conflict.OCEIAN_WORTH + Integer.parseInt(arg[3]);
+					((Player)sender).sendMessage("Oceian Worth = "+Conflict.OCEIAN_WORTH);
+				}
+				else if(arg[2].equalsIgnoreCase("savania")){
+					Conflict.SAVANIA_WORTH = Conflict.SAVANIA_WORTH + Integer.parseInt(arg[3]);
+					((Player)sender).sendMessage("Savania Worth = "+Conflict.SAVANIA_WORTH);
+				}else{
+					((Player)sender).sendMessage("Invalid City.  Try, abatton, oceian or savania");
+				}
+			}else if(arg.length == 4 && arg[0].equalsIgnoreCase("worth") && arg[1].equalsIgnoreCase("set")){
+				if(arg[2].equalsIgnoreCase("abatton")){
+					Conflict.ABATTON_WORTH = Integer.parseInt(arg[3]);
+					((Player)sender).sendMessage("Abatton Worth = "+Conflict.ABATTON_WORTH);
+				}
+				else if(arg[2].equalsIgnoreCase("oceian")){
+					Conflict.OCEIAN_WORTH = Integer.parseInt(arg[3]);
+					((Player)sender).sendMessage("Oceian Worth = "+Conflict.OCEIAN_WORTH);
+				}
+				else if(arg[2].equalsIgnoreCase("savania")){
+					Conflict.SAVANIA_WORTH = Integer.parseInt(arg[3]);
+					((Player)sender).sendMessage("Savania Worth = "+Conflict.SAVANIA_WORTH);
+				}else{
+					((Player)sender).sendMessage("Invalid City.  Try, abatton, oceian or savania");
+				}
+			}
+		}else if(cmd.getName().equalsIgnoreCase("cc") && arg.length == 0){
+			if(Conflict.ABATTON_PLAYERS.contains(((Player)sender).getName()))((Player)sender).performCommand("ch Abatton poontang");
+			else if(Conflict.OCEIAN_PLAYERS.contains(((Player)sender).getName()))((Player)sender).performCommand("ch Oceian cuntcloister");
+			else if(Conflict.SAVANIA_PLAYERS.contains(((Player)sender).getName()))((Player)sender).performCommand("ch Savania dicktrick");
+			return true;
+		}else if(cmd.getName().equalsIgnoreCase("post") && arg.length == 0){
 			if(BeyondUtil.rarity(((Player)sender).getItemInHand()) >= 60){
 				((Player)sender).chat(BeyondUtil.getColorOfRarity(BeyondUtil.rarity(((Player)sender).getItemInHand()))+"["+((Player)sender).getItemInHand().getType().name()+"] Rarity Index : "+BeyondUtil.rarity(((Player)sender).getItemInHand()));
 				post = ((Player)sender).getItemInHand();
@@ -98,6 +172,8 @@ public class CommandHandler implements CommandExecutor {
 			else if(Conflict.SAVANIA_LOCATION_SPAWN != null && Conflict.SAVANIA_PLAYERS.contains(((Player)sender).getName()))((Player)sender).teleport(Conflict.SAVANIA_LOCATION_SPAWN);
 			else((Player)sender).teleport(((Player)sender).getWorld().getSpawnLocation());
 			return true;
+		}else if(cmd.getName().equalsIgnoreCase("nulls") && arg.length == 0 && ((Player)sender).isOp()){
+			((Player)sender).teleport(((Player)sender).getWorld().getSpawnLocation());
 		}else if(cmd.getName().equalsIgnoreCase("setspawn") && arg.length == 0){
 			if(Conflict.ABATTON_GENERALS.contains(((Player)sender).getName())) Conflict.ABATTON_LOCATION_SPAWN = ((Player)sender).getLocation() ;
 			else if(Conflict.OCEIAN_GENERALS.contains(((Player)sender).getName())) Conflict.OCEIAN_LOCATION_SPAWN = ((Player)sender).getLocation() ;

@@ -30,6 +30,12 @@ public class BeyondPlayerListener implements Listener {
 		plugin = instance;
 	}
 	@EventHandler
+	public static void onPlayerChat(PlayerChatEvent event){
+		if(Conflict.ABATTON_GENERALS.contains(event.getPlayer().getName()))event.setFormat("["+ChatColor.LIGHT_PURPLE+"AB - General"+ChatColor.WHITE+"]"+ChatColor.LIGHT_PURPLE+event.getPlayer().getName()+ChatColor.WHITE+": %2$s");
+		else if(Conflict.OCEIAN_GENERALS.contains(event.getPlayer().getName()))event.setFormat("["+ChatColor.LIGHT_PURPLE+"OC - General"+ChatColor.WHITE+"]"+ChatColor.LIGHT_PURPLE+event.getPlayer().getName()+ChatColor.WHITE+": %2$s");
+		else if(Conflict.SAVANIA_GENERALS.contains(event.getPlayer().getName()))event.setFormat("["+ChatColor.LIGHT_PURPLE+"SA - General"+ChatColor.WHITE+"]"+ChatColor.LIGHT_PURPLE+event.getPlayer().getName()+ChatColor.WHITE+": %2$s");
+	}
+	@EventHandler
 	public static void onPlayerMove(PlayerMoveEvent event){
 		if((event.getFrom().getBlockX() != event.getTo().getBlockX()
 				|| event.getFrom().getBlockY() != event.getTo().getBlockY()
@@ -77,7 +83,8 @@ public class BeyondPlayerListener implements Listener {
 	@EventHandler
 	public static void onPlayerJoin(PlayerJoinEvent event){
 		if(!Conflict.ABATTON_PLAYERS.contains(event.getPlayer().getName()) && !Conflict.OCEIAN_PLAYERS.contains(event.getPlayer().getName())
-				&& !Conflict.SAVANIA_PLAYERS.contains(event.getPlayer().getName())){
+				&& !Conflict.SAVANIA_PLAYERS.contains(event.getPlayer().getName())
+				&& !Conflict.handler.inGroup(event.getPlayer().getWorld().getName(), event.getPlayer().getName(), "Drifter")){
 			if(!Conflict.UNASSIGNED_PLAYERS.contains(event.getPlayer().getName()))Conflict.UNASSIGNED_PLAYERS.add(event.getPlayer().getName());
 		}
 	}

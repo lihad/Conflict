@@ -340,12 +340,11 @@ public class BeyondUtil {
 	}
 	public static Enchantment toolEnchantRandomizer(){
 		Random chance = new Random();
-		int next = chance.nextInt(4);
+		int next = chance.nextInt(3);
 		switch(next){
 		case 0: return Enchantment.DURABILITY;
 		case 1: return Enchantment.LOOT_BONUS_BLOCKS;
 		case 2: return Enchantment.DIG_SPEED;
-		case 3: return Enchantment.SILK_TOUCH;
 		}
 		return Enchantment.PROTECTION_EXPLOSIONS;
 	}

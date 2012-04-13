@@ -365,7 +365,10 @@ public class Conflict extends JavaPlugin {
 		getCommand("post").setExecutor(cmd);
 		getCommand("look").setExecutor(cmd);
 		getCommand("gear").setExecutor(cmd);
-
+		getCommand("cc").setExecutor(cmd);
+		getCommand("cadmin").setExecutor(cmd);
+		getCommand("nulls").setExecutor(cmd);
+		
 		//PermsManager
 		setupPermissions();
 
