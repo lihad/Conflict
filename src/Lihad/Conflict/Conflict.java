@@ -88,6 +88,12 @@ public class Conflict extends JavaPlugin {
 	public static int TRADE_RICHPORTAL_COUNTER;
 	public static Location TRADE_MYSTPORTAL;
 	public static int TRADE_MYSTPORTAL_COUNTER;
+	
+	public static String mystportal_temp = null;
+	public static String richportal_temp = null;
+	public static String blacksmith_temp = null;
+	public static String potions_temp = null;
+	public static String enchantments_temp = null;
 
 	public static List<String> UNASSIGNED_PLAYERS = new LinkedList<String>(); 
 	public static Map<String, String> PLAYER_SET_SELECT = new HashMap<String, String>();
@@ -181,12 +187,6 @@ public class Conflict extends JavaPlugin {
 							return;
 						}
 						Player[] players = getServer().getOnlinePlayers();
-						String mystportal_temp = null;
-						String richportal_temp = null;
-						String blacksmith_temp = null;
-						String potions_temp = null;
-						String enchantments_temp = null;
-
 						for(int i=0;i<players.length;i++){
 							if(players[i].getLocation().distance(TRADE_MYSTPORTAL) < 3){
 								if(mystportal_temp == null){
