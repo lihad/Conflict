@@ -1,6 +1,6 @@
 name: Conflict
 main: Lihad.Conflict.Conflict
-version: 1.00
+version: 1.02
 commands:
   abatton:
     description: Invalid Command
@@ -20,7 +20,7 @@ commands:
   spawn:
     description: Invalid Command
     usage: Invalid Command
-  setspawn:
+  setcityspawn:
     description: Invalid Command
     usage: Invalid Command
   rarity:
@@ -38,9 +38,15 @@ commands:
   cc:
     description: Invalid Command
     usage: Invalid Command'
-  cadmin:
+  cca:
     description: Invalid Command
     usage: Invalid Command
   nulls:
+    description: Invalid Command
+    usage: Invalid Command
+  protectcity:
+    description: Invalid Command
+    usage: Invalid Command
+  myst:
     description: Invalid Command
     usage: Invalid Command

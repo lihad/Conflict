@@ -5,5 +5,6 @@
 	<classpathentry kind="lib" path="C:/Users/Kyle/Downloads/bukkit-1.2.3-R0.3-20120316.090458-11.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Kyle/Documents/Permissions.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Kyle/Documents/PermissionsEx.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Kyle/Documents/Herochat.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -26,6 +26,7 @@ public class BeyondInfo {
 		Conflict.ABATTON_TRADES.addAll(Conflict.information.getStringList("Capitals.Abatton.Trades"));
 		Conflict.ABATTON_PERKS.addAll(Conflict.information.getStringList("Capitals.Abatton.Perks"));
 		Conflict.ABATTON_WORTH = (Conflict.information.getInt("Capitals.Abatton.Worth"));
+		Conflict.ABATTON_PROTECTION = (Conflict.information.getInt("Capitals.Abatton.Protection"));
 		Conflict.OCEIAN_PLAYERS.addAll(Conflict.information.getStringList("Capitals.Oceian.Players"));
 		Conflict.OCEIAN_LOCATION = toLocation("Capitals.Oceian.Location");
 		Conflict.OCEIAN_LOCATION_SPAWN = toLocation("Capitals.Oceian.Spawn");
@@ -34,6 +35,7 @@ public class BeyondInfo {
 		Conflict.OCEIAN_TRADES.addAll(Conflict.information.getStringList("Capitals.Oceian.Trades"));
 		Conflict.OCEIAN_PERKS.addAll(Conflict.information.getStringList("Capitals.Oceian.Perks"));
 		Conflict.OCEIAN_WORTH = (Conflict.information.getInt("Capitals.Oceian.Worth"));
+		Conflict.OCEIAN_PROTECTION = (Conflict.information.getInt("Capitals.Oceian.Protection"));
 		Conflict.SAVANIA_PLAYERS.addAll(Conflict.information.getStringList("Capitals.Savania.Players"));
 		Conflict.SAVANIA_LOCATION = toLocation("Capitals.Savania.Location");
 		Conflict.SAVANIA_LOCATION_SPAWN = toLocation("Capitals.Savania.Spawn");
@@ -42,6 +44,7 @@ public class BeyondInfo {
 		Conflict.SAVANIA_TRADES.addAll(Conflict.information.getStringList("Capitals.Savania.Trades"));
 		Conflict.SAVANIA_PERKS.addAll(Conflict.information.getStringList("Capitals.Savania.Perks"));
 		Conflict.SAVANIA_WORTH = (Conflict.information.getInt("Capitals.Savania.Worth"));
+		Conflict.SAVANIA_PROTECTION = (Conflict.information.getInt("Capitals.Savania.Protection"));
 		Conflict.TRADE_BLACKSMITH = toLocation("Trades.blacksmith");
 		Conflict.TRADE_POTIONS = toLocation("Trades.potions");
 		Conflict.TRADE_ENCHANTMENTS = toLocation("Trades.enchantments");
@@ -57,6 +60,7 @@ public class BeyondInfo {
 		Conflict.information.set("Capitals.Abatton.Trades", Conflict.ABATTON_TRADES);
 		Conflict.information.set("Capitals.Abatton.Perks", Conflict.ABATTON_PERKS);
 		Conflict.information.set("Capitals.Abatton.Worth", Conflict.ABATTON_WORTH);
+		Conflict.information.set("Capitals.Abatton.Protection", Conflict.ABATTON_PROTECTION);
 		Conflict.information.set("Capitals.Oceian.Players", Conflict.OCEIAN_PLAYERS);
 		Conflict.information.set("Capitals.Oceian.Location", toString(Conflict.OCEIAN_LOCATION));
 		Conflict.information.set("Capitals.Oceian.Spawn", toString(Conflict.OCEIAN_LOCATION_SPAWN));
@@ -65,6 +69,7 @@ public class BeyondInfo {
 		Conflict.information.set("Capitals.Oceian.Trades", Conflict.OCEIAN_TRADES);
 		Conflict.information.set("Capitals.Oceian.Perks", Conflict.OCEIAN_PERKS);
 		Conflict.information.set("Capitals.Oceian.Worth", Conflict.OCEIAN_WORTH);
+		Conflict.information.set("Capitals.Oceian.Protection", Conflict.OCEIAN_PROTECTION);
 		Conflict.information.set("Capitals.Savania.Players", Conflict.SAVANIA_PLAYERS);
 		Conflict.information.set("Capitals.Savania.Location", toString(Conflict.SAVANIA_LOCATION));
 		Conflict.information.set("Capitals.Savania.Spawn", toString(Conflict.SAVANIA_LOCATION_SPAWN));
@@ -73,6 +78,7 @@ public class BeyondInfo {
 		Conflict.information.set("Capitals.Savania.Trades", Conflict.SAVANIA_TRADES);
 		Conflict.information.set("Capitals.Savania.Perks", Conflict.SAVANIA_PERKS);
 		Conflict.information.set("Capitals.Savania.Worth", Conflict.SAVANIA_WORTH);
+		Conflict.information.set("Capitals.Savania.Protection", Conflict.SAVANIA_PROTECTION);
 		Conflict.information.set("Trades.blacksmith", toString(Conflict.TRADE_BLACKSMITH));
 		Conflict.information.set("Trades.potions", toString(Conflict.TRADE_POTIONS));
 		Conflict.information.set("Trades.enchantments", toString(Conflict.TRADE_ENCHANTMENTS));

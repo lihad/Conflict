@@ -70,7 +70,7 @@ public class BeyondEntityListener implements Listener {
 			}
 		}
 		if(event.getEntity() instanceof Player){
-			Player player = (Player) event.getDamager();
+			Player player = (Player) event.getEntity();
 			if((Conflict.ABATTON_PERKS.contains("shield") && Conflict.ABATTON_PLAYERS.contains(player.getName()))
 					|| (Conflict.OCEIAN_PERKS.contains("shield") && Conflict.OCEIAN_PLAYERS.contains(player.getName()))
 					|| (Conflict.SAVANIA_PERKS.contains("shield") && Conflict.SAVANIA_PLAYERS.contains(player.getName()))){

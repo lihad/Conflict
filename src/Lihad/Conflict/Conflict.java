@@ -24,6 +24,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import ru.tehkode.permissions.PermissionManager;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
+import com.dthielke.herochat.Herochat;
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
 
@@ -56,6 +57,7 @@ public class Conflict extends JavaPlugin {
 	public static List<String> ABATTON_TRADES_TEMP = new LinkedList<String>();
 	public static List<String> ABATTON_PERKS = new LinkedList<String>();
 	public static int ABATTON_WORTH;
+	public static int ABATTON_PROTECTION;
 	public static List<String> OCEIAN_PLAYERS = new LinkedList<String>();
 	public static Location OCEIAN_LOCATION;
 	public static Location OCEIAN_LOCATION_SPAWN;
@@ -65,6 +67,7 @@ public class Conflict extends JavaPlugin {
 	public static List<String> OCEIAN_TRADES_TEMP = new LinkedList<String>();
 	public static List<String> OCEIAN_PERKS = new LinkedList<String>();
 	public static int OCEIAN_WORTH;
+	public static int OCEIAN_PROTECTION;
 	public static List<String> SAVANIA_PLAYERS = new LinkedList<String>();
 	public static Location SAVANIA_LOCATION;
 	public static Location SAVANIA_LOCATION_SPAWN;
@@ -74,6 +77,7 @@ public class Conflict extends JavaPlugin {
 	public static List<String> SAVANIA_TRADES_TEMP = new LinkedList<String>();
 	public static List<String> SAVANIA_PERKS = new LinkedList<String>();
 	public static int SAVANIA_WORTH;
+	public static int SAVANIA_PROTECTION;
 	public static Location TRADE_BLACKSMITH;
 	public static int TRADE_BLACKSMITH_COUNTER;
 	public static Location TRADE_POTIONS;
@@ -149,19 +153,18 @@ public class Conflict extends JavaPlugin {
 					TRADE_POTIONS_PLAYER_USES.clear();
 					TRADE_ENCHANTMENTS_PLAYER_USES.clear();
 				}
-			},0L, 72000L);
+			},0L, 1728000L);
 			this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
 				public void run() {
 					cal.setTime(new Date(System.currentTimeMillis()));
 					if(!IS_EVENT_RUNNING){
-						if((cal.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) && cal.get(Calendar.HOUR_OF_DAY) == 19){
+						if((cal.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY && cal.get(Calendar.HOUR_OF_DAY) == 19) || (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY && cal.get(Calendar.HOUR_OF_DAY) == 13) ){
 							ABATTON_TRADES.clear();
 							OCEIAN_TRADES.clear();
 							SAVANIA_TRADES.clear();
-							ABATTON_PERKS.clear();
-							OCEIAN_PERKS.clear();
-							SAVANIA_PERKS.clear();
 							IS_EVENT_RUNNING = true;
+						}else if((cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY && cal.get(Calendar.HOUR_OF_DAY) == 12)){
+							System.out.println("Preparing..");
 						}
 					}else{
 						if((cal.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY && cal.get(Calendar.HOUR_OF_DAY) != 19 && cal.get(Calendar.HOUR_OF_DAY) != 20)
@@ -196,6 +199,7 @@ public class Conflict extends JavaPlugin {
 										|| (OCEIAN_PLAYERS.contains(players[i].getName()) && mystportal_temp.equals("Oceian"))
 										|| (SAVANIA_PLAYERS.contains(players[i].getName()) && mystportal_temp.equals("Savania"))){
 									TRADE_MYSTPORTAL_COUNTER++;
+									players[i].sendMessage(ChatColor.GOLD+"Taking point...");
 								}else{
 									mystportal_temp = "contested";
 									TRADE_MYSTPORTAL_COUNTER = 0;
@@ -211,6 +215,7 @@ public class Conflict extends JavaPlugin {
 										|| (OCEIAN_PLAYERS.contains(players[i].getName()) && richportal_temp.equals("Oceian"))
 										|| (SAVANIA_PLAYERS.contains(players[i].getName()) && richportal_temp.equals("Savania"))){
 									TRADE_RICHPORTAL_COUNTER++;
+									players[i].sendMessage(ChatColor.GOLD+"Taking point...");
 								}else{
 									richportal_temp = "contested";
 									TRADE_RICHPORTAL_COUNTER = 0;
@@ -226,6 +231,7 @@ public class Conflict extends JavaPlugin {
 										|| (OCEIAN_PLAYERS.contains(players[i].getName()) && blacksmith_temp.equals("Oceian"))
 										|| (SAVANIA_PLAYERS.contains(players[i].getName()) && blacksmith_temp.equals("Savania"))){
 									TRADE_BLACKSMITH_COUNTER++;
+									players[i].sendMessage(ChatColor.GOLD+"Taking point...");
 								}else{
 									blacksmith_temp = "contested";
 									TRADE_BLACKSMITH_COUNTER = 0;
@@ -241,6 +247,7 @@ public class Conflict extends JavaPlugin {
 										|| (OCEIAN_PLAYERS.contains(players[i].getName()) && potions_temp.equals("Oceian"))
 										|| (SAVANIA_PLAYERS.contains(players[i].getName()) && potions_temp.equals("Savania"))){
 									TRADE_POTIONS_COUNTER++;
+									players[i].sendMessage(ChatColor.GOLD+"Taking point...");
 								}else{
 									potions_temp = "contested";
 									TRADE_POTIONS_COUNTER = 0;
@@ -256,6 +263,7 @@ public class Conflict extends JavaPlugin {
 										|| (OCEIAN_PLAYERS.contains(players[i].getName()) && enchantments_temp.equals("Oceian"))
 										|| (SAVANIA_PLAYERS.contains(players[i].getName()) && enchantments_temp.equals("Savania"))){
 									TRADE_ENCHANTMENTS_COUNTER++;
+									players[i].sendMessage(ChatColor.GOLD+"Taking point...");
 								}else{
 									enchantments_temp = "contested";
 									TRADE_ENCHANTMENTS_COUNTER = 0;
@@ -360,18 +368,22 @@ public class Conflict extends JavaPlugin {
 		getCommand("point").setExecutor(cmd);
 		getCommand("purchase").setExecutor(cmd);
 		getCommand("spawn").setExecutor(cmd);
-		getCommand("setspawn").setExecutor(cmd);
+		getCommand("setcityspawn").setExecutor(cmd);
 		getCommand("rarity").setExecutor(cmd);
 		getCommand("post").setExecutor(cmd);
 		getCommand("look").setExecutor(cmd);
 		getCommand("gear").setExecutor(cmd);
 		getCommand("cc").setExecutor(cmd);
-		getCommand("cadmin").setExecutor(cmd);
+		getCommand("cca").setExecutor(cmd);
 		getCommand("nulls").setExecutor(cmd);
+		getCommand("protectcity").setExecutor(cmd);
+		getCommand("myst").setExecutor(cmd);
+
 		
 		//PermsManager
 		setupPermissions();
-
+		setupPermissionsEx();
+		
 		//PluginManager
 		if(ABATTON_LOCATION == null || OCEIAN_LOCATION == null || SAVANIA_LOCATION == null){
 			severe("Unable to find all Capital Locations.  Booted in SAFE MODE for Listeners");
@@ -411,7 +423,7 @@ public class Conflict extends JavaPlugin {
 		Plugin permissionsPlugin = this.getServer().getPluginManager().getPlugin("PermissionsEx");
 		
 		if (permissionsPlugin != null) {
-			info("Succesfully connected to Permissions!");
+			info("Succesfully connected to PermissionsEx!");
 			ex = PermissionsEx.getPermissionManager();
 			
 		} else {
