@@ -16,6 +16,7 @@ import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -84,34 +85,43 @@ public class BeyondPlayerListener implements Listener {
 		}
 	}
 
-	@EventHandler
-	public static void onPlayerTeleport(PlayerTeleportEvent event){
-		if(event.getCause() == TeleportCause.NETHER_PORTAL && event.getFrom().getWorld().getName().equals("survival") &&  Conflict.TRADE_RICHPORTAL.distance(event.getFrom()) < 10){
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public static void onPlayerPortal(PlayerPortalEvent event){
+		if(event.getCause().equals(TeleportCause.NETHER_PORTAL) && event.getFrom().getWorld().getName().equals("survival") &&  Conflict.TRADE_RICHPORTAL.distance(event.getFrom()) < 10){
 			if((Conflict.ABATTON_TRADES.contains("richportal") && Conflict.ABATTON_PLAYERS.contains(event.getPlayer().getName()))
 					|| (Conflict.OCEIAN_TRADES.contains("richportal") && Conflict.OCEIAN_PLAYERS.contains(event.getPlayer().getName()))
 					|| (Conflict.SAVANIA_TRADES.contains("richportal") && Conflict.SAVANIA_PLAYERS.contains(event.getPlayer().getName()))
 			){
+				event.getPlayer().sendMessage("Shaaaaazaaam!");
+				event.getPlayer().teleport(new Location(plugin.getServer().getWorld("richworld"), 0.0, 0.0, 0.0));
 				event.setTo(new Location(plugin.getServer().getWorld("richworld"), 0.0, 0.0, 0.0));
+				event.setCancelled(true);
 			}else{
 				event.getPlayer().sendMessage("Epic Fail");
 			}
 		}
-		else if(event.getCause() == TeleportCause.NETHER_PORTAL && event.getFrom().getWorld().getName().equals("survival") && Conflict.TRADE_MYSTPORTAL.distance(event.getFrom()) < 10){
+		else if(event.getCause().equals(TeleportCause.NETHER_PORTAL) && event.getFrom().getWorld().getName().equals("survival") && Conflict.TRADE_MYSTPORTAL.distance(event.getFrom()) < 10){
 			if((Conflict.ABATTON_TRADES.contains("mystportal") && Conflict.ABATTON_PLAYERS.contains(event.getPlayer().getName()))
 					|| (Conflict.OCEIAN_TRADES.contains("mystportal") && Conflict.OCEIAN_PLAYERS.contains(event.getPlayer().getName()))
 					|| (Conflict.SAVANIA_TRADES.contains("mystportal") && Conflict.SAVANIA_PLAYERS.contains(event.getPlayer().getName()))
 			){
+				event.getPlayer().sendMessage("Shaaaaazaaam!");
+				event.getPlayer().teleport(new Location(plugin.getServer().getWorld("mystworld"), 0.0, 0.0, 0.0));
 				event.setTo(new Location(plugin.getServer().getWorld("mystworld"), 0.0, 0.0, 0.0));
+				event.setCancelled(true);
 			}else{
 				event.getPlayer().sendMessage("Epic Fail");
 			}
 		}
-		else if(event.getTo().getWorld().getName().equals("survival") && (event.getTo().distance(Conflict.TRADE_BLACKSMITH) < 200 || event.getTo().distance(Conflict.TRADE_ENCHANTMENTS) < 200
+	}
+	public static void onPlayerTeleport(PlayerTeleportEvent event){
+
+		if(event.getTo().getWorld().getName().equals("survival") && (event.getTo().distance(Conflict.TRADE_BLACKSMITH) < 200 || event.getTo().distance(Conflict.TRADE_ENCHANTMENTS) < 200
 			|| event.getTo().distance(Conflict.TRADE_MYSTPORTAL) < 200 || event.getTo().distance(Conflict.TRADE_POTIONS) < 200
 			|| event.getTo().distance(Conflict.TRADE_RICHPORTAL) < 200) && !event.getPlayer().isOp()){
 			event.setTo(event.getFrom());
 		}
-		else if(event.getTo().getWorld().getName().equals("richworld") && event.getCause() == TeleportCause.ENDER_PEARL){
+		else if(event.getTo().getWorld().getName().equals("richworld") && event.getCause().equals(TeleportCause.ENDER_PEARL)){
 			event.setTo(event.getFrom());
 		}
 	}
@@ -138,7 +148,7 @@ public class BeyondPlayerListener implements Listener {
 						|| (Conflict.SAVANIA_TRADES.contains("blacksmith") && Conflict.SAVANIA_PLAYERS.contains(event.getPlayer().getName())))){
 			if(event.getPlayer().getItemInHand().getDurability() != 0){
 				if(Conflict.TRADE_BLACKSMITH_PLAYER_USES.containsKey(event.getPlayer().getName())){
-					if(Conflict.TRADE_BLACKSMITH_PLAYER_USES.get(event.getPlayer().getName())<3){
+					if(Conflict.TRADE_BLACKSMITH_PLAYER_USES.get(event.getPlayer().getName())<5){
 						Conflict.TRADE_BLACKSMITH_PLAYER_USES.put(event.getPlayer().getName(), Conflict.TRADE_BLACKSMITH_PLAYER_USES.get(event.getPlayer().getName())+1);
 						event.getPlayer().getItemInHand().setDurability((short) 0);
 					}else{
@@ -156,11 +166,11 @@ public class BeyondPlayerListener implements Listener {
 			ItemStack stack = event.getPlayer().getItemInHand();
 			if(stack.getType() == Material.DIAMOND_SWORD){
 				if(Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.containsKey(event.getPlayer().getName())){
-					if(Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.get(event.getPlayer().getName())<3){
+					if(Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.get(event.getPlayer().getName())<5){
 						Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.put(event.getPlayer().getName(), Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.get(event.getPlayer().getName())+1);
 						event.getPlayer().getItemInHand().addUnsafeEnchantment(BeyondUtil.weaponEnchantRandomizer(), BeyondUtil.weaponLevelRandomizer());
 					}else{
-						event.getPlayer().sendMessage("You have accessed blacksmith too many times this hour");
+						event.getPlayer().sendMessage("You have accessed enchantments too many times this hour");
 						event.setCancelled(true);
 					}
 				}else Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.put(event.getPlayer().getName(), 1);
@@ -168,11 +178,11 @@ public class BeyondPlayerListener implements Listener {
 			else if(stack.getType() == Material.DIAMOND_HELMET || stack.getType() == Material.DIAMOND_CHESTPLATE 
 					|| stack.getType() == Material.DIAMOND_LEGGINGS || stack.getType() == Material.DIAMOND_BOOTS){
 				if(Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.containsKey(event.getPlayer().getName())){
-					if(Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.get(event.getPlayer().getName())<3){
+					if(Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.get(event.getPlayer().getName())<5){
 						Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.put(event.getPlayer().getName(), Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.get(event.getPlayer().getName())+1);
 						event.getPlayer().getItemInHand().addUnsafeEnchantment(BeyondUtil.armorEnchantRandomizer(),BeyondUtil.armorLevelRandomizer());
 					}else{
-						event.getPlayer().sendMessage("You have accessed blacksmith too many times this hour");
+						event.getPlayer().sendMessage("You have accessed enchantments too many times this hour");
 						event.setCancelled(true);
 					}
 				}else Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.put(event.getPlayer().getName(), 1);
@@ -180,22 +190,22 @@ public class BeyondPlayerListener implements Listener {
 			else if(stack.getType() == Material.DIAMOND_AXE || stack.getType() == Material.DIAMOND_PICKAXE 
 					|| stack.getType() == Material.DIAMOND_SPADE || stack.getType() == Material.DIAMOND_HOE){
 				if(Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.containsKey(event.getPlayer().getName())){
-					if(Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.get(event.getPlayer().getName())<3){
+					if(Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.get(event.getPlayer().getName())<5){
 						Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.put(event.getPlayer().getName(), Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.get(event.getPlayer().getName())+1);
 						event.getPlayer().getItemInHand().addUnsafeEnchantment(BeyondUtil.toolEnchantRandomizer(),BeyondUtil.toolLevelRandomizer());
 					}else{
-						event.getPlayer().sendMessage("You have accessed blacksmith too many times this hour");
+						event.getPlayer().sendMessage("You have accessed enchantments too many times this hour");
 						event.setCancelled(true);
 					}
 				}else Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.put(event.getPlayer().getName(), 1);
 			}
 			else if(stack.getType() == Material.BOW){
 				if(Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.containsKey(event.getPlayer().getName())){
-					if(Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.get(event.getPlayer().getName())<3){
+					if(Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.get(event.getPlayer().getName())<5){
 						Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.put(event.getPlayer().getName(), Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.get(event.getPlayer().getName())+1);
 						event.getPlayer().getItemInHand().addUnsafeEnchantment(BeyondUtil.bowEnchantRandomizer(),BeyondUtil.bowLevelRandomizer());
 					}else{
-						event.getPlayer().sendMessage("You have accessed blacksmith too many times this hour");
+						event.getPlayer().sendMessage("You have accessed enchantments too many times this hour");
 						event.setCancelled(true);
 					}
 				}else Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.put(event.getPlayer().getName(), 1);
@@ -208,7 +218,7 @@ public class BeyondPlayerListener implements Listener {
 						|| (Conflict.SAVANIA_TRADES.contains("potions") && Conflict.SAVANIA_PLAYERS.contains(event.getPlayer().getName())))){
 			if(event.getPlayer().getItemInHand().getType() == Material.GLASS_BOTTLE){
 				if(Conflict.TRADE_POTIONS_PLAYER_USES.containsKey(event.getPlayer().getName())){
-					if(Conflict.TRADE_POTIONS_PLAYER_USES.get(event.getPlayer().getName())<3){
+					if(Conflict.TRADE_POTIONS_PLAYER_USES.get(event.getPlayer().getName())<30){
 						Conflict.TRADE_POTIONS_PLAYER_USES.put(event.getPlayer().getName(), Conflict.TRADE_POTIONS_PLAYER_USES.get(event.getPlayer().getName())+1);
 						Potion potion = new Potion(BeyondUtil.potionTypeRandomizer(), BeyondUtil.potionTierRandomizer(), BeyondUtil.potionSplashRandomizer());
 						ItemStack stack = new ItemStack(Material.POTION, 1);
@@ -216,7 +226,7 @@ public class BeyondPlayerListener implements Listener {
 						event.getPlayer().setItemInHand(stack);
 						event.getPlayer().updateInventory();
 					}else{
-						event.getPlayer().sendMessage("You have accessed blacksmith too many times this hour");
+						event.getPlayer().sendMessage("You have accessed potions too many times this hour");
 						event.setCancelled(true);
 					}
 				}else Conflict.TRADE_POTIONS_PLAYER_USES.put(event.getPlayer().getName(), 1);

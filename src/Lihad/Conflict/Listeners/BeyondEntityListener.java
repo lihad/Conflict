@@ -33,6 +33,7 @@ public class BeyondEntityListener implements Listener {
 		//
 		// "PvP"
 		if(event.getEntity().getWorld().getName().equals("survival")){
+			if(Conflict.IS_EVENT_RUNNING)return;
 			if((event.getDamager() instanceof Player || (event.getDamager() instanceof Projectile 
 					&& ((Projectile)event.getDamager()).getShooter() instanceof Player)) && event.getEntity() instanceof Player){
 				Player player;

@@ -89,12 +89,6 @@ public class Conflict extends JavaPlugin {
 	public static Location TRADE_MYSTPORTAL;
 	public static int TRADE_MYSTPORTAL_COUNTER;
 	
-	public static String mystportal_temp = null;
-	public static String richportal_temp = null;
-	public static String blacksmith_temp = null;
-	public static String potions_temp = null;
-	public static String enchantments_temp = null;
-
 	public static List<String> UNASSIGNED_PLAYERS = new LinkedList<String>(); 
 	public static Map<String, String> PLAYER_SET_SELECT = new HashMap<String, String>();
 	
@@ -159,7 +153,7 @@ public class Conflict extends JavaPlugin {
 					TRADE_POTIONS_PLAYER_USES.clear();
 					TRADE_ENCHANTMENTS_PLAYER_USES.clear();
 				}
-			},0L, 1728000L);
+			},0L, 432000L);
 			this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
 				public void run() {
 					cal.setTime(new Date(System.currentTimeMillis()));
@@ -187,6 +181,12 @@ public class Conflict extends JavaPlugin {
 							return;
 						}
 						Player[] players = getServer().getOnlinePlayers();
+						String mystportal_temp = null;
+						String richportal_temp = null;
+						String blacksmith_temp = null;
+						String potions_temp = null;
+						String enchantments_temp = null;
+
 						for(int i=0;i<players.length;i++){
 							if(players[i].getLocation().distance(TRADE_MYSTPORTAL) < 3){
 								if(mystportal_temp == null){
@@ -270,7 +270,7 @@ public class Conflict extends JavaPlugin {
 								}
 							}
 						}
-						if(!mystportal_temp.equals("contested") && TRADE_MYSTPORTAL_COUNTER >= 30){
+						if(mystportal_temp != null && !mystportal_temp.equals("contested") && TRADE_MYSTPORTAL_COUNTER >= 30){
 							if(mystportal_temp.equals("Abatton") && !ABATTON_TRADES_TEMP.contains("mystportal")){
 								ABATTON_TRADES_TEMP.add("mystportal");
 								OCEIAN_TRADES_TEMP.remove("mystportal");
@@ -287,7 +287,7 @@ public class Conflict extends JavaPlugin {
 								SAVANIA_TRADES_TEMP.add("mystportal");
 								getServer().broadcastMessage(ChatColor.RED+"Savania has taken control of the Myst Portal!");
 							}
-						}else if(!richportal_temp.equals("contested") && TRADE_RICHPORTAL_COUNTER >= 30){
+						}else if(richportal_temp != null &&  !richportal_temp.equals("contested") && TRADE_RICHPORTAL_COUNTER >= 30){
 							if(richportal_temp.equals("Abatton") && !ABATTON_TRADES_TEMP.contains("richportal")){
 								ABATTON_TRADES_TEMP.add("richportal");
 								OCEIAN_TRADES_TEMP.remove("richportal");
@@ -304,7 +304,7 @@ public class Conflict extends JavaPlugin {
 								SAVANIA_TRADES_TEMP.add("richportal");
 								getServer().broadcastMessage(ChatColor.RED+"Savania has taken control of the Rich Portal!");
 							}
-						}else if(!blacksmith_temp.equals("contested") && TRADE_BLACKSMITH_COUNTER >= 30){
+						}else if( blacksmith_temp != null && !blacksmith_temp.equals("contested") && TRADE_BLACKSMITH_COUNTER >= 30){
 							if(blacksmith_temp.equals("Abatton") && !ABATTON_TRADES_TEMP.contains("blacksmith")){
 								ABATTON_TRADES_TEMP.add("blacksmith");
 								OCEIAN_TRADES_TEMP.remove("blacksmith");
@@ -321,7 +321,7 @@ public class Conflict extends JavaPlugin {
 								SAVANIA_TRADES_TEMP.add("blacksmith");
 								getServer().broadcastMessage(ChatColor.RED+"Savania has taken control of the Blacksmith!");
 							}
-						}else if(!potions_temp.equals("contested") && TRADE_POTIONS_COUNTER >= 30){
+						}else if(potions_temp != null &&  !potions_temp.equals("contested") && TRADE_POTIONS_COUNTER >= 30){
 							if(potions_temp.equals("Abatton") && !ABATTON_TRADES_TEMP.contains("potions")){
 								ABATTON_TRADES_TEMP.add("potions");
 								OCEIAN_TRADES_TEMP.remove("potions");
@@ -338,7 +338,7 @@ public class Conflict extends JavaPlugin {
 								SAVANIA_TRADES_TEMP.add("potions");
 								getServer().broadcastMessage(ChatColor.RED+"Savania has taken control of the Potion Chest!");
 							}
-						}else if(!enchantments_temp.equals("contested") && TRADE_ENCHANTMENTS_COUNTER >= 30){
+						}else if(enchantments_temp != null &&  !enchantments_temp.equals("contested") && TRADE_ENCHANTMENTS_COUNTER >= 30){
 							if(enchantments_temp.equals("Abatton") && !ABATTON_TRADES_TEMP.contains("enchantments")){
 								ABATTON_TRADES_TEMP.add("enchantments");
 								OCEIAN_TRADES_TEMP.remove("enchantments");
@@ -378,6 +378,7 @@ public class Conflict extends JavaPlugin {
 		getCommand("nulls").setExecutor(cmd);
 		getCommand("protectcity").setExecutor(cmd);
 		getCommand("myst").setExecutor(cmd);
+		getCommand("cwho").setExecutor(cmd);
 
 		
 		//PermsManager

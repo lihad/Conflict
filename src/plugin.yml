@@ -50,3 +50,6 @@ commands:
   myst:
     description: Invalid Command
     usage: Invalid Command
+  cwho:
+    description: Invalid Command
+    usage: Invalid Command

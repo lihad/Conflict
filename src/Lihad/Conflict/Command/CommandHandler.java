@@ -1,5 +1,8 @@
 package Lihad.Conflict.Command;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -34,6 +37,40 @@ public class CommandHandler implements CommandExecutor {
 				Conflict.PLAYER_SET_SELECT.put(((Player)sender).getName(), arg[1]);
 			}
 			return true;
+		}else if(cmd.getName().equalsIgnoreCase("cwho")){
+			if(arg.length == 1){
+				if(arg[0].equalsIgnoreCase("abatton")){
+					List<Player> players = Arrays.asList(plugin.getServer().getOnlinePlayers());
+					String message = "";
+					for(int i = 0;i<players.size();i++){
+						if(Conflict.ABATTON_PLAYERS.contains(players.get(i).getName()))	message.concat(players.get(i).getName()+" ");
+					}
+					((Player)sender).sendMessage(message);
+				}else if(arg[0].equalsIgnoreCase("oceian")){
+					List<Player> players = Arrays.asList(plugin.getServer().getOnlinePlayers());
+					String message = "";
+					for(int i = 0;i<players.size();i++){
+						if(Conflict.OCEIAN_PLAYERS.contains(players.get(i).getName()))	message.concat(players.get(i).getName()+" ");
+					}
+					((Player)sender).sendMessage(message);
+				}else if(arg[0].equalsIgnoreCase("savania")){
+					List<Player> players = Arrays.asList(plugin.getServer().getOnlinePlayers());
+					String message = "";
+					for(int i = 0;i<players.size();i++){
+						if(Conflict.SAVANIA_PLAYERS.contains(players.get(i).getName()))	message.concat(players.get(i).getName()+" ");
+					}
+					((Player)sender).sendMessage(message);
+				}else if(plugin.getServer().getPlayer(arg[0]) != null){
+					if(Conflict.ABATTON_PLAYERS.contains(plugin.getServer().getPlayer(arg[0]).getName())) ((Player)sender).sendMessage(arg[0]+" - Abatton");
+					else if(Conflict.OCEIAN_PLAYERS.contains(plugin.getServer().getPlayer(arg[0]).getName())) ((Player)sender).sendMessage(arg[0]+" - Oceian");
+					else if(Conflict.SAVANIA_PLAYERS.contains(plugin.getServer().getPlayer(arg[0]).getName())) ((Player)sender).sendMessage(arg[0]+" - Savania");
+					else ((Player)sender).sendMessage(arg[0]+" - <None>");
+
+				}else ((Player)sender).sendMessage("Player is not online");
+
+			}else ((Player)sender).sendMessage("try '/cwho <playername>|<capname>");
+			return true;
+
 		}else if(cmd.getName().equalsIgnoreCase("rarity") && arg.length == 0){
 			if(BeyondUtil.rarity(((Player)sender).getItemInHand()) >= 60)((Player)sender).sendMessage("The Rarity Index of your "+ChatColor.BLUE.toString()+((Player)sender).getItemInHand().getType().name()+" is "+BeyondUtil.getColorOfRarity(BeyondUtil.rarity(((Player)sender).getItemInHand()))+BeyondUtil.rarity(((Player)sender).getItemInHand()));
 			else ((Player)sender).sendMessage("This item has no Rarity Index");
@@ -41,11 +78,12 @@ public class CommandHandler implements CommandExecutor {
 		}else if(cmd.getName().equalsIgnoreCase("myst") && arg.length == 3){
 			if(((Player)sender).getWorld().getName().equals("mystworld")){	
 				if(Integer.parseInt(arg[0]) < 15000 && Integer.parseInt(arg[0]) > 500 
-						&& Integer.parseInt(arg[1]) < 15000 && Integer.parseInt(arg[1]) > 500 
+						&& Integer.parseInt(arg[1]) < 255 && Integer.parseInt(arg[1]) > 0
 						&& Integer.parseInt(arg[2]) < 15000 && Integer.parseInt(arg[2]) > 500){
 					((Player)sender).teleport(new Location(plugin.getServer().getWorld("survival"),Integer.parseInt(arg[0]),Integer.parseInt(arg[1]),Integer.parseInt(arg[2])));
 				}
 			}else ((Player)sender).sendMessage("You are not in the correct world to use this command");
+			return true;
 		}else if(cmd.getName().equalsIgnoreCase("protectcity") && arg.length == 1){
 			if(Integer.parseInt(arg[0]) <= 500 && Integer.parseInt(arg[0]) > -1){
 				if(Conflict.ABATTON_GENERALS.contains(((Player)sender).getName())){
