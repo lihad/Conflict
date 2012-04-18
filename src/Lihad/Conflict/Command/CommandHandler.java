@@ -43,21 +43,21 @@ public class CommandHandler implements CommandExecutor {
 					List<Player> players = Arrays.asList(plugin.getServer().getOnlinePlayers());
 					String message = "";
 					for(int i = 0;i<players.size();i++){
-						if(Conflict.ABATTON_PLAYERS.contains(players.get(i).getName()))	message.concat(players.get(i).getName()+" ");
+						if(Conflict.ABATTON_PLAYERS.contains(players.get(i).getName()))	message = message.concat(players.get(i).getName()+" ");
 					}
 					((Player)sender).sendMessage(message);
 				}else if(arg[0].equalsIgnoreCase("oceian")){
 					List<Player> players = Arrays.asList(plugin.getServer().getOnlinePlayers());
 					String message = "";
 					for(int i = 0;i<players.size();i++){
-						if(Conflict.OCEIAN_PLAYERS.contains(players.get(i).getName()))	message.concat(players.get(i).getName()+" ");
+						if(Conflict.OCEIAN_PLAYERS.contains(players.get(i).getName()))	message = message.concat(players.get(i).getName()+" ");
 					}
 					((Player)sender).sendMessage(message);
 				}else if(arg[0].equalsIgnoreCase("savania")){
 					List<Player> players = Arrays.asList(plugin.getServer().getOnlinePlayers());
 					String message = "";
 					for(int i = 0;i<players.size();i++){
-						if(Conflict.SAVANIA_PLAYERS.contains(players.get(i).getName()))	message.concat(players.get(i).getName()+" ");
+						if(Conflict.SAVANIA_PLAYERS.contains(players.get(i).getName()))	message = message.concat(players.get(i).getName()+" ");
 					}
 					((Player)sender).sendMessage(message);
 				}else if(plugin.getServer().getPlayer(arg[0]) != null){
@@ -234,13 +234,10 @@ public class CommandHandler implements CommandExecutor {
 					player.sendMessage(" -- "+ChatColor.BLUE.toString()+((Enchantment)(post.getEnchantments().keySet().toArray()[i])).getName()+ChatColor.WHITE.toString()+" LVL"+BeyondUtil.getColorOfLevel(post.getEnchantmentLevel(((Enchantment)(post.getEnchantments().keySet().toArray()[i]))))+post.getEnchantmentLevel(((Enchantment)(post.getEnchantments().keySet().toArray()[i]))));
 				}
 				if(post.getEnchantments().keySet().size() <= 0)player.sendMessage(ChatColor.WHITE.toString()+" -- This Item Has No Enchants");
-
 				player.sendMessage(ChatColor.YELLOW.toString()+" -------------------------------- ");
-
 			}else ((Player)sender).sendMessage("There is no item to look at");
 			return true;
 		}
-
 		else if(cmd.getName().equalsIgnoreCase("gear") && arg.length == 0){
 			double total = (BeyondUtil.rarity(((Player)sender).getInventory().getHelmet())+BeyondUtil.rarity(((Player)sender).getInventory().getLeggings())+BeyondUtil.rarity(((Player)sender).getInventory().getBoots())+BeyondUtil.rarity(((Player)sender).getInventory().getChestplate())+BeyondUtil.rarity(((Player)sender).getInventory().getItemInHand()))/5.00;
 			((Player)sender).sendMessage(BeyondUtil.getColorOfRarity(total)+"Your Gear Rating is : "+total);

@@ -41,13 +41,13 @@ public class Conflict extends JavaPlugin {
 	protected static String name = "Conflict";
 	/** Header used for console and player output messages */
 	protected static String header = "[" + name + "] ";
-	
-    public static YamlConfiguration information;
-    
+
+	public static YamlConfiguration information;
+
 	public static PermissionHandler handler;
 	public static PermissionManager ex;
 	private static Logger log = Logger.getLogger("Minecraft");
-	
+
 	public static List<String> ABATTON_PLAYERS = new LinkedList<String>();
 	public static Location ABATTON_LOCATION;
 	public static Location ABATTON_LOCATION_SPAWN;
@@ -88,28 +88,35 @@ public class Conflict extends JavaPlugin {
 	public static int TRADE_RICHPORTAL_COUNTER;
 	public static Location TRADE_MYSTPORTAL;
 	public static int TRADE_MYSTPORTAL_COUNTER;
-	
+
 	public static List<String> UNASSIGNED_PLAYERS = new LinkedList<String>(); 
 	public static Map<String, String> PLAYER_SET_SELECT = new HashMap<String, String>();
-	
+
 	public static Map<String, Integer> TRADE_BLACKSMITH_PLAYER_USES = new HashMap<String, Integer>();
 	public static Map<String, Integer> TRADE_POTIONS_PLAYER_USES = new HashMap<String, Integer>();
 	public static Map<String, Integer> TRADE_ENCHANTMENTS_PLAYER_USES = new HashMap<String, Integer>();
-	
+
+	public static Map<String, Integer> TRADE_BLACKSMITH_CAP_COUNTER = new HashMap<String, Integer>();
+	public static Map<String, Integer> TRADE_POTIONS_CAP_COUNTER = new HashMap<String, Integer>();
+	public static Map<String, Integer> TRADE_ENCHANTMENTS_CAP_COUNTER = new HashMap<String, Integer>();
+	public static Map<String, Integer> TRADE_RICHPORTAL_CAP_COUNTER = new HashMap<String, Integer>();
+	public static Map<String, Integer> TRADE_MYSTPORTAL_CAP_COUNTER = new HashMap<String, Integer>();
+
+
 	public static int TASK_ID_EVENT;
-	
+
 	public static Calendar cal = Calendar.getInstance();
 	public static boolean IS_EVENT_RUNNING = false;
-	
+
 	public static CommandExecutor cmd;
 	public static BeyondInfo info;
-	
+
 	private final BeyondPluginListener pluginListener = new BeyondPluginListener(this);
 	private final BeyondBlockListener blockListener = new BeyondBlockListener(this);
 	private final BeyondPlayerListener playerListener = new BeyondPlayerListener(this);
 	private final BeyondEntityListener entityListener = new BeyondEntityListener(this);
 	private final BeyondSafeModeListener safeListener = new BeyondSafeModeListener(this);
-    
+
 	public static File infoFile = new File("plugins/Conflict/information.yml");
 
 
@@ -124,7 +131,7 @@ public class Conflict extends JavaPlugin {
 	}
 	@Override
 	public void onEnable() {
-		
+
 		//InfoManager
 		information = new YamlConfiguration();
 		try {
@@ -156,6 +163,17 @@ public class Conflict extends JavaPlugin {
 			},0L, 432000L);
 			this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
 				public void run() {
+					if(IS_EVENT_RUNNING){
+						getServer().broadcastMessage("Blacksmith Tally| AB: "+TRADE_BLACKSMITH_CAP_COUNTER.get("Abatton")+" OC: "+TRADE_BLACKSMITH_CAP_COUNTER.get("Oceian")+" SA: "+TRADE_BLACKSMITH_CAP_COUNTER.get("Savania"));
+						getServer().broadcastMessage("Potions Tally| AB: "+TRADE_POTIONS_CAP_COUNTER.get("Abatton")+" OC: "+TRADE_POTIONS_CAP_COUNTER.get("Oceian")+" SA: "+TRADE_POTIONS_CAP_COUNTER.get("Savania"));
+						getServer().broadcastMessage("Enchantment Tally| AB: "+TRADE_ENCHANTMENTS_CAP_COUNTER.get("Abatton")+" OC: "+TRADE_ENCHANTMENTS_CAP_COUNTER.get("Oceian")+" SA: "+TRADE_ENCHANTMENTS_CAP_COUNTER.get("Savania"));
+						getServer().broadcastMessage("RichPortal Tally| AB: "+TRADE_RICHPORTAL_CAP_COUNTER.get("Abatton")+" OC: "+TRADE_RICHPORTAL_CAP_COUNTER.get("Oceian")+" SA: "+TRADE_RICHPORTAL_CAP_COUNTER.get("Savania"));
+						getServer().broadcastMessage("MystPortal Tally| AB: "+TRADE_MYSTPORTAL_CAP_COUNTER.get("Abatton")+" OC: "+TRADE_MYSTPORTAL_CAP_COUNTER.get("Oceian")+" SA: "+TRADE_MYSTPORTAL_CAP_COUNTER.get("Savania"));
+					}
+				}
+			},0L, 6000L);
+			this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
+				public void run() {
 					cal.setTime(new Date(System.currentTimeMillis()));
 					if(!IS_EVENT_RUNNING){
 						if((cal.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY && cal.get(Calendar.HOUR_OF_DAY) == 19) || (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY && cal.get(Calendar.HOUR_OF_DAY) == 13) ){
@@ -163,21 +181,53 @@ public class Conflict extends JavaPlugin {
 							OCEIAN_TRADES.clear();
 							SAVANIA_TRADES.clear();
 							IS_EVENT_RUNNING = true;
-						}else if((cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY && cal.get(Calendar.HOUR_OF_DAY) == 12)){
-							System.out.println("Preparing..");
+							getServer().broadcastMessage(ChatColor.RED+"It Has Begun!!!");
 						}
 					}else{
 						if((cal.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY && cal.get(Calendar.HOUR_OF_DAY) != 19 && cal.get(Calendar.HOUR_OF_DAY) != 20)
 								|| (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY && cal.get(Calendar.HOUR_OF_DAY) != 13 && cal.get(Calendar.HOUR_OF_DAY) != 14)
 								|| cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY
 								|| cal.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY){
-							ABATTON_TRADES.addAll(ABATTON_TRADES_TEMP);
-							OCEIAN_TRADES.addAll(OCEIAN_TRADES_TEMP);
-							SAVANIA_TRADES.addAll(SAVANIA_TRADES_TEMP);
+							if(TRADE_BLACKSMITH_CAP_COUNTER.get("Abatton") > TRADE_BLACKSMITH_CAP_COUNTER.get("Oceian") 
+									&& TRADE_BLACKSMITH_CAP_COUNTER.get("Abatton") > TRADE_BLACKSMITH_CAP_COUNTER.get("Savania"))ABATTON_TRADES.add("blacksmith");
+							else if(TRADE_BLACKSMITH_CAP_COUNTER.get("Oceian") > TRADE_BLACKSMITH_CAP_COUNTER.get("Savania") 
+									&& TRADE_BLACKSMITH_CAP_COUNTER.get("Oceian") > TRADE_BLACKSMITH_CAP_COUNTER.get("Abatton"))OCEIAN_TRADES.add("blacksmith");
+							else if(TRADE_BLACKSMITH_CAP_COUNTER.get("Savania") > TRADE_BLACKSMITH_CAP_COUNTER.get("Oceian") 
+									&& TRADE_BLACKSMITH_CAP_COUNTER.get("Savania") > TRADE_BLACKSMITH_CAP_COUNTER.get("Abatton"))SAVANIA_TRADES.add("blacksmith");
+
+							if(TRADE_POTIONS_CAP_COUNTER.get("Abatton") > TRADE_POTIONS_CAP_COUNTER.get("Oceian") 
+									&& TRADE_POTIONS_CAP_COUNTER.get("Abatton") > TRADE_POTIONS_CAP_COUNTER.get("Savania"))ABATTON_TRADES.add("potions");
+							else if(TRADE_POTIONS_CAP_COUNTER.get("Oceian") > TRADE_POTIONS_CAP_COUNTER.get("Savania") 
+									&& TRADE_POTIONS_CAP_COUNTER.get("Oceian") > TRADE_POTIONS_CAP_COUNTER.get("Abatton"))OCEIAN_TRADES.add("potions");
+							else if(TRADE_POTIONS_CAP_COUNTER.get("Savania") > TRADE_POTIONS_CAP_COUNTER.get("Oceian") 
+									&& TRADE_POTIONS_CAP_COUNTER.get("Savania") > TRADE_POTIONS_CAP_COUNTER.get("Abatton"))SAVANIA_TRADES.add("potions");
+
+							if(TRADE_ENCHANTMENTS_CAP_COUNTER.get("Abatton") > TRADE_ENCHANTMENTS_CAP_COUNTER.get("Oceian") 
+									&& TRADE_ENCHANTMENTS_CAP_COUNTER.get("Abatton") > TRADE_ENCHANTMENTS_CAP_COUNTER.get("Savania"))ABATTON_TRADES.add("enchantments");
+							else if(TRADE_ENCHANTMENTS_CAP_COUNTER.get("Oceian") > TRADE_ENCHANTMENTS_CAP_COUNTER.get("Savania") 
+									&& TRADE_ENCHANTMENTS_CAP_COUNTER.get("Oceian") > TRADE_ENCHANTMENTS_CAP_COUNTER.get("Abatton"))OCEIAN_TRADES.add("enchantments");
+							else if(TRADE_ENCHANTMENTS_CAP_COUNTER.get("Savania") > TRADE_ENCHANTMENTS_CAP_COUNTER.get("Oceian") 
+									&& TRADE_ENCHANTMENTS_CAP_COUNTER.get("Savania") > TRADE_ENCHANTMENTS_CAP_COUNTER.get("Abatton"))SAVANIA_TRADES.add("enchantments");
+
+							if(TRADE_RICHPORTAL_CAP_COUNTER.get("Abatton") > TRADE_RICHPORTAL_CAP_COUNTER.get("Oceian") 
+									&& TRADE_RICHPORTAL_CAP_COUNTER.get("Abatton") > TRADE_RICHPORTAL_CAP_COUNTER.get("Savania"))ABATTON_TRADES.add("richportal");
+							else if(TRADE_RICHPORTAL_CAP_COUNTER.get("Oceian") > TRADE_RICHPORTAL_CAP_COUNTER.get("Savania") 
+									&& TRADE_RICHPORTAL_CAP_COUNTER.get("Oceian") > TRADE_RICHPORTAL_CAP_COUNTER.get("Abatton"))OCEIAN_TRADES.add("richportal");
+							else if(TRADE_RICHPORTAL_CAP_COUNTER.get("Savania") > TRADE_RICHPORTAL_CAP_COUNTER.get("Oceian") 
+									&& TRADE_RICHPORTAL_CAP_COUNTER.get("Savania") > TRADE_RICHPORTAL_CAP_COUNTER.get("Abatton"))SAVANIA_TRADES.add("richportal");
+
+							if(TRADE_MYSTPORTAL_CAP_COUNTER.get("Abatton") > TRADE_MYSTPORTAL_CAP_COUNTER.get("Oceian") 
+									&& TRADE_MYSTPORTAL_CAP_COUNTER.get("Abatton") > TRADE_MYSTPORTAL_CAP_COUNTER.get("Savania"))ABATTON_TRADES.add("mystportal");
+							else if(TRADE_MYSTPORTAL_CAP_COUNTER.get("Oceian") > TRADE_MYSTPORTAL_CAP_COUNTER.get("Savania") 
+									&& TRADE_MYSTPORTAL_CAP_COUNTER.get("Oceian") > TRADE_MYSTPORTAL_CAP_COUNTER.get("Abatton"))OCEIAN_TRADES.add("mystportal");
+							else if(TRADE_MYSTPORTAL_CAP_COUNTER.get("Savania") > TRADE_MYSTPORTAL_CAP_COUNTER.get("Oceian") 
+									&& TRADE_MYSTPORTAL_CAP_COUNTER.get("Savania") > TRADE_MYSTPORTAL_CAP_COUNTER.get("Abatton"))SAVANIA_TRADES.add("mystportal");
+
 							ABATTON_TRADES_TEMP.clear();
 							OCEIAN_TRADES_TEMP.clear();
 							SAVANIA_TRADES_TEMP.clear();
 							IS_EVENT_RUNNING = false;
+							getServer().broadcastMessage(ChatColor.RED+"It Has Ended");
 							return;
 						}
 						Player[] players = getServer().getOnlinePlayers();
@@ -188,18 +238,24 @@ public class Conflict extends JavaPlugin {
 						String enchantments_temp = null;
 
 						for(int i=0;i<players.length;i++){
-							if(players[i].getLocation().distance(TRADE_MYSTPORTAL) < 3){
+							if(players[i].getLocation().distance(TRADE_MYSTPORTAL) < 3){  
 								if(mystportal_temp == null){
-									if(ABATTON_PLAYERS.contains(players[i].getName()))mystportal_temp = "Abatton";			
+									if(ABATTON_PLAYERS.contains(players[i].getName())) mystportal_temp = "Abatton";
 									else if(OCEIAN_PLAYERS.contains(players[i].getName()))mystportal_temp = "Oceian";									
 									else if(SAVANIA_PLAYERS.contains(players[i].getName()))mystportal_temp = "Savania";
 								}else if(mystportal_temp.equals("contested")){
+									continue;
+								}else if(
+										(ABATTON_PLAYERS.contains(players[i].getName()) && ABATTON_TRADES_TEMP.contains("mystportal"))
+										||(OCEIAN_PLAYERS.contains(players[i].getName()) && OCEIAN_TRADES_TEMP.contains("mystportal"))
+										||(SAVANIA_PLAYERS.contains(players[i].getName()) && SAVANIA_TRADES_TEMP.contains("mystportal"))
+								){
 									continue;
 								}else if((ABATTON_PLAYERS.contains(players[i].getName()) && mystportal_temp.equals("Abatton"))
 										|| (OCEIAN_PLAYERS.contains(players[i].getName()) && mystportal_temp.equals("Oceian"))
 										|| (SAVANIA_PLAYERS.contains(players[i].getName()) && mystportal_temp.equals("Savania"))){
 									TRADE_MYSTPORTAL_COUNTER++;
-									players[i].sendMessage(ChatColor.GOLD+"Taking point...");
+									players[i].sendMessage(ChatColor.GOLD+"Taking point. "+TRADE_MYSTPORTAL_COUNTER+"/30");
 								}else{
 									mystportal_temp = "contested";
 									TRADE_MYSTPORTAL_COUNTER = 0;
@@ -211,11 +267,17 @@ public class Conflict extends JavaPlugin {
 									else if(SAVANIA_PLAYERS.contains(players[i].getName()))richportal_temp = "Savania";
 								}else if(richportal_temp.equals("contested")){
 									continue;
+								}else if(
+										(ABATTON_PLAYERS.contains(players[i].getName()) && ABATTON_TRADES_TEMP.contains("richportal"))
+										||(OCEIAN_PLAYERS.contains(players[i].getName()) && OCEIAN_TRADES_TEMP.contains("richportal"))
+										||(SAVANIA_PLAYERS.contains(players[i].getName()) && SAVANIA_TRADES_TEMP.contains("richportal"))
+								){
+									continue;
 								}else if((ABATTON_PLAYERS.contains(players[i].getName()) && richportal_temp.equals("Abatton"))
 										|| (OCEIAN_PLAYERS.contains(players[i].getName()) && richportal_temp.equals("Oceian"))
 										|| (SAVANIA_PLAYERS.contains(players[i].getName()) && richportal_temp.equals("Savania"))){
 									TRADE_RICHPORTAL_COUNTER++;
-									players[i].sendMessage(ChatColor.GOLD+"Taking point...");
+									players[i].sendMessage(ChatColor.GOLD+"Taking point. "+TRADE_RICHPORTAL_COUNTER+"/30");
 								}else{
 									richportal_temp = "contested";
 									TRADE_RICHPORTAL_COUNTER = 0;
@@ -227,11 +289,17 @@ public class Conflict extends JavaPlugin {
 									else if(SAVANIA_PLAYERS.contains(players[i].getName()))blacksmith_temp = "Savania";
 								}else if(blacksmith_temp.equals("contested")){
 									continue;
+								}else if(
+										(ABATTON_PLAYERS.contains(players[i].getName()) && ABATTON_TRADES_TEMP.contains("blacksmith"))
+										||(OCEIAN_PLAYERS.contains(players[i].getName()) && OCEIAN_TRADES_TEMP.contains("blacksmith"))
+										||(SAVANIA_PLAYERS.contains(players[i].getName()) && SAVANIA_TRADES_TEMP.contains("blacksmith"))
+								){
+									continue;
 								}else if((ABATTON_PLAYERS.contains(players[i].getName()) && blacksmith_temp.equals("Abatton"))
 										|| (OCEIAN_PLAYERS.contains(players[i].getName()) && blacksmith_temp.equals("Oceian"))
 										|| (SAVANIA_PLAYERS.contains(players[i].getName()) && blacksmith_temp.equals("Savania"))){
 									TRADE_BLACKSMITH_COUNTER++;
-									players[i].sendMessage(ChatColor.GOLD+"Taking point...");
+									players[i].sendMessage(ChatColor.GOLD+"Taking point. "+TRADE_BLACKSMITH_COUNTER+"/30");
 								}else{
 									blacksmith_temp = "contested";
 									TRADE_BLACKSMITH_COUNTER = 0;
@@ -243,11 +311,17 @@ public class Conflict extends JavaPlugin {
 									else if(SAVANIA_PLAYERS.contains(players[i].getName()))potions_temp = "Savania";
 								}else if(potions_temp.equals("contested")){
 									continue;
+								}else if(
+										(ABATTON_PLAYERS.contains(players[i].getName()) && ABATTON_TRADES_TEMP.contains("potions"))
+										||(OCEIAN_PLAYERS.contains(players[i].getName()) && OCEIAN_TRADES_TEMP.contains("potions"))
+										||(SAVANIA_PLAYERS.contains(players[i].getName()) && SAVANIA_TRADES_TEMP.contains("potions"))
+								){
+									continue;
 								}else if((ABATTON_PLAYERS.contains(players[i].getName()) && potions_temp.equals("Abatton"))
 										|| (OCEIAN_PLAYERS.contains(players[i].getName()) && potions_temp.equals("Oceian"))
 										|| (SAVANIA_PLAYERS.contains(players[i].getName()) && potions_temp.equals("Savania"))){
 									TRADE_POTIONS_COUNTER++;
-									players[i].sendMessage(ChatColor.GOLD+"Taking point...");
+									players[i].sendMessage(ChatColor.GOLD+"Taking point. "+TRADE_POTIONS_COUNTER+"/30");
 								}else{
 									potions_temp = "contested";
 									TRADE_POTIONS_COUNTER = 0;
@@ -259,11 +333,17 @@ public class Conflict extends JavaPlugin {
 									else if(SAVANIA_PLAYERS.contains(players[i].getName()))enchantments_temp = "Savania";
 								}else if(enchantments_temp.equals("contested")){
 									continue;
+								}else if(
+										(ABATTON_PLAYERS.contains(players[i].getName()) && ABATTON_TRADES_TEMP.contains("enchantments"))
+										||(OCEIAN_PLAYERS.contains(players[i].getName()) && OCEIAN_TRADES_TEMP.contains("enchantments"))
+										||(SAVANIA_PLAYERS.contains(players[i].getName()) && SAVANIA_TRADES_TEMP.contains("enchantments"))
+								){
+									continue;
 								}else if((ABATTON_PLAYERS.contains(players[i].getName()) && enchantments_temp.equals("Abatton"))
 										|| (OCEIAN_PLAYERS.contains(players[i].getName()) && enchantments_temp.equals("Oceian"))
 										|| (SAVANIA_PLAYERS.contains(players[i].getName()) && enchantments_temp.equals("Savania"))){
 									TRADE_ENCHANTMENTS_COUNTER++;
-									players[i].sendMessage(ChatColor.GOLD+"Taking point...");
+									players[i].sendMessage(ChatColor.GOLD+"Taking point. "+TRADE_ENCHANTMENTS_COUNTER+"/30");
 								}else{
 									enchantments_temp = "contested";
 									TRADE_ENCHANTMENTS_COUNTER = 0;
@@ -275,16 +355,19 @@ public class Conflict extends JavaPlugin {
 								ABATTON_TRADES_TEMP.add("mystportal");
 								OCEIAN_TRADES_TEMP.remove("mystportal");
 								SAVANIA_TRADES_TEMP.remove("mystportal");
+								TRADE_MYSTPORTAL_COUNTER = 0;
 								getServer().broadcastMessage(ChatColor.RED+"Abatton has taken control of the Myst Portal!");
 							}else if(mystportal_temp.equals("Oceian") && !OCEIAN_TRADES_TEMP.contains("mystportal")){
 								ABATTON_TRADES_TEMP.remove("mystportal");
 								OCEIAN_TRADES_TEMP.add("mystportal");
 								SAVANIA_TRADES_TEMP.remove("mystportal");
+								TRADE_MYSTPORTAL_COUNTER = 0;
 								getServer().broadcastMessage(ChatColor.RED+"Oceian has taken control of the Myst Portal!");
 							}else if(mystportal_temp.equals("Savania") && !SAVANIA_TRADES_TEMP.contains("mystportal")){
 								ABATTON_TRADES_TEMP.remove("mystportal");
 								OCEIAN_TRADES_TEMP.remove("mystportal");
 								SAVANIA_TRADES_TEMP.add("mystportal");
+								TRADE_MYSTPORTAL_COUNTER = 0;
 								getServer().broadcastMessage(ChatColor.RED+"Savania has taken control of the Myst Portal!");
 							}
 						}else if(richportal_temp != null &&  !richportal_temp.equals("contested") && TRADE_RICHPORTAL_COUNTER >= 30){
@@ -356,11 +439,38 @@ public class Conflict extends JavaPlugin {
 								getServer().broadcastMessage(ChatColor.RED+"Savania has taken control of the Enchantment Chest!");
 							}
 						}
+						if(!ABATTON_TRADES_TEMP.isEmpty()){
+							for(int i = 0; i<ABATTON_TRADES_TEMP.size();i++){
+								if(ABATTON_TRADES_TEMP.get(i).equals("enchantments"))TRADE_ENCHANTMENTS_CAP_COUNTER.put("Abatton", TRADE_ENCHANTMENTS_CAP_COUNTER.get("Abatton")+1);
+								else if(ABATTON_TRADES_TEMP.get(i).equals("potions"))TRADE_POTIONS_CAP_COUNTER.put("Abatton", TRADE_POTIONS_CAP_COUNTER.get("Abatton")+1);
+								else if(ABATTON_TRADES_TEMP.get(i).equals("blacksmith"))TRADE_BLACKSMITH_CAP_COUNTER.put("Abatton", TRADE_BLACKSMITH_CAP_COUNTER.get("Abatton")+1);
+								else if(ABATTON_TRADES_TEMP.get(i).equals("richportal"))TRADE_RICHPORTAL_CAP_COUNTER.put("Abatton", TRADE_RICHPORTAL_CAP_COUNTER.get("Abatton")+1);
+								else if(ABATTON_TRADES_TEMP.get(i).equals("mystportal"))TRADE_MYSTPORTAL_CAP_COUNTER.put("Abatton", TRADE_MYSTPORTAL_CAP_COUNTER.get("Abatton")+1);
+							}
+						}
+						if(!OCEIAN_TRADES_TEMP.isEmpty()){
+							for(int i = 0; i<OCEIAN_TRADES_TEMP.size();i++){
+								if(OCEIAN_TRADES_TEMP.get(i).equals("enchantments"))TRADE_ENCHANTMENTS_CAP_COUNTER.put("Oceian", TRADE_ENCHANTMENTS_CAP_COUNTER.get("Oceian")+1);
+								else if(OCEIAN_TRADES_TEMP.get(i).equals("potions"))TRADE_POTIONS_CAP_COUNTER.put("Oceian", TRADE_POTIONS_CAP_COUNTER.get("Oceian")+1);
+								else if(OCEIAN_TRADES_TEMP.get(i).equals("blacksmith"))TRADE_BLACKSMITH_CAP_COUNTER.put("Oceian", TRADE_BLACKSMITH_CAP_COUNTER.get("Oceian")+1);
+								else if(OCEIAN_TRADES_TEMP.get(i).equals("richportal"))TRADE_RICHPORTAL_CAP_COUNTER.put("Oceian", TRADE_RICHPORTAL_CAP_COUNTER.get("Oceian")+1);
+								else if(OCEIAN_TRADES_TEMP.get(i).equals("mystportal"))TRADE_MYSTPORTAL_CAP_COUNTER.put("Oceian", TRADE_MYSTPORTAL_CAP_COUNTER.get("Oceian")+1);
+							}
+						}
+						if(!SAVANIA_TRADES_TEMP.isEmpty()){
+							for(int i = 0; i<SAVANIA_TRADES_TEMP.size();i++){
+								if(SAVANIA_TRADES_TEMP.get(i).equals("enchantments"))TRADE_ENCHANTMENTS_CAP_COUNTER.put("Savania", TRADE_ENCHANTMENTS_CAP_COUNTER.get("Savania")+1);
+								else if(SAVANIA_TRADES_TEMP.get(i).equals("potions"))TRADE_POTIONS_CAP_COUNTER.put("Savania", TRADE_POTIONS_CAP_COUNTER.get("Savania")+1);
+								else if(SAVANIA_TRADES_TEMP.get(i).equals("blacksmith"))TRADE_BLACKSMITH_CAP_COUNTER.put("Savania", TRADE_BLACKSMITH_CAP_COUNTER.get("Savania")+1);
+								else if(SAVANIA_TRADES_TEMP.get(i).equals("richportal"))TRADE_RICHPORTAL_CAP_COUNTER.put("Savania", TRADE_RICHPORTAL_CAP_COUNTER.get("Savania")+1);
+								else if(SAVANIA_TRADES_TEMP.get(i).equals("mystportal"))TRADE_MYSTPORTAL_CAP_COUNTER.put("Savania", TRADE_MYSTPORTAL_CAP_COUNTER.get("Savania")+1);
+							}
+						}
 					}
 				}
 			},0L, 20L);
 		}
-        //CommandManager
+		//CommandManager
 		cmd = new CommandHandler(this);
 		getCommand("abatton").setExecutor(cmd);
 		getCommand("oceian").setExecutor(cmd);
@@ -380,11 +490,11 @@ public class Conflict extends JavaPlugin {
 		getCommand("myst").setExecutor(cmd);
 		getCommand("cwho").setExecutor(cmd);
 
-		
+
 		//PermsManager
 		setupPermissions();
 		setupPermissionsEx();
-		
+
 		//PluginManager
 		if(ABATTON_LOCATION == null || OCEIAN_LOCATION == null || SAVANIA_LOCATION == null){
 			severe("Unable to find all Capital Locations.  Booted in SAFE MODE for Listeners");
@@ -414,7 +524,7 @@ public class Conflict extends JavaPlugin {
 		if (permissionsPlugin != null) {
 			info("Succesfully connected to Permissions!");
 			handler = ((Permissions) permissionsPlugin).getHandler();
-			
+
 		} else {
 			handler = null;
 			warning("Disconnected from Permissions...what could possibly go wrong?");
@@ -422,11 +532,11 @@ public class Conflict extends JavaPlugin {
 	}
 	public void setupPermissionsEx() {
 		Plugin permissionsPlugin = this.getServer().getPluginManager().getPlugin("PermissionsEx");
-		
+
 		if (permissionsPlugin != null) {
 			info("Succesfully connected to PermissionsEx!");
 			ex = PermissionsEx.getPermissionManager();
-			
+
 		} else {
 			ex = null;
 			warning("Disconnected from PermissionsEx...what could possibly go wrong?");

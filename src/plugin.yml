@@ -1,6 +1,6 @@
 name: Conflict
 main: Lihad.Conflict.Conflict
-version: 1.02
+version: 1.03
 commands:
   abatton:
     description: Invalid Command
