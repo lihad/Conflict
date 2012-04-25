@@ -77,9 +77,9 @@ public class CommandHandler implements CommandExecutor {
 			return true;
 		}else if(cmd.getName().equalsIgnoreCase("myst") && arg.length == 3){
 			if(((Player)sender).getWorld().getName().equals("mystworld")){	
-				if(Integer.parseInt(arg[0]) < 15000 && Integer.parseInt(arg[0]) > 500 
+				if(Integer.parseInt(arg[0]) < 15000 && Integer.parseInt(arg[0]) > -15000 
 						&& Integer.parseInt(arg[1]) < 255 && Integer.parseInt(arg[1]) > 0
-						&& Integer.parseInt(arg[2]) < 15000 && Integer.parseInt(arg[2]) > 500){
+						&& Integer.parseInt(arg[2]) < 15000 && Integer.parseInt(arg[2]) > -15000){
 					((Player)sender).teleport(new Location(plugin.getServer().getWorld("survival"),Integer.parseInt(arg[0]),Integer.parseInt(arg[1]),Integer.parseInt(arg[2])));
 				}
 			}else ((Player)sender).sendMessage("You are not in the correct world to use this command");

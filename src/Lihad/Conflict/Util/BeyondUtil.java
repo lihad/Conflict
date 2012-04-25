@@ -1,9 +1,7 @@
 package Lihad.Conflict.Util;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -11,14 +9,14 @@ import java.util.Random;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionType;
 import org.bukkit.potion.Potion.Tier;
+import org.bukkit.potion.PotionType;
+
+import Lihad.Conflict.Conflict;
 
 /**
  * 
@@ -29,6 +27,37 @@ import org.bukkit.potion.Potion.Tier;
  *
  */
 public class BeyondUtil {
+	
+	public static String getWarAutoBlacksmith(){
+		if(Conflict.TRADE_BLACKSMITH_CAP_COUNTER.get("Abatton") > 3600)return (ChatColor.GREEN+"Conquered by Abatton");
+		else if(Conflict.TRADE_BLACKSMITH_CAP_COUNTER.get("Oceian") > 3600)return (ChatColor.GREEN+"Conquered by Oceian"); 
+		else if(Conflict.TRADE_BLACKSMITH_CAP_COUNTER.get("Savania") > 3600)return (ChatColor.GREEN+"Conquered by Savania"); 
+		else return (ChatColor.AQUA+"AB: "+ChatColor.WHITE+Conflict.TRADE_BLACKSMITH_CAP_COUNTER.get("Abatton")+ChatColor.AQUA+" OC: "+ChatColor.WHITE+Conflict.TRADE_BLACKSMITH_CAP_COUNTER.get("Oceian")+ChatColor.AQUA+" SA: "+ChatColor.WHITE+Conflict.TRADE_BLACKSMITH_CAP_COUNTER.get("Savania"));
+	}
+	public static String getWarAutoPotions(){
+		if(Conflict.TRADE_POTIONS_CAP_COUNTER.get("Abatton") > 3600)return (ChatColor.GREEN+"Conquered by Abatton");
+		else if(Conflict.TRADE_POTIONS_CAP_COUNTER.get("Oceian") > 3600)return (ChatColor.GREEN+"Conquered by Oceian"); 
+		else if(Conflict.TRADE_POTIONS_CAP_COUNTER.get("Savania") > 3600)return (ChatColor.GREEN+"Conquered by Savania"); 
+		else return (ChatColor.AQUA+"AB: "+ChatColor.WHITE+Conflict.TRADE_POTIONS_CAP_COUNTER.get("Abatton")+ChatColor.AQUA+" OC: "+ChatColor.WHITE+Conflict.TRADE_POTIONS_CAP_COUNTER.get("Oceian")+ChatColor.AQUA+" SA: "+ChatColor.WHITE+Conflict.TRADE_POTIONS_CAP_COUNTER.get("Savania"));
+	}
+	public static String getWarAutoEnchantments(){
+		if(Conflict.TRADE_ENCHANTMENTS_CAP_COUNTER.get("Abatton") > 3600)return (ChatColor.GREEN+"Conquered by Abatton");
+		else if(Conflict.TRADE_ENCHANTMENTS_CAP_COUNTER.get("Oceian") > 3600)return (ChatColor.GREEN+"Conquered by Oceian"); 
+		else if(Conflict.TRADE_ENCHANTMENTS_CAP_COUNTER.get("Savania") > 3600)return (ChatColor.GREEN+"Conquered by Savania"); 
+		else return (ChatColor.AQUA+"AB: "+ChatColor.WHITE+Conflict.TRADE_ENCHANTMENTS_CAP_COUNTER.get("Abatton")+ChatColor.AQUA+" OC: "+ChatColor.WHITE+Conflict.TRADE_ENCHANTMENTS_CAP_COUNTER.get("Oceian")+ChatColor.AQUA+" SA: "+ChatColor.WHITE+Conflict.TRADE_ENCHANTMENTS_CAP_COUNTER.get("Savania"));
+	}
+	public static String getWarAutoMystPortal(){
+		if(Conflict.TRADE_MYSTPORTAL_CAP_COUNTER.get("Abatton") > 3600)return (ChatColor.GREEN+"Conquered by Abatton");
+		else if(Conflict.TRADE_MYSTPORTAL_CAP_COUNTER.get("Oceian") > 3600)return (ChatColor.GREEN+"Conquered by Oceian"); 
+		else if(Conflict.TRADE_MYSTPORTAL_CAP_COUNTER.get("Savania") > 3600)return (ChatColor.GREEN+"Conquered by Savania"); 
+		else return (ChatColor.AQUA+"AB: "+ChatColor.WHITE+Conflict.TRADE_MYSTPORTAL_CAP_COUNTER.get("Abatton")+ChatColor.AQUA+" OC: "+ChatColor.WHITE+Conflict.TRADE_MYSTPORTAL_CAP_COUNTER.get("Oceian")+ChatColor.AQUA+" SA: "+ChatColor.WHITE+Conflict.TRADE_MYSTPORTAL_CAP_COUNTER.get("Savania"));
+	}
+	public static String getWarAutoRichPortal(){
+		if(Conflict.TRADE_RICHPORTAL_CAP_COUNTER.get("Abatton") > 3600)return (ChatColor.GREEN+"Conquered by Abatton");
+		else if(Conflict.TRADE_RICHPORTAL_CAP_COUNTER.get("Oceian") > 3600)return (ChatColor.GREEN+"Conquered by Oceian"); 
+		else if(Conflict.TRADE_RICHPORTAL_CAP_COUNTER.get("Savania") > 3600)return (ChatColor.GREEN+"Conquered by Savania"); 
+		else return (ChatColor.AQUA+"AB: "+ChatColor.WHITE+Conflict.TRADE_RICHPORTAL_CAP_COUNTER.get("Abatton")+ChatColor.AQUA+" OC: "+ChatColor.WHITE+Conflict.TRADE_RICHPORTAL_CAP_COUNTER.get("Oceian")+ChatColor.AQUA+" SA: "+ChatColor.WHITE+Conflict.TRADE_RICHPORTAL_CAP_COUNTER.get("Savania"));
+	}
 	
 	/**
 	 * Compares two locations to see if they share the same block.

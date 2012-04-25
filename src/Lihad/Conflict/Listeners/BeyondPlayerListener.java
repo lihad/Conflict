@@ -114,13 +114,18 @@ public class BeyondPlayerListener implements Listener {
 			}
 		}
 	}
+	@EventHandler   
 	public static void onPlayerTeleport(PlayerTeleportEvent event){
-
 		if(event.getTo().getWorld().getName().equals("survival") && (event.getTo().distance(Conflict.TRADE_BLACKSMITH) < 200 || event.getTo().distance(Conflict.TRADE_ENCHANTMENTS) < 200
 			|| event.getTo().distance(Conflict.TRADE_MYSTPORTAL) < 200 || event.getTo().distance(Conflict.TRADE_POTIONS) < 200
-			|| event.getTo().distance(Conflict.TRADE_RICHPORTAL) < 200) && !event.getPlayer().isOp()){
+			|| event.getTo().distance(Conflict.TRADE_RICHPORTAL) < 200) && !Conflict.handler.has(event.getPlayer(), "conflict.teleport")){
 			event.setTo(event.getFrom());
 		}
+		else if(event.getTo().getWorld().getName().equals("survival") && ((event.getTo().distance(Conflict.ABATTON_LOCATION) < 500 && !Conflict.ABATTON_PLAYERS.contains(event.getPlayer().getName()))
+				|| (event.getTo().distance(Conflict.OCEIAN_LOCATION) < 500 && !Conflict.OCEIAN_PLAYERS.contains(event.getPlayer().getName()))
+				|| (event.getTo().distance(Conflict.SAVANIA_LOCATION) < 500 && !Conflict.SAVANIA_PLAYERS.contains(event.getPlayer().getName()))) && !Conflict.handler.has(event.getPlayer(), "conflict.teleport")){
+				event.setTo(event.getFrom());
+			}
 		else if(event.getTo().getWorld().getName().equals("richworld") && event.getCause().equals(TeleportCause.ENDER_PEARL)){
 			event.setTo(event.getFrom());
 		}
@@ -164,7 +169,7 @@ public class BeyondPlayerListener implements Listener {
 						|| (Conflict.OCEIAN_TRADES.contains("enchantments") && Conflict.OCEIAN_PLAYERS.contains(event.getPlayer().getName()))
 						|| (Conflict.SAVANIA_TRADES.contains("enchantments") && Conflict.SAVANIA_PLAYERS.contains(event.getPlayer().getName())))){
 			ItemStack stack = event.getPlayer().getItemInHand();
-			if(stack.getType() == Material.DIAMOND_SWORD){
+			if(stack.getType() == Material.DIAMOND_SWORD && stack.getAmount() == 1){
 				if(Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.containsKey(event.getPlayer().getName())){
 					if(Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.get(event.getPlayer().getName())<5){
 						Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.put(event.getPlayer().getName(), Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.get(event.getPlayer().getName())+1);
@@ -175,8 +180,8 @@ public class BeyondPlayerListener implements Listener {
 					}
 				}else Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.put(event.getPlayer().getName(), 1);
 			}
-			else if(stack.getType() == Material.DIAMOND_HELMET || stack.getType() == Material.DIAMOND_CHESTPLATE 
-					|| stack.getType() == Material.DIAMOND_LEGGINGS || stack.getType() == Material.DIAMOND_BOOTS){
+			else if((stack.getType() == Material.DIAMOND_HELMET || stack.getType() == Material.DIAMOND_CHESTPLATE 
+					|| stack.getType() == Material.DIAMOND_LEGGINGS || stack.getType() == Material.DIAMOND_BOOTS)&& stack.getAmount() == 1){
 				if(Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.containsKey(event.getPlayer().getName())){
 					if(Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.get(event.getPlayer().getName())<5){
 						Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.put(event.getPlayer().getName(), Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.get(event.getPlayer().getName())+1);
@@ -187,8 +192,8 @@ public class BeyondPlayerListener implements Listener {
 					}
 				}else Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.put(event.getPlayer().getName(), 1);
 			}
-			else if(stack.getType() == Material.DIAMOND_AXE || stack.getType() == Material.DIAMOND_PICKAXE 
-					|| stack.getType() == Material.DIAMOND_SPADE || stack.getType() == Material.DIAMOND_HOE){
+			else if((stack.getType() == Material.DIAMOND_AXE || stack.getType() == Material.DIAMOND_PICKAXE 
+					|| stack.getType() == Material.DIAMOND_SPADE || stack.getType() == Material.DIAMOND_HOE)&& stack.getAmount() == 1){
 				if(Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.containsKey(event.getPlayer().getName())){
 					if(Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.get(event.getPlayer().getName())<5){
 						Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.put(event.getPlayer().getName(), Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.get(event.getPlayer().getName())+1);
@@ -199,7 +204,7 @@ public class BeyondPlayerListener implements Listener {
 					}
 				}else Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.put(event.getPlayer().getName(), 1);
 			}
-			else if(stack.getType() == Material.BOW){
+			else if(stack.getType() == Material.BOW && stack.getAmount() == 1){
 				if(Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.containsKey(event.getPlayer().getName())){
 					if(Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.get(event.getPlayer().getName())<5){
 						Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.put(event.getPlayer().getName(), Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.get(event.getPlayer().getName())+1);
@@ -300,7 +305,6 @@ public class BeyondPlayerListener implements Listener {
 						&& !Conflict.handler.inGroup(event.getPlayer().getWorld().getName(), event.getPlayer().getName(), "Peasant")){
 					if((Conflict.ABATTON_PLAYERS.size()-Conflict.OCEIAN_PLAYERS.size()) < -5 || (Conflict.SAVANIA_PLAYERS.size()-Conflict.OCEIAN_PLAYERS.size()) < -5){
 						event.getPlayer().sendMessage(ChatColor.BLUE.toString()+"This Capital is Over Capacity!  Try joining one of the others, or wait and try later.");
-
 					}else{
 						System.out.println("-------------------UPGRADE-DEBUG-----------");
 						System.out.println("Sponge hit by player: "+event.getPlayer());
@@ -327,7 +331,6 @@ public class BeyondPlayerListener implements Listener {
 						&& !Conflict.handler.inGroup(event.getPlayer().getWorld().getName(), event.getPlayer().getName(), "Peasant")){
 					if((Conflict.ABATTON_PLAYERS.size()-Conflict.SAVANIA_PLAYERS.size()) < -5 || (Conflict.OCEIAN_PLAYERS.size()-Conflict.SAVANIA_PLAYERS.size()) < -5){
 						event.getPlayer().sendMessage(ChatColor.BLUE.toString()+"This Capital is Over Capacity!  Try joining one of the others, or wait and try later.");
-
 					}else{
 						System.out.println("-------------------UPGRADE-DEBUG-----------");
 						System.out.println("Sponge hit by player: "+event.getPlayer());
