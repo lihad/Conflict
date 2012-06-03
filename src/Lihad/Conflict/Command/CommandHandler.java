@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -77,9 +78,9 @@ public class CommandHandler implements CommandExecutor {
 			return true;
 		}else if(cmd.getName().equalsIgnoreCase("myst") && arg.length == 3){
 			if(((Player)sender).getWorld().getName().equals("mystworld")){	
-				if(Integer.parseInt(arg[0]) < 15000 && Integer.parseInt(arg[0]) > -15000 
+				if(Integer.parseInt(arg[0]) < 100000 && Integer.parseInt(arg[0]) > -100000 
 						&& Integer.parseInt(arg[1]) < 255 && Integer.parseInt(arg[1]) > 0
-						&& Integer.parseInt(arg[2]) < 15000 && Integer.parseInt(arg[2]) > -15000){
+						&& Integer.parseInt(arg[2]) < 100000 && Integer.parseInt(arg[2]) > -100000){
 					((Player)sender).teleport(new Location(plugin.getServer().getWorld("survival"),Integer.parseInt(arg[0]),Integer.parseInt(arg[1]),Integer.parseInt(arg[2])));
 				}
 			}else ((Player)sender).sendMessage("You are not in the correct world to use this command");
@@ -97,119 +98,125 @@ public class CommandHandler implements CommandExecutor {
 				((Player)sender).sendMessage("Invalid number. 0-500");
 			}
 			return true;
-		}else if(cmd.getName().equalsIgnoreCase("cca") && ((Player)sender).isOp()){
+		}else if(cmd.getName().equalsIgnoreCase("cca") && ((sender instanceof Player && ((Player)sender).isOp()) || sender instanceof ConsoleCommandSender)){
 			if(arg.length == 1 && arg[0].equalsIgnoreCase("count")){
-				((Player)sender).sendMessage("Counts - [AB - "+Conflict.ABATTON_PLAYERS.size()+" OC - "+Conflict.OCEIAN_PLAYERS.size()+" SA - "+Conflict.SAVANIA_PLAYERS.size()+"]");
+				sender.sendMessage("Counts - [AB - "+Conflict.ABATTON_PLAYERS.size()+" OC - "+Conflict.OCEIAN_PLAYERS.size()+" SA - "+Conflict.SAVANIA_PLAYERS.size()+"]");
 			}else if(arg.length == 1 && arg[0].equalsIgnoreCase("ttrade")){
-				((Player)sender).sendMessage("Abatton Temp - "+Conflict.ABATTON_TRADES_TEMP);
-				((Player)sender).sendMessage("Oceian Temp - "+Conflict.OCEIAN_TRADES_TEMP);
-				((Player)sender).sendMessage("Savania Temp - "+Conflict.SAVANIA_TRADES_TEMP);
+				sender.sendMessage("Abatton Temp - "+Conflict.ABATTON_TRADES_TEMP);
+				sender.sendMessage("Oceian Temp - "+Conflict.OCEIAN_TRADES_TEMP);
+				sender.sendMessage("Savania Temp - "+Conflict.SAVANIA_TRADES_TEMP);
 			}else if(arg.length == 1 && arg[0].equalsIgnoreCase("trade")){
-				((Player)sender).sendMessage("Abatton - "+Conflict.ABATTON_TRADES);
-				((Player)sender).sendMessage("Oceian - "+Conflict.OCEIAN_TRADES);
-				((Player)sender).sendMessage("Savania - "+Conflict.SAVANIA_TRADES);
+				sender.sendMessage("Abatton - "+Conflict.ABATTON_TRADES);
+				sender.sendMessage("Oceian - "+Conflict.OCEIAN_TRADES);
+				sender.sendMessage("Savania - "+Conflict.SAVANIA_TRADES);
 			}else if(arg.length == 3 && arg[0].equalsIgnoreCase("cmove")){
 				if(plugin.getServer().getPlayer(arg[2]) != null){
-					if(arg[1].equalsIgnoreCase("abatton")){
+					if(arg[1].equalsIgnoreCase("abatton") && !Conflict.ABATTON_PLAYERS.contains(plugin.getServer().getPlayer(arg[2]).getName())){
 						Conflict.ABATTON_PLAYERS.add(plugin.getServer().getPlayer(arg[2]).getName());
 						Conflict.OCEIAN_PLAYERS.remove(plugin.getServer().getPlayer(arg[2]).getName());
+						Conflict.OCEIAN_GENERALS.remove(plugin.getServer().getPlayer(arg[2]).getName());
 						Conflict.SAVANIA_PLAYERS.remove(plugin.getServer().getPlayer(arg[2]).getName());
-						((Player)sender).sendMessage("Player "+plugin.getServer().getPlayer(arg[2]).getName()+" is now a Member of Abatton");
+						Conflict.SAVANIA_GENERALS.remove(plugin.getServer().getPlayer(arg[2]).getName());
+						sender.sendMessage("Player "+plugin.getServer().getPlayer(arg[2]).getName()+" is now a Member of Abatton");
 					}
-					else if(arg[1].equalsIgnoreCase("oceian")){
+					else if(arg[1].equalsIgnoreCase("oceian") && !Conflict.OCEIAN_PLAYERS.contains(plugin.getServer().getPlayer(arg[2]).getName())){
 						Conflict.ABATTON_PLAYERS.remove(plugin.getServer().getPlayer(arg[2]).getName());
+						Conflict.ABATTON_GENERALS.remove(plugin.getServer().getPlayer(arg[2]).getName());
 						Conflict.OCEIAN_PLAYERS.add(plugin.getServer().getPlayer(arg[2]).getName());
 						Conflict.SAVANIA_PLAYERS.remove(plugin.getServer().getPlayer(arg[2]).getName());
-						((Player)sender).sendMessage("Player "+plugin.getServer().getPlayer(arg[2]).getName()+" is now a Member of Oceian");
+						Conflict.SAVANIA_GENERALS.remove(plugin.getServer().getPlayer(arg[2]).getName());
+						sender.sendMessage("Player "+plugin.getServer().getPlayer(arg[2]).getName()+" is now a Member of Oceian");
 					}
-					else if(arg[1].equalsIgnoreCase("savania")){
+					else if(arg[1].equalsIgnoreCase("savania") && !Conflict.SAVANIA_PLAYERS.contains(plugin.getServer().getPlayer(arg[2]).getName())){
 						Conflict.ABATTON_PLAYERS.remove(plugin.getServer().getPlayer(arg[2]).getName());
+						Conflict.ABATTON_GENERALS.remove(plugin.getServer().getPlayer(arg[2]).getName());
 						Conflict.OCEIAN_PLAYERS.remove(plugin.getServer().getPlayer(arg[2]).getName());
 						Conflict.SAVANIA_PLAYERS.add(plugin.getServer().getPlayer(arg[2]).getName());
-						((Player)sender).sendMessage("Player "+plugin.getServer().getPlayer(arg[2]).getName()+" is now a Member of Savania");
+						Conflict.SAVANIA_GENERALS.remove(plugin.getServer().getPlayer(arg[2]).getName());
+						sender.sendMessage("Player "+plugin.getServer().getPlayer(arg[2]).getName()+" is now a Member of Savania");
 					}else{
-						((Player)sender).sendMessage("Invalid City.  Try, abatton, oceian or savania");
+						sender.sendMessage("Invalid City.  Try, abatton, oceian or savania");
 					}
 				}else{
-					((Player)sender).sendMessage("Player not online or invalid. Safety Enabled. Upgrade denied.");
+					sender.sendMessage("Player not online or invalid. Safety Enabled. Upgrade denied.");
 				}
 			}else if(arg.length == 3 && arg[0].equalsIgnoreCase("gassign")){
 				if(plugin.getServer().getPlayer(arg[2]) != null){
 					if(arg[1].equalsIgnoreCase("abatton")){
 						Conflict.ABATTON_GENERALS.add(plugin.getServer().getPlayer(arg[2]).getName());
 						Conflict.ex.getUser(plugin.getServer().getPlayer(arg[2])).setPrefix(ChatColor.WHITE.toString()+"["+ChatColor.LIGHT_PURPLE.toString()+"AB-General"+ChatColor.WHITE.toString()+"]", null);
-						((Player)sender).sendMessage("Player "+plugin.getServer().getPlayer(arg[2]).getName()+" is now a General of Abatton");
+						sender.sendMessage("Player "+plugin.getServer().getPlayer(arg[2]).getName()+" is now a General of Abatton");
 					}
 					else if(arg[1].equalsIgnoreCase("oceian")){
 						Conflict.OCEIAN_GENERALS.add(plugin.getServer().getPlayer(arg[2]).getName());
 						Conflict.ex.getUser(plugin.getServer().getPlayer(arg[2])).setPrefix(ChatColor.WHITE.toString()+"["+ChatColor.LIGHT_PURPLE.toString()+"OC-General"+ChatColor.WHITE.toString()+"]", null);
-						((Player)sender).sendMessage("Player "+plugin.getServer().getPlayer(arg[2]).getName()+" is now a General of Oceian");
+						sender.sendMessage("Player "+plugin.getServer().getPlayer(arg[2]).getName()+" is now a General of Oceian");
 					}
 					else if(arg[1].equalsIgnoreCase("savania")){
 						Conflict.SAVANIA_GENERALS.add(plugin.getServer().getPlayer(arg[2]).getName());
 						Conflict.ex.getUser(plugin.getServer().getPlayer(arg[2])).setPrefix(ChatColor.WHITE.toString()+"["+ChatColor.LIGHT_PURPLE.toString()+"SA-General"+ChatColor.WHITE.toString()+"]", null);
-						((Player)sender).sendMessage("Player "+plugin.getServer().getPlayer(arg[2]).getName()+" is now a General of Savania");
+						sender.sendMessage("Player "+plugin.getServer().getPlayer(arg[2]).getName()+" is now a General of Savania");
 					}else{
-						((Player)sender).sendMessage("Invalid City.  Try, abatton, oceian or savania");
+						sender.sendMessage("Invalid City.  Try, abatton, oceian or savania");
 					}
 				}else{
-					((Player)sender).sendMessage("Player not online or invalid. Safety Enabled. Upgrade denied.");
+					sender.sendMessage("Player not online or invalid. Safety Enabled. Upgrade denied.");
 				}
 
 			}else if(arg.length == 3 && arg[0].equalsIgnoreCase("gremove")){
 				if(Conflict.ABATTON_GENERALS.contains(arg[2]) && arg[1].equalsIgnoreCase("abatton")){
 					Conflict.ABATTON_GENERALS.remove(plugin.getServer().getPlayer(arg[2]).getName());
 					Conflict.ex.getUser(plugin.getServer().getPlayer(arg[2]).getName()).setPrefix("", null);
-					((Player)sender).sendMessage("Player "+plugin.getServer().getPlayer(arg[2]).getName()+" is no longer a General of Abatton");
+					sender.sendMessage("Player "+plugin.getServer().getPlayer(arg[2]).getName()+" is no longer a General of Abatton");
 				}
 				else if(Conflict.OCEIAN_GENERALS.contains(arg[2]) && arg[1].equalsIgnoreCase("oceian")){
 					Conflict.OCEIAN_GENERALS.remove(plugin.getServer().getPlayer(arg[2]).getName());
 					Conflict.ex.getUser(plugin.getServer().getPlayer(arg[2]).getName()).setPrefix("", null);
-					((Player)sender).sendMessage("Player "+plugin.getServer().getPlayer(arg[2]).getName()+" is no longer a General of Oceian");
+					sender.sendMessage("Player "+plugin.getServer().getPlayer(arg[2]).getName()+" is no longer a General of Oceian");
 				}
 				else if(Conflict.SAVANIA_GENERALS.contains(arg[2]) && arg[1].equalsIgnoreCase("savania")){
 					Conflict.SAVANIA_GENERALS.remove(plugin.getServer().getPlayer(arg[2]).getName());
 					Conflict.ex.getUser(plugin.getServer().getPlayer(arg[2]).getName()).setPrefix("", null);
-					((Player)sender).sendMessage("Player "+plugin.getServer().getPlayer(arg[2]).getName()+" is no longer a General of Savania");
+					sender.sendMessage("Player "+plugin.getServer().getPlayer(arg[2]).getName()+" is no longer a General of Savania");
 				}else{
-					((Player)sender).sendMessage("Invalid City or Player isn't a General");
+					sender.sendMessage("Invalid City or Player isn't a General");
 				}
 			}else if(arg.length == 1 && arg[0].equalsIgnoreCase("worth")){
-				((Player)sender).sendMessage("Worth - [AB - "+Conflict.ABATTON_WORTH+" OC - "+Conflict.OCEIAN_WORTH+" SA - "+Conflict.SAVANIA_WORTH+"]");
+				sender.sendMessage("Worth - [AB - "+Conflict.ABATTON_WORTH+" OC - "+Conflict.OCEIAN_WORTH+" SA - "+Conflict.SAVANIA_WORTH+"]");
 			}else if(arg.length == 4 && arg[0].equalsIgnoreCase("worth") && arg[1].equalsIgnoreCase("modify")){
 				if(arg[2].equalsIgnoreCase("abatton")){
 					Conflict.ABATTON_WORTH = Conflict.ABATTON_WORTH + Integer.parseInt(arg[3]);
-					((Player)sender).sendMessage("Abatton Worth = "+Conflict.ABATTON_WORTH);
+					sender.sendMessage("Abatton Worth = "+Conflict.ABATTON_WORTH);
 				}
 				else if(arg[2].equalsIgnoreCase("oceian")){
 					Conflict.OCEIAN_WORTH = Conflict.OCEIAN_WORTH + Integer.parseInt(arg[3]);
-					((Player)sender).sendMessage("Oceian Worth = "+Conflict.OCEIAN_WORTH);
+					sender.sendMessage("Oceian Worth = "+Conflict.OCEIAN_WORTH);
 				}
 				else if(arg[2].equalsIgnoreCase("savania")){
 					Conflict.SAVANIA_WORTH = Conflict.SAVANIA_WORTH + Integer.parseInt(arg[3]);
-					((Player)sender).sendMessage("Savania Worth = "+Conflict.SAVANIA_WORTH);
+					sender.sendMessage("Savania Worth = "+Conflict.SAVANIA_WORTH);
 				}else{
-					((Player)sender).sendMessage("Invalid City.  Try, abatton, oceian or savania");
+					sender.sendMessage("Invalid City.  Try, abatton, oceian or savania");
 				}
 			}else if(arg.length == 4 && arg[0].equalsIgnoreCase("worth") && arg[1].equalsIgnoreCase("set")){
 				if(arg[2].equalsIgnoreCase("abatton")){
 					Conflict.ABATTON_WORTH = Integer.parseInt(arg[3]);
-					((Player)sender).sendMessage("Abatton Worth = "+Conflict.ABATTON_WORTH);
+					sender.sendMessage("Abatton Worth = "+Conflict.ABATTON_WORTH);
 				}
 				else if(arg[2].equalsIgnoreCase("oceian")){
 					Conflict.OCEIAN_WORTH = Integer.parseInt(arg[3]);
-					((Player)sender).sendMessage("Oceian Worth = "+Conflict.OCEIAN_WORTH);
+					sender.sendMessage("Oceian Worth = "+Conflict.OCEIAN_WORTH);
 				}
 				else if(arg[2].equalsIgnoreCase("savania")){
 					Conflict.SAVANIA_WORTH = Integer.parseInt(arg[3]);
-					((Player)sender).sendMessage("Savania Worth = "+Conflict.SAVANIA_WORTH);
+					sender.sendMessage("Savania Worth = "+Conflict.SAVANIA_WORTH);
 				}else{
-					((Player)sender).sendMessage("Invalid City.  Try, abatton, oceian or savania");
+					sender.sendMessage("Invalid City.  Try, abatton, oceian or savania");
 				}
 			}else if(arg.length == 1 && arg[0].equalsIgnoreCase("generals")){
-				((Player)sender).sendMessage("AB - "+Conflict.ABATTON_GENERALS);
-				((Player)sender).sendMessage("OC - "+Conflict.OCEIAN_GENERALS);
-				((Player)sender).sendMessage("SA - "+Conflict.SAVANIA_GENERALS);
+				sender.sendMessage("AB - "+Conflict.ABATTON_GENERALS);
+				sender.sendMessage("OC - "+Conflict.OCEIAN_GENERALS);
+				sender.sendMessage("SA - "+Conflict.SAVANIA_GENERALS);
 			}
 			return true;
 		}else if(cmd.getName().equalsIgnoreCase("cc") && arg.length == 0){
@@ -291,7 +298,7 @@ public class CommandHandler implements CommandExecutor {
 			else((Player)sender).sendMessage(ChatColor.LIGHT_PURPLE.toString()+"Unable to use this command");
 			return true;
 		}else if(cmd.getName().equalsIgnoreCase("purchase") && arg.length == 0){
-			((Player)sender).sendMessage("Possible Perks: weapondrops, armordrops, potiondrops, tooldrops, bowdrops, shield, strike");
+			((Player)sender).sendMessage("Possible Perks: weapondrops, armordrops, potiondrops, tooldrops, bowdrops, shield, strike, endergrenade, enchantup, golddrops");
 			return true;
 		}else if(cmd.getName().equalsIgnoreCase("purchase") && arg.length == 1){
 			if(Conflict.ABATTON_GENERALS.contains(((Player)sender).getName())){
@@ -317,6 +324,15 @@ public class CommandHandler implements CommandExecutor {
 							Conflict.ABATTON_WORTH = Conflict.ABATTON_WORTH - 500;
 						}else if(arg[0].equalsIgnoreCase("strike")){
 							Conflict.ABATTON_PERKS.add("strike");
+							Conflict.ABATTON_WORTH = Conflict.ABATTON_WORTH - 500;
+						}else if(arg[0].equalsIgnoreCase("endergrenade")){
+							Conflict.ABATTON_PERKS.add("endergrenade");
+							Conflict.ABATTON_WORTH = Conflict.ABATTON_WORTH - 500;
+						}else if(arg[0].equalsIgnoreCase("enchantup")){
+							Conflict.ABATTON_PERKS.add("enchantup");
+							Conflict.ABATTON_WORTH = Conflict.ABATTON_WORTH - 500;
+						}else if(arg[0].equalsIgnoreCase("golddrops")){
+							Conflict.ABATTON_PERKS.add("golddrops");
 							Conflict.ABATTON_WORTH = Conflict.ABATTON_WORTH - 500;
 						}else((Player)sender).sendMessage("Invalid Perk");
 					}else((Player)sender).sendMessage("Abatton currently owns perk: "+arg[0]);
@@ -345,6 +361,15 @@ public class CommandHandler implements CommandExecutor {
 						}else if(arg[0].equalsIgnoreCase("strike")){
 							Conflict.OCEIAN_PERKS.add("strike");
 							Conflict.OCEIAN_WORTH = Conflict.OCEIAN_WORTH - 500;
+						}else if(arg[0].equalsIgnoreCase("endergrenade")){
+							Conflict.OCEIAN_PERKS.add("endergrenade");
+							Conflict.OCEIAN_WORTH = Conflict.OCEIAN_WORTH - 500;
+						}else if(arg[0].equalsIgnoreCase("enchantup")){
+							Conflict.OCEIAN_PERKS.add("enchantup");
+							Conflict.OCEIAN_WORTH = Conflict.OCEIAN_WORTH - 500;
+						}else if(arg[0].equalsIgnoreCase("golddrops")){
+							Conflict.OCEIAN_PERKS.add("golddrops");
+							Conflict.OCEIAN_WORTH = Conflict.OCEIAN_WORTH - 500;
 						}else((Player)sender).sendMessage("Invalid Perk");
 					}else((Player)sender).sendMessage("Oceian currently owns perk: "+arg[0]);
 				}else((Player)sender).sendMessage("Oceian does not have enough gold to purchase any ability");
@@ -371,6 +396,15 @@ public class CommandHandler implements CommandExecutor {
 							Conflict.SAVANIA_WORTH = Conflict.SAVANIA_WORTH - 500;
 						}else if(arg[0].equalsIgnoreCase("strike")){
 							Conflict.SAVANIA_PERKS.add("strike");
+							Conflict.SAVANIA_WORTH = Conflict.SAVANIA_WORTH - 500;
+						}else if(arg[0].equalsIgnoreCase("endergrenade")){
+							Conflict.SAVANIA_PERKS.add("endergrenade");
+							Conflict.SAVANIA_WORTH = Conflict.SAVANIA_WORTH - 500;
+						}else if(arg[0].equalsIgnoreCase("enchantup")){
+							Conflict.SAVANIA_PERKS.add("enchantup");
+							Conflict.SAVANIA_WORTH = Conflict.SAVANIA_WORTH - 500;
+						}else if(arg[0].equalsIgnoreCase("golddrops")){
+							Conflict.SAVANIA_PERKS.add("golddrops");
 							Conflict.SAVANIA_WORTH = Conflict.SAVANIA_WORTH - 500;
 						}else((Player)sender).sendMessage("Invalid Perk");
 					}else((Player)sender).sendMessage("Savania currently owns perk: "+arg[0]);

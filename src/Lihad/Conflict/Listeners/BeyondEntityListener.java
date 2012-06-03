@@ -1,18 +1,24 @@
 package Lihad.Conflict.Listeners;
 
+import java.util.List;
 import java.util.Random;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Effect;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.PigZombie;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Sheep;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.Potion;
 
@@ -42,11 +48,12 @@ public class BeyondEntityListener implements Listener {
 				else player = (Player)((Projectile)event.getDamager()).getShooter();
 				if(player.isOp()){
 					return;
-				}else if((Conflict.ABATTON_PLAYERS.contains(player.getName()) && Conflict.ABATTON_PLAYERS.contains(hurt.getName()))
+				}/**else if((Conflict.ABATTON_PLAYERS.contains(player.getName()) && Conflict.ABATTON_PLAYERS.contains(hurt.getName()))
 						|| (Conflict.OCEIAN_PLAYERS.contains(player.getName()) && Conflict.OCEIAN_PLAYERS.contains(hurt.getName()))
 						|| (Conflict.SAVANIA_PLAYERS.contains(player.getName()) && Conflict.SAVANIA_PLAYERS.contains(hurt.getName()))){
 					event.setCancelled(true);
-				}else if(player.getLocation().distance(player.getWorld().getSpawnLocation()) > 5000.0){
+					*/
+				else if(player.getLocation().distance(player.getWorld().getSpawnLocation()) > 5000.0){
 					return;
 				}else if((Conflict.ABATTON_PLAYERS.contains(player.getName()) && (Conflict.OCEIAN_LOCATION.distance(hurt.getLocation())<500.0 || Conflict.SAVANIA_LOCATION.distance(hurt.getLocation())<500.0))
 						|| (Conflict.OCEIAN_PLAYERS.contains(player.getName()) && (Conflict.ABATTON_LOCATION.distance(hurt.getLocation())<500.0 || Conflict.SAVANIA_LOCATION.distance(hurt.getLocation())<500.0))
@@ -79,6 +86,46 @@ public class BeyondEntityListener implements Listener {
 			}
 		}
 	}
+	/**
+	@EventHandler
+	public void onEntityExplode(EntityExplodeEvent event){
+		if(event.getLocation().getWorld().getName().equals("survival")){
+			if((Conflict.TRADE_BLACKSMITH.distance(event.getLocation()) < 200)
+					|| (Conflict.TRADE_MYSTPORTAL.distance(event.getLocation()) < 200)
+					|| (Conflict.TRADE_ENCHANTMENTS.distance(event.getLocation()) < 200)
+					|| (Conflict.TRADE_RICHPORTAL.distance(event.getLocation()) < 200)
+					|| (Conflict.TRADE_POTIONS.distance(event.getLocation()) < 200)
+			){
+				List<Entity> entities;
+				if(event.getEntity() != null)entities = event.getEntity().getNearbyEntities(5, 2, 5);
+				else entities = event.getLocation().getWorld().spawnCreature(event.getLocation(), EntityType.CHICKEN).getNearbyEntities(5, 2, 5);
+				for(int i = 0;i<entities.size();i++){
+					if(entities.get(i) instanceof Player){
+						Player player = (Player)entities.get(i);
+						if(player.getInventory().getArmorContents() != null && player.getInventory().getArmorContents().length > 0){
+							int index = new Random().nextInt(player.getInventory().getArmorContents().length);
+							if(player.getInventory().getArmorContents()[index].getType() != Material.AIR){
+								player.getWorld().dropItemNaturally(player.getLocation(), player.getInventory().getArmorContents()[index]);
+								player.sendMessage(ChatColor.RED+"Your "+player.getInventory().getArmorContents()[index].getType().toString()+" got ripped off!!!");
+								ItemStack[] stack =  player.getInventory().getArmorContents();
+								stack[index] = new ItemStack(0);
+								player.getInventory().setArmorContents(stack);
+								player.updateInventory();
+								player.getWorld().playEffect(player.getLocation(), Effect.GHAST_SHRIEK, null);
+								player.getWorld().playEffect(player.getLocation(), Effect.GHAST_SHRIEK, null);
+								player.getWorld().playEffect(player.getLocation(), Effect.GHAST_SHRIEK, null);
+								player.getWorld().playEffect(player.getLocation(), Effect.BLAZE_SHOOT, null);
+								player.getWorld().playEffect(player.getLocation(), Effect.ZOMBIE_CHEW_IRON_DOOR, null);
+								player.getWorld().playEffect(player.getLocation(), Effect.EXTINGUISH, null);
+							}
+						}
+					}
+				}
+				event.setCancelled(true);
+			}
+		}
+	}
+	*/
 	@EventHandler
 	public void onEntityDeath(EntityDeathEvent event){
 		if(event.getEntity().getKiller() != null){
@@ -149,6 +196,13 @@ public class BeyondEntityListener implements Listener {
 				if(next<40)stack.addUnsafeEnchantment(BeyondUtil.bowEnchantRandomizer(), BeyondUtil.bowLevelRandomizer());
 				if(next<25)stack.addUnsafeEnchantment(BeyondUtil.bowEnchantRandomizer(), BeyondUtil.bowLevelRandomizer());
 				if(next<10)stack.addUnsafeEnchantment(BeyondUtil.bowEnchantRandomizer(), BeyondUtil.bowLevelRandomizer());
+				event.getEntity().getWorld().dropItemNaturally(event.getEntity().getLocation(), stack);
+			}else if(random < 2
+					&& event.getEntity() instanceof Sheep 
+					&& ((Conflict.ABATTON_PLAYERS.contains(player.getName()) && Conflict.ABATTON_PERKS.contains("golddrops"))
+							|| (Conflict.OCEIAN_PLAYERS.contains(player.getName()) && Conflict.OCEIAN_PERKS.contains("golddrops"))
+							|| (Conflict.SAVANIA_PLAYERS.contains(player.getName()) && Conflict.SAVANIA_PERKS.contains("golddrops")))){
+				ItemStack stack = new ItemStack(Material.GOLD_INGOT, 1);
 				event.getEntity().getWorld().dropItemNaturally(event.getEntity().getLocation(), stack);
 			}
 		}

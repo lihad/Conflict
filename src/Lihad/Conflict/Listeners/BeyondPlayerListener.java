@@ -2,17 +2,25 @@ package Lihad.Conflict.Listeners;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -93,8 +101,8 @@ public class BeyondPlayerListener implements Listener {
 					|| (Conflict.SAVANIA_TRADES.contains("richportal") && Conflict.SAVANIA_PLAYERS.contains(event.getPlayer().getName()))
 			){
 				event.getPlayer().sendMessage("Shaaaaazaaam!");
-				event.getPlayer().teleport(new Location(plugin.getServer().getWorld("richworld"), 0.0, 0.0, 0.0));
-				event.setTo(new Location(plugin.getServer().getWorld("richworld"), 0.0, 0.0, 0.0));
+				event.getPlayer().teleport(new Location(plugin.getServer().getWorld("richworld"), 0.0, 80.0, 0.0));
+				event.setTo(new Location(plugin.getServer().getWorld("richworld"), 0.0, 80.0, 0.0));
 				event.setCancelled(true);
 			}else{
 				event.getPlayer().sendMessage("Epic Fail");
@@ -117,8 +125,8 @@ public class BeyondPlayerListener implements Listener {
 	@EventHandler   
 	public static void onPlayerTeleport(PlayerTeleportEvent event){
 		if(event.getTo().getWorld().getName().equals("survival") && (event.getTo().distance(Conflict.TRADE_BLACKSMITH) < 200 || event.getTo().distance(Conflict.TRADE_ENCHANTMENTS) < 200
-			|| event.getTo().distance(Conflict.TRADE_MYSTPORTAL) < 200 || event.getTo().distance(Conflict.TRADE_POTIONS) < 200
-			|| event.getTo().distance(Conflict.TRADE_RICHPORTAL) < 200) && !Conflict.handler.has(event.getPlayer(), "conflict.teleport")){
+				|| event.getTo().distance(Conflict.TRADE_MYSTPORTAL) < 200 || event.getTo().distance(Conflict.TRADE_POTIONS) < 200
+				|| event.getTo().distance(Conflict.TRADE_RICHPORTAL) < 200) && !Conflict.handler.has(event.getPlayer(), "conflict.teleport")){
 			event.setTo(event.getFrom());
 		}
 		else if(event.getTo().getWorld().getName().equals("survival") && ((event.getTo().distance(Conflict.ABATTON_LOCATION) < 500 && !Conflict.ABATTON_PLAYERS.contains(event.getPlayer().getName()))
@@ -130,6 +138,39 @@ public class BeyondPlayerListener implements Listener {
 			event.setTo(event.getFrom());
 		}
 	}
+	@EventHandler
+	public static void onPlayerInteractEntity(PlayerInteractEntityEvent event){
+		if(event.getRightClicked() instanceof Villager && event.getPlayer().getInventory().contains(Material.DIAMOND_BLOCK)
+				&& ((Conflict.ABATTON_PLAYERS.contains(event.getPlayer().getName()) && Conflict.ABATTON_PERKS.contains("enchantup"))
+				|| (Conflict.OCEIAN_PLAYERS.contains(event.getPlayer().getName()) && Conflict.OCEIAN_PERKS.contains("enchantup"))
+				|| (Conflict.SAVANIA_PLAYERS.contains(event.getPlayer().getName()) && Conflict.SAVANIA_PERKS.contains("enchantup")))){
+			if(event.getPlayer().getItemInHand() != null){
+				if(!event.getPlayer().getItemInHand().getEnchantments().isEmpty()){
+					Enchantment enchantment = (Enchantment) event.getPlayer().getItemInHand().getEnchantments().keySet().toArray()[(new Random().nextInt(event.getPlayer().getItemInHand().getEnchantments().size()))];
+					if(event.getPlayer().getItemInHand().getEnchantmentLevel(enchantment) < 10){
+						event.getPlayer().getItemInHand().addUnsafeEnchantment(enchantment, event.getPlayer().getItemInHand().getEnchantmentLevel(enchantment)+1);
+						event.getPlayer().sendMessage(ChatColor.AQUA+"WOOT!! "+enchantment.toString()+" is now level "+event.getPlayer().getItemInHand().getEnchantmentLevel(enchantment));
+						ItemStack stack = event.getPlayer().getInventory().getItem(event.getPlayer().getInventory().first(Material.DIAMOND_BLOCK));
+						if(stack.getAmount() <= 1){
+							stack.setTypeId(0);
+						}else{
+							stack.setAmount(stack.getAmount()-1);
+						}
+						event.getPlayer().getInventory().setItem(event.getPlayer().getInventory().first(Material.DIAMOND_BLOCK),stack);
+						event.getPlayer().updateInventory();
+					}
+					else{						
+						event.getPlayer().getItemInHand().addUnsafeEnchantment(enchantment, event.getPlayer().getItemInHand().getEnchantmentLevel(enchantment)-5);
+						event.getPlayer().sendMessage(ChatColor.AQUA+"Oh no!  That enchant was way too high for me to handle...");
+						event.getPlayer().setLevel(event.getPlayer().getLevel() - 10);
+					}
+				}else{
+					event.getPlayer().sendMessage(ChatColor.AQUA+"MMMhmm.  It would seem as if this item has no enchants on it for me to upgrade.");
+				}
+			}
+		}
+	}
+	/**
 	@EventHandler
 	public static void onPlayerExpChange(PlayerExpChangeEvent event){
 		if(event.getAmount() > 0){
@@ -145,6 +186,7 @@ public class BeyondPlayerListener implements Listener {
 			}
 		}
 	}
+	*/
 	@EventHandler
 	public static void onPlayerInteract(PlayerInteractEvent event){
 		if(event.getClickedBlock() != null && event.getClickedBlock().getLocation().equals(Conflict.TRADE_BLACKSMITH.getBlock().getLocation())
@@ -221,13 +263,11 @@ public class BeyondPlayerListener implements Listener {
 				&&((Conflict.ABATTON_TRADES.contains("potions") && Conflict.ABATTON_PLAYERS.contains(event.getPlayer().getName()))
 						|| (Conflict.OCEIAN_TRADES.contains("potions") && Conflict.OCEIAN_PLAYERS.contains(event.getPlayer().getName()))
 						|| (Conflict.SAVANIA_TRADES.contains("potions") && Conflict.SAVANIA_PLAYERS.contains(event.getPlayer().getName())))){
-			if(event.getPlayer().getItemInHand().getType() == Material.GLASS_BOTTLE){
+			if(event.getPlayer().getItemInHand().getType() == Material.GLASS_BOTTLE && event.getPlayer().getItemInHand().getAmount() == 1){
 				if(Conflict.TRADE_POTIONS_PLAYER_USES.containsKey(event.getPlayer().getName())){
-					if(Conflict.TRADE_POTIONS_PLAYER_USES.get(event.getPlayer().getName())<30){
+					if(Conflict.TRADE_POTIONS_PLAYER_USES.get(event.getPlayer().getName())<256){
 						Conflict.TRADE_POTIONS_PLAYER_USES.put(event.getPlayer().getName(), Conflict.TRADE_POTIONS_PLAYER_USES.get(event.getPlayer().getName())+1);
-						Potion potion = new Potion(BeyondUtil.potionTypeRandomizer(), BeyondUtil.potionTierRandomizer(), BeyondUtil.potionSplashRandomizer());
-						ItemStack stack = new ItemStack(Material.POTION, 1);
-						potion.apply(stack);
+						ItemStack stack = new ItemStack(Material.EXP_BOTTLE, 1);
 						event.getPlayer().setItemInHand(stack);
 						event.getPlayer().updateInventory();
 					}else{
@@ -239,36 +279,51 @@ public class BeyondPlayerListener implements Listener {
 		}else if(event.getClickedBlock() != null && event.getClickedBlock().getLocation().equals(Conflict.ABATTON_LOCATION.getBlock().getLocation())){
 			if(event.getPlayer().getItemInHand().getType() == Material.GOLD_INGOT){
 				event.getPlayer().sendMessage("You gave "+ChatColor.YELLOW.toString()+"1 "+ChatColor.WHITE.toString()+"Gold Bar to "+ChatColor.GREEN.toString()+"Abatton");
-				if(event.getPlayer().getItemInHand().getAmount() == 1)event.getPlayer().getInventory().setItemInHand(null);
-				else{
+				if(event.getPlayer().getItemInHand().getAmount() == 1){
+					event.getPlayer().getInventory().setItemInHand(null);
+					Conflict.ABATTON_WORTH++;
+				}else if(event.getPlayer().isSneaking()){
+					Conflict.ABATTON_WORTH = Conflict.ABATTON_WORTH + event.getPlayer().getItemInHand().getAmount();
+					event.getPlayer().getInventory().setItemInHand(null);
+				}else{
 					event.getPlayer().getItemInHand().setAmount(event.getPlayer().getItemInHand().getAmount()-1);
 					event.getPlayer().getInventory().setItemInHand(event.getPlayer().getItemInHand());
+					Conflict.ABATTON_WORTH++;
 				}
-				Conflict.ABATTON_WORTH++;
 				event.getPlayer().updateInventory();
 			}
 			event.getPlayer().sendMessage("Abatton has "+ChatColor.GREEN.toString()+Conflict.ABATTON_WORTH+" Gold!");
 		}else if(event.getClickedBlock() != null && event.getClickedBlock().getLocation().equals(Conflict.OCEIAN_LOCATION.getBlock().getLocation())){
 			if(event.getPlayer().getItemInHand().getType() == Material.GOLD_INGOT){
 				event.getPlayer().sendMessage("You gave "+ChatColor.YELLOW.toString()+"1 "+ChatColor.WHITE.toString()+"Gold Bar to "+ChatColor.GREEN.toString()+"Oceian");
-				if(event.getPlayer().getItemInHand().getAmount() == 1)event.getPlayer().getInventory().setItemInHand(null);
-				else{
+				if(event.getPlayer().getItemInHand().getAmount() == 1){
+					event.getPlayer().getInventory().setItemInHand(null);
+					Conflict.OCEIAN_WORTH++;
+				}else if(event.getPlayer().isSneaking()){
+					Conflict.OCEIAN_WORTH = Conflict.OCEIAN_WORTH + event.getPlayer().getItemInHand().getAmount();
+					event.getPlayer().getInventory().setItemInHand(null);
+				}else{
 					event.getPlayer().getItemInHand().setAmount(event.getPlayer().getItemInHand().getAmount()-1);
 					event.getPlayer().getInventory().setItemInHand(event.getPlayer().getItemInHand());
+					Conflict.OCEIAN_WORTH++;
 				}
-				Conflict.OCEIAN_WORTH++;
 				event.getPlayer().updateInventory();
 			}
 			event.getPlayer().sendMessage("Oceian has "+ChatColor.GREEN.toString()+Conflict.OCEIAN_WORTH+" Gold!");
 		}else if(event.getClickedBlock() != null && event.getClickedBlock().getLocation().equals(Conflict.SAVANIA_LOCATION.getBlock().getLocation())){
 			if(event.getPlayer().getItemInHand().getType() == Material.GOLD_INGOT){
 				event.getPlayer().sendMessage("You gave "+ChatColor.YELLOW.toString()+"1 "+ChatColor.WHITE.toString()+"Gold Bar to "+ChatColor.GREEN.toString()+"Savania");
-				if(event.getPlayer().getItemInHand().getAmount() == 1)event.getPlayer().getInventory().setItemInHand(null);
-				else{
+				if(event.getPlayer().getItemInHand().getAmount() == 1){
+					event.getPlayer().getInventory().setItemInHand(null);
+					Conflict.SAVANIA_WORTH++;
+				}else if(event.getPlayer().isSneaking()){
+					Conflict.SAVANIA_WORTH = Conflict.SAVANIA_WORTH + event.getPlayer().getItemInHand().getAmount();
+					event.getPlayer().getInventory().setItemInHand(null);
+				}else{
 					event.getPlayer().getItemInHand().setAmount(event.getPlayer().getItemInHand().getAmount()-1);
 					event.getPlayer().getInventory().setItemInHand(event.getPlayer().getItemInHand());
+					Conflict.SAVANIA_WORTH++;
 				}
-				Conflict.SAVANIA_WORTH++;
 				event.getPlayer().updateInventory();
 			}
 			event.getPlayer().sendMessage("Savania has "+ChatColor.GREEN.toString()+Conflict.SAVANIA_WORTH+" Gold!");

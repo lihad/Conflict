@@ -185,7 +185,7 @@ public class Conflict extends JavaPlugin {
 						getServer().broadcastMessage(ChatColor.GOLD+"MystPortal Tally|"+ChatColor.WHITE+BeyondUtil.getWarAutoMystPortal());
 					}
 				}
-			},0L, 6000L);
+			},0L, 5500L);
 			this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
 				public void run() {
 					cal.setTime(new Date(System.currentTimeMillis()));
