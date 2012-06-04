@@ -42,11 +42,7 @@ public class BeyondBlockListener implements Listener {
 			}
 		}
 		else if(event.getBlock().getWorld().getName().equals("richworld")){
-			if((!Conflict.ABATTON_PLAYERS.contains(event.getPlayer().getName()) && Conflict.ABATTON_TRADES.contains("richportal")
-					|| !Conflict.OCEIAN_PLAYERS.contains(event.getPlayer().getName()) && Conflict.OCEIAN_TRADES.contains("richportal")
-					|| !Conflict.SAVANIA_PLAYERS.contains(event.getPlayer().getName()) && Conflict.SAVANIA_TRADES.contains("richportal"))
-					&& !event.getPlayer().isOp())
-			{
+			if( !Conflict.PlayerCanUseTrade(event.getPlayer().getName(), "richportal") && !event.getPlayer().isOp()) {
 				event.setCancelled(true);
 				event.getPlayer().kickPlayer("Invalid Block Break by Unauthorized Player in Rich World");
 			}

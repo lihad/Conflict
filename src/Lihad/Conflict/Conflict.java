@@ -110,6 +110,28 @@ public class Conflict extends JavaPlugin {
 
 	public static CommandExecutor cmd;
 	public static BeyondInfo info;
+    
+    public enum City {
+        None,
+        Abatton,
+        Oceian,
+        Savania
+    };
+    
+    public static City GetPlayerCity(String playerName) {
+        if (ABATTON_PLAYERS.contains(playerName)) return City.Abatton;
+        if (OCEIAN_PLAYERS.contains(playerName)) return City.Oceian;
+        if (SAVANIA_PLAYERS.contains(playerName)) return City.Savania;
+        return City.None;
+    }
+    
+    public static boolean PlayerCanUseTrade(String playerName, String trade) {
+        City c = GetPlayerCity(playerName);
+        if (c == City.Abatton && ABATTON_TRADES.contains(trade)) return true;
+        if (c == City.Oceian  && OCEIAN_TRADES.contains(trade))  return true;
+        if (c == City.Savania && SAVANIA_TRADES.contains(trade)) return true;
+        return false;
+    }
 
 	private final BeyondPluginListener pluginListener = new BeyondPluginListener(this);
 	private final BeyondBlockListener blockListener = new BeyondBlockListener(this);
