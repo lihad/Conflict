@@ -45,12 +45,21 @@ public class BeyondInfo {
 		Conflict.SAVANIA_PERKS.addAll(Conflict.information.getStringList("Capitals.Savania.Perks"));
 		Conflict.SAVANIA_WORTH = (Conflict.information.getInt("Capitals.Savania.Worth"));
 		Conflict.SAVANIA_PROTECTION = (Conflict.information.getInt("Capitals.Savania.Protection"));
+
 		Conflict.TRADE_BLACKSMITH = toLocation("Trades.blacksmith");
 		Conflict.TRADE_POTIONS = toLocation("Trades.potions");
 		Conflict.TRADE_ENCHANTMENTS = toLocation("Trades.enchantments");
 		Conflict.TRADE_RICHPORTAL = toLocation("Trades.richportal");
 		Conflict.TRADE_MYSTPORTAL = toLocation("Trades.mystportal");
+        
+        Conflict.nodes.add(new Conflict.Node(Conflict.information.getString("Nodes.0.Name", "Tower"),   toLocation("Nodes.0.Location", Conflict.TRADE_POTIONS)));
+        Conflict.nodes.add(new Conflict.Node(Conflict.information.getString("Nodes.1.Name", "Cavern"),  toLocation("Nodes.1.Location", Conflict.TRADE_RICHPORTAL)));
+        Conflict.nodes.add(new Conflict.Node(Conflict.information.getString("Nodes.2.Name", "Fort"),    toLocation("Nodes.2.Location", Conflict.TRADE_MYSTPORTAL)));
+        Conflict.nodes.add(new Conflict.Node(Conflict.information.getString("Nodes.3.Name", "Derrick"), toLocation("Nodes.3.Location", Conflict.TRADE_BLACKSMITH)));
+        Conflict.nodes.add(new Conflict.Node(Conflict.information.getString("Nodes.4.Name", "Outpost"), toLocation("Nodes.4.Location", Conflict.TRADE_ENCHANTMENTS)));
+        
 	}
+
 	public static void writer(){
 		Conflict.information.set("Capitals.Abatton.Players", Conflict.ABATTON_PLAYERS);
 		Conflict.information.set("Capitals.Abatton.Location", toString(Conflict.ABATTON_LOCATION));
@@ -84,6 +93,13 @@ public class BeyondInfo {
 		Conflict.information.set("Trades.enchantments", toString(Conflict.TRADE_ENCHANTMENTS));
 		Conflict.information.set("Trades.richportal", toString(Conflict.TRADE_RICHPORTAL));
 		Conflict.information.set("Trades.mystportal", toString(Conflict.TRADE_MYSTPORTAL));
+        
+        int i = 0;
+        for (Conflict.Node n : Conflict.nodes) {
+            Conflict.information.set("Nodes." + i + ".Name", n.name);
+            Conflict.information.set("Nodes." + i + ".Location", toString(n.location));
+            i++;
+        }
 	}
 	private static Location toLocation(String path){
 		String[] array;
@@ -93,6 +109,11 @@ public class BeyondInfo {
 		Location location = new Location(plugin.getServer().getWorld(array[3]), Integer.parseInt(array[0]), Integer.parseInt(array[1]), Integer.parseInt(array[2]));
 		return location;
 	}
+	private static Location toLocation(String path, Location def) {
+        Location l = toLocation(path);
+        if (l == null) { return def; }
+        return l;
+    }
 	private static String toString(Location location){
 		if(location == null) return null;
 		return (location.getBlockX()+","+location.getBlockY()+","+location.getBlockZ()+","+location.getWorld().getName());
