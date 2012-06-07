@@ -166,7 +166,7 @@ public class BeyondPlayerListener implements Listener {
 			}
 		}
 	}
-	/**
+
 	@EventHandler
 	public static void onPlayerExpChange(PlayerExpChangeEvent event){
 		if(event.getAmount() > 0){
@@ -182,7 +182,7 @@ public class BeyondPlayerListener implements Listener {
 			}
 		}
 	}
-	*/
+
 	@EventHandler
 	public static void onPlayerInteract(PlayerInteractEvent event){
         Player player = event.getPlayer();
