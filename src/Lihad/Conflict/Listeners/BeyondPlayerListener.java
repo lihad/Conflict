@@ -134,7 +134,8 @@ public class BeyondPlayerListener implements Listener {
 	}
 	@EventHandler
 	public static void onPlayerInteractEntity(PlayerInteractEntityEvent event){
-		if(event.getRightClicked() instanceof Villager && event.getPlayer().getInventory().contains(Material.DIAMOND_BLOCK)
+		//if(event.getRightClicked() instanceof Villager && event.getPlayer().getInventory().contains(Material.DIAMOND_BLOCK)
+		if(event.getRightClicked() instanceof Villager && event.getPlayer().getLevel() >= 25
 				&& ((Conflict.ABATTON_PLAYERS.contains(event.getPlayer().getName()) && Conflict.ABATTON_PERKS.contains("enchantup"))
 				|| (Conflict.OCEIAN_PLAYERS.contains(event.getPlayer().getName()) && Conflict.OCEIAN_PERKS.contains("enchantup"))
 				|| (Conflict.SAVANIA_PLAYERS.contains(event.getPlayer().getName()) && Conflict.SAVANIA_PERKS.contains("enchantup")))){
@@ -144,16 +145,17 @@ public class BeyondPlayerListener implements Listener {
 					if(event.getPlayer().getItemInHand().getEnchantmentLevel(enchantment) < 10){
 						event.getPlayer().getItemInHand().addUnsafeEnchantment(enchantment, event.getPlayer().getItemInHand().getEnchantmentLevel(enchantment)+1);
 						event.getPlayer().sendMessage(ChatColor.AQUA+"WOOT!! "+enchantment.toString()+" is now level "+event.getPlayer().getItemInHand().getEnchantmentLevel(enchantment));
-						ItemStack stack = event.getPlayer().getInventory().getItem(event.getPlayer().getInventory().first(Material.DIAMOND_BLOCK));
-						if(stack.getAmount() <= 1){
-							stack.setTypeId(0);
-						}else{
-							stack.setAmount(stack.getAmount()-1);
-						}
-						event.getPlayer().getInventory().setItem(event.getPlayer().getInventory().first(Material.DIAMOND_BLOCK),stack);
+						//ItemStack stack = event.getPlayer().getInventory().getItem(event.getPlayer().getInventory().first(Material.DIAMOND_BLOCK));
+						//if(stack.getAmount() <= 1){
+						//	stack.setTypeId(0);
+						//}else{
+						//	stack.setAmount(stack.getAmount()-1);
+						//}
+						//event.getPlayer().getInventory().setItem(event.getPlayer().getInventory().first(Material.DIAMOND_BLOCK),stack);
+                        event.getPlayer().setLevel(event.getPlayer().getLevel() - 25);
 						event.getPlayer().updateInventory();
 					}
-					else{						
+					else{
 						event.getPlayer().getItemInHand().addUnsafeEnchantment(enchantment, event.getPlayer().getItemInHand().getEnchantmentLevel(enchantment)-5);
 						event.getPlayer().sendMessage(ChatColor.AQUA+"Oh no!  That enchant was way too high for me to handle...");
 						event.getPlayer().setLevel(event.getPlayer().getLevel() - 10);
