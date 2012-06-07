@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import java.util.Random;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -115,6 +116,7 @@ public class Conflict extends JavaPlugin {
 
 	public static CommandExecutor cmd;
 	public static BeyondInfo info;
+    public static Random random = new Random();
     
     public enum CityEnum {
         None,

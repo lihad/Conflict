@@ -1,7 +1,6 @@
 package Lihad.Conflict.Listeners;
 
 import java.util.List;
-import java.util.Random;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
@@ -103,7 +102,7 @@ public class BeyondEntityListener implements Listener {
 					if(entities.get(i) instanceof Player){
 						Player player = (Player)entities.get(i);
 						if(player.getInventory().getArmorContents() != null && player.getInventory().getArmorContents().length > 0){
-							int index = new Random().nextInt(player.getInventory().getArmorContents().length);
+							int index = Conflict.random.nextInt(player.getInventory().getArmorContents().length);
 							if(player.getInventory().getArmorContents()[index].getType() != Material.AIR){
 								player.getWorld().dropItemNaturally(player.getLocation(), player.getInventory().getArmorContents()[index]);
 								player.sendMessage(ChatColor.RED+"Your "+player.getInventory().getArmorContents()[index].getType().toString()+" got ripped off!!!");
@@ -130,7 +129,7 @@ public class BeyondEntityListener implements Listener {
 	public void onEntityDeath(EntityDeathEvent event){
 		if(event.getEntity().getKiller() != null){
 			Player player = event.getEntity().getKiller();
-			int random = new Random().nextInt(100);
+			int random = Conflict.random.nextInt(100);
 			if(random < 2 
 					&& event.getEntity() instanceof PigZombie 
 					&& ((Conflict.ABATTON_PLAYERS.contains(player.getName()) && Conflict.ABATTON_PERKS.contains("weapondrops"))
@@ -139,8 +138,7 @@ public class BeyondEntityListener implements Listener {
 				ItemStack stack = new ItemStack(BeyondUtil.weaponTypeRandomizer(), 1);
 				while(stack.getEnchantments().isEmpty()){
 					stack.addUnsafeEnchantment(BeyondUtil.weaponEnchantRandomizer(), BeyondUtil.weaponLevelRandomizer());
-					Random chance = new Random();
-					int next = chance.nextInt(100);
+					int next = Conflict.random.nextInt(100);
 					if(next<30)stack.addUnsafeEnchantment(BeyondUtil.weaponEnchantRandomizer(),BeyondUtil.weaponLevelRandomizer());
 					if(next<20)stack.addUnsafeEnchantment(BeyondUtil.weaponEnchantRandomizer(), BeyondUtil.weaponLevelRandomizer());
 					if(next<5)stack.addUnsafeEnchantment(BeyondUtil.weaponEnchantRandomizer(), BeyondUtil.weaponLevelRandomizer());
@@ -154,8 +152,7 @@ public class BeyondEntityListener implements Listener {
 							|| (Conflict.SAVANIA_PLAYERS.contains(player.getName()) && Conflict.SAVANIA_PERKS.contains("armordrops")))){
 				ItemStack stack = new ItemStack(BeyondUtil.armorTypeRandomizer(), 1);
 				stack.addUnsafeEnchantment(BeyondUtil.armorEnchantRandomizer(), BeyondUtil.armorLevelRandomizer());
-				Random chance = new Random();
-				int next = chance.nextInt(100);
+				int next = Conflict.random.nextInt(100);
 				if(next<30)stack.addUnsafeEnchantment(BeyondUtil.armorEnchantRandomizer(), BeyondUtil.armorLevelRandomizer());							
 				if(next<20)stack.addUnsafeEnchantment(BeyondUtil.armorEnchantRandomizer(), BeyondUtil.armorLevelRandomizer());
 				if(next<5)stack.addUnsafeEnchantment(BeyondUtil.armorEnchantRandomizer(), BeyondUtil.armorLevelRandomizer());
@@ -168,8 +165,7 @@ public class BeyondEntityListener implements Listener {
 							|| (Conflict.SAVANIA_PLAYERS.contains(player.getName()) && Conflict.SAVANIA_PERKS.contains("tooldrops")))){
 				ItemStack stack = new ItemStack(BeyondUtil.toolTypeRandomizer(), 1);
 				stack.addUnsafeEnchantment(BeyondUtil.toolEnchantRandomizer(), BeyondUtil.toolLevelRandomizer());
-				Random chance = new Random();
-				int next = chance.nextInt(100);
+				int next = Conflict.random.nextInt(100);
 				if(next<40)stack.addUnsafeEnchantment(BeyondUtil.toolEnchantRandomizer(), BeyondUtil.toolLevelRandomizer());
 				if(next<25)stack.addUnsafeEnchantment(BeyondUtil.toolEnchantRandomizer(), BeyondUtil.toolLevelRandomizer());
 				if(next<10)stack.addUnsafeEnchantment(BeyondUtil.toolEnchantRandomizer(), BeyondUtil.toolLevelRandomizer());
@@ -191,8 +187,7 @@ public class BeyondEntityListener implements Listener {
 							|| (Conflict.SAVANIA_PLAYERS.contains(player.getName()) && Conflict.SAVANIA_PERKS.contains("bowdrops")))){
 				ItemStack stack = new ItemStack(Material.BOW, 1);
 				stack.addUnsafeEnchantment(BeyondUtil.bowEnchantRandomizer(), BeyondUtil.bowLevelRandomizer());
-				Random chance = new Random();
-				int next = chance.nextInt(100);
+				int next = Conflict.random.nextInt(100);
 				if(next<40)stack.addUnsafeEnchantment(BeyondUtil.bowEnchantRandomizer(), BeyondUtil.bowLevelRandomizer());
 				if(next<25)stack.addUnsafeEnchantment(BeyondUtil.bowEnchantRandomizer(), BeyondUtil.bowLevelRandomizer());
 				if(next<10)stack.addUnsafeEnchantment(BeyondUtil.bowEnchantRandomizer(), BeyondUtil.bowLevelRandomizer());

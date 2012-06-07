@@ -141,7 +141,7 @@ public class BeyondPlayerListener implements Listener {
 				|| (Conflict.SAVANIA_PLAYERS.contains(event.getPlayer().getName()) && Conflict.SAVANIA_PERKS.contains("enchantup")))){
 			if(event.getPlayer().getItemInHand() != null){
 				if(!event.getPlayer().getItemInHand().getEnchantments().isEmpty()){
-					Enchantment enchantment = (Enchantment) event.getPlayer().getItemInHand().getEnchantments().keySet().toArray()[(new Random().nextInt(event.getPlayer().getItemInHand().getEnchantments().size()))];
+					Enchantment enchantment = (Enchantment) event.getPlayer().getItemInHand().getEnchantments().keySet().toArray()[(Conflict.random.nextInt(event.getPlayer().getItemInHand().getEnchantments().size()))];
 					if(event.getPlayer().getItemInHand().getEnchantmentLevel(enchantment) < 10){
 						event.getPlayer().getItemInHand().addUnsafeEnchantment(enchantment, event.getPlayer().getItemInHand().getEnchantmentLevel(enchantment)+1);
 						event.getPlayer().sendMessage(ChatColor.AQUA+"WOOT!! "+enchantment.toString()+" is now level "+event.getPlayer().getItemInHand().getEnchantmentLevel(enchantment));
