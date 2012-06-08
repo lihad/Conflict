@@ -18,31 +18,60 @@ public class BeyondInfo {
 	}
 	
 	public static void loader(){
-		Conflict.ABATTON_PLAYERS.addAll(Conflict.information.getStringList("Capitals.Abatton.Players"));
+        Conflict.ABATTON_PLAYERS.clear();
+        Conflict.ABATTON_PLAYERS.addAll(Conflict.information.getStringList("Capitals.Abatton.Players"));
+
 		Conflict.ABATTON_LOCATION = toLocation("Capitals.Abatton.Location");
 		Conflict.ABATTON_LOCATION_SPAWN = toLocation("Capitals.Abatton.Spawn");
 		Conflict.ABATTON_LOCATION_DRIFTER = toLocation("Capitals.Abatton.Drifter");
+
+        Conflict.ABATTON_GENERALS.clear();
 		Conflict.ABATTON_GENERALS.addAll(Conflict.information.getStringList("Capitals.Abatton.Generals"));
+
+        Conflict.ABATTON_TRADES.clear();
 		Conflict.ABATTON_TRADES.addAll(Conflict.information.getStringList("Capitals.Abatton.Trades"));
+
+        Conflict.ABATTON_PERKS.clear();
 		Conflict.ABATTON_PERKS.addAll(Conflict.information.getStringList("Capitals.Abatton.Perks"));
+
 		Conflict.ABATTON_WORTH = (Conflict.information.getInt("Capitals.Abatton.Worth"));
 		Conflict.ABATTON_PROTECTION = (Conflict.information.getInt("Capitals.Abatton.Protection"));
+
+        Conflict.OCEIAN_PLAYERS.clear();
 		Conflict.OCEIAN_PLAYERS.addAll(Conflict.information.getStringList("Capitals.Oceian.Players"));
+
 		Conflict.OCEIAN_LOCATION = toLocation("Capitals.Oceian.Location");
 		Conflict.OCEIAN_LOCATION_SPAWN = toLocation("Capitals.Oceian.Spawn");
 		Conflict.OCEIAN_LOCATION_DRIFTER = toLocation("Capitals.Oceian.Drifter");
+
+        Conflict.OCEIAN_GENERALS.clear();
 		Conflict.OCEIAN_GENERALS.addAll(Conflict.information.getStringList("Capitals.Oceian.Generals"));
+
+        Conflict.OCEIAN_TRADES.clear();
 		Conflict.OCEIAN_TRADES.addAll(Conflict.information.getStringList("Capitals.Oceian.Trades"));
+
+        Conflict.OCEIAN_PERKS.clear();
 		Conflict.OCEIAN_PERKS.addAll(Conflict.information.getStringList("Capitals.Oceian.Perks"));
+
 		Conflict.OCEIAN_WORTH = (Conflict.information.getInt("Capitals.Oceian.Worth"));
 		Conflict.OCEIAN_PROTECTION = (Conflict.information.getInt("Capitals.Oceian.Protection"));
+
+        Conflict.SAVANIA_PLAYERS.clear();
 		Conflict.SAVANIA_PLAYERS.addAll(Conflict.information.getStringList("Capitals.Savania.Players"));
+
 		Conflict.SAVANIA_LOCATION = toLocation("Capitals.Savania.Location");
 		Conflict.SAVANIA_LOCATION_SPAWN = toLocation("Capitals.Savania.Spawn");
 		Conflict.SAVANIA_LOCATION_DRIFTER = toLocation("Capitals.Savania.Drifter");
+
+        Conflict.SAVANIA_GENERALS.clear();
 		Conflict.SAVANIA_GENERALS.addAll(Conflict.information.getStringList("Capitals.Savania.Generals"));
+
+        Conflict.SAVANIA_TRADES.clear();
 		Conflict.SAVANIA_TRADES.addAll(Conflict.information.getStringList("Capitals.Savania.Trades"));
+
+        Conflict.SAVANIA_PERKS.clear();
 		Conflict.SAVANIA_PERKS.addAll(Conflict.information.getStringList("Capitals.Savania.Perks"));
+
 		Conflict.SAVANIA_WORTH = (Conflict.information.getInt("Capitals.Savania.Worth"));
 		Conflict.SAVANIA_PROTECTION = (Conflict.information.getInt("Capitals.Savania.Protection"));
 

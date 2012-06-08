@@ -1,7 +1,6 @@
 package Lihad.Conflict;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -25,6 +24,8 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
+
+import com.nuclearw.firstlastseen.FirstLastSeen;
 
 import Lihad.Conflict.Command.CommandHandler;
 import Lihad.Conflict.Information.BeyondInfo;
@@ -152,12 +153,7 @@ public class Conflict extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		BeyondInfo.writer();
-		try {
-			information.save(infoFile);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        saveInfoFile();
 	}
 	@Override
 	public void onEnable() {
@@ -178,17 +174,8 @@ public class Conflict extends JavaPlugin {
 		TRADE_MYSTPORTAL_CAP_COUNTER.put("Savania", 0);
 		//InfoManager
 		information = new YamlConfiguration();
-		try {
-			information.load(infoFile);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InvalidConfigurationException e) {
-			e.printStackTrace();
-		}
 		info = new BeyondInfo(this);
-		BeyondInfo.loader();
+        loadInfoFile();
 		//TimerManager
 		if(ABATTON_LOCATION == null || OCEIAN_LOCATION == null || SAVANIA_LOCATION == null){
 			severe("Unable to find all Capital Locations.  Booted in SAFE MODE for Timers");
@@ -207,14 +194,18 @@ public class Conflict extends JavaPlugin {
 			},0L, 432000L);
 			this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
 				public void run() {
-					if(war != null){
+                    // Maintenance timer - runs every 5 mins
+                    if(war != null){
                         war.postWarAutoList();
-					}
+                    }
+                    PurgeInactivePlayers();
+                    saveInfoFile();
 				}
 			},0L, 5500L);
 			this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
 				public void run() {
-					if(war == null){
+                    // War timer - runs every second
+                    if(war == null){
                         if(War.warShouldStart()){
 							ABATTON_TRADES.clear();
 							OCEIAN_TRADES.clear();
@@ -347,7 +338,72 @@ public class Conflict extends JavaPlugin {
 	{
 		log.log(level, header + message);
 	}
-	public static void saveInfoFile() throws IOException{
-		information.save(infoFile);
+	public static void saveInfoFile() {
+		try {
+            BeyondInfo.writer();
+            information.save(infoFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
+    
+    public static void loadInfoFile() {
+        try {
+            information.load(infoFile);
+        } catch (java.io.FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InvalidConfigurationException e) {
+            e.printStackTrace();
+        }
+        BeyondInfo.loader();
+    }
+
+    public static String theerror = "error not set";
+    
+    private static boolean purgeHasRunAlready = false;
+    static void PurgeInactivePlayers() {
+        // Only need to do this once per server restart.
+        if (purgeHasRunAlready) return;
+
+        try {
+            long now = java.lang.System.currentTimeMillis();
+        
+            for (java.util.Iterator<String> it = ABATTON_PLAYERS.iterator(); it.hasNext();) {
+                long lastseen = 0;
+                lastseen = FirstLastSeen.getLastSeenLong(it.next());
+
+                long days = (now - lastseen) / 1000 / 86400;
+                // Purge anyone who hasn't logged in the last four weeks
+                if (days > 28) {
+                    it.remove();
+                }            
+            }
+            for (java.util.Iterator<String> it = OCEIAN_PLAYERS.iterator(); it.hasNext();) {
+                long lastseen = 0;
+                lastseen = FirstLastSeen.getLastSeenLong(it.next());
+
+                long days = (now - lastseen) / 1000 / 86400;
+                // Purge anyone who hasn't logged in the last four weeks
+                if (days > 28) {
+                    it.remove();
+                }            
+            }
+            for (java.util.Iterator<String> it = SAVANIA_PLAYERS.iterator(); it.hasNext();) {
+                long lastseen = 0;
+                lastseen = FirstLastSeen.getLastSeenLong(it.next());
+
+                long days = (now - lastseen) / 1000 / 86400;
+                // Purge anyone who hasn't logged in the last four weeks
+                if (days > 28) {
+                    it.remove();
+                }            
+            }
+        }
+        catch (java.lang.NoClassDefFoundError e) {
+            severe("Cannot find FirstLastSeen!  Automatic town member purge is disabled.");
+        }
+        purgeHasRunAlready = true;
+    }
 }

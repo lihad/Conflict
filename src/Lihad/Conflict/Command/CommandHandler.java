@@ -217,6 +217,10 @@ public class CommandHandler implements CommandExecutor {
 				sender.sendMessage("AB - "+Conflict.ABATTON_GENERALS);
 				sender.sendMessage("OC - "+Conflict.OCEIAN_GENERALS);
 				sender.sendMessage("SA - "+Conflict.SAVANIA_GENERALS);
+			}else if(arg.length == 1 && arg[0].equalsIgnoreCase("save")){
+                Conflict.saveInfoFile();
+			}else if(arg.length == 1 && arg[0].equalsIgnoreCase("reload")){
+                Conflict.loadInfoFile();
 			}
 			return true;
 		}else if(cmd.getName().equalsIgnoreCase("cc") && arg.length == 0){
