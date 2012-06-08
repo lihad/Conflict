@@ -81,6 +81,7 @@ public class BeyondInfo {
 		Conflict.TRADE_RICHPORTAL = toLocation("Trades.richportal");
 		Conflict.TRADE_MYSTPORTAL = toLocation("Trades.mystportal");
         
+        Conflict.nodes.clear();
         Conflict.nodes.add(new Conflict.Node(Conflict.information.getString("Nodes.0.Name", "Tower"),   toLocation("Nodes.0.Location", Conflict.TRADE_POTIONS)));
         Conflict.nodes.add(new Conflict.Node(Conflict.information.getString("Nodes.1.Name", "Cavern"),  toLocation("Nodes.1.Location", Conflict.TRADE_RICHPORTAL)));
         Conflict.nodes.add(new Conflict.Node(Conflict.information.getString("Nodes.2.Name", "Fort"),    toLocation("Nodes.2.Location", Conflict.TRADE_MYSTPORTAL)));

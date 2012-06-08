@@ -198,7 +198,7 @@ public class Conflict extends JavaPlugin {
                     if(war != null){
                         war.postWarAutoList();
                     }
-                    PurgeInactivePlayers();
+                    //PurgeInactivePlayers();
                     saveInfoFile();
 				}
 			},0L, 5500L);
