@@ -416,6 +416,11 @@ public class CommandHandler implements CommandExecutor {
 			}else((Player)sender).sendMessage("You are not allowed to run this command.");
 			return true;
 		}
+		else if(cmd.getName().equalsIgnoreCase("warstats") && arg.length == 1){
+            if (Conflict.war != null) {
+                Conflict.war.postWarAutoList(sender);
+            }
+        }
 		return false;
 	}
 }

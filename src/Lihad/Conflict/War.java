@@ -69,7 +69,7 @@ public class War {
         }
     }
     
-    public void postWarAutoList(){
+    public void postWarAutoList(org.bukkit.command.CommandSender sender){
         for (WarNode node : nodes) {
             String message = ChatColor.GOLD+"Node "+ node.name +" Tally | ";
 
@@ -81,11 +81,20 @@ public class War {
             }
             else {
                 for (Map.Entry entry : node.cityCounters.entrySet()) {
-                    message += "" + ChatColor.AQUA + (CityEnum)entry.getKey() + ": " + ChatColor.WHITE + (Integer)entry.getValue() + "; ";
+                    CityEnum city = (CityEnum)entry.getKey();
+                    int count = (Integer)entry.getValue();
+                    
+                    String countText = (city == node.owner) ? ("" + ChatColor.YELLOW + "[" + count + "]") : ("" + ChatColor.WHITE + count);
+                    message += "" + ChatColor.AQUA + city + ": " + countText + "; ";
                 }
             }
 
-            Bukkit.getServer().broadcastMessage(message);
+            if (sender != null) {
+                sender.sendMessage(message);
+            }
+            else {
+                Bukkit.getServer().broadcastMessage(message);
+            }
         }
     }
     

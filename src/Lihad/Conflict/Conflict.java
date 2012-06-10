@@ -25,8 +25,6 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
 
-import com.nuclearw.firstlastseen.FirstLastSeen;
-
 import Lihad.Conflict.Command.CommandHandler;
 import Lihad.Conflict.Information.BeyondInfo;
 import Lihad.Conflict.Listeners.BeyondBlockListener;
@@ -38,9 +36,9 @@ import Lihad.Conflict.Util.BeyondUtil;
 
 public class Conflict extends JavaPlugin {
 	/** Name of the plugin, used in output messages */
-	protected static String name = "Conflict";
+	protected static String PLUGIN_NAME = "Conflict";
 	/** Header used for console and player output messages */
-	protected static String header = "[" + name + "] ";
+	protected static String header = "[" + PLUGIN_NAME + "] ";
 
 	public static YamlConfiguration information;
 
@@ -196,12 +194,12 @@ public class Conflict extends JavaPlugin {
 				public void run() {
                     // Maintenance timer - runs every 5 mins
                     if(war != null){
-                        war.postWarAutoList();
+                        war.postWarAutoList(null);
                     }
-                    //PurgeInactivePlayers();
+                    PurgeInactivePlayers();
                     saveInfoFile();
 				}
-			},0L, 5500L);
+			},1200L, 5500L);
 			this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
 				public void run() {
                     // War timer - runs every second
@@ -223,7 +221,7 @@ public class Conflict extends JavaPlugin {
                         }
 					}
 				}
-			},0L, 20L);
+			},200L, 20L);
 		}
 		//CommandManager
 		cmd = new CommandHandler(this);
@@ -244,6 +242,7 @@ public class Conflict extends JavaPlugin {
 		getCommand("protectcity").setExecutor(cmd);
 		getCommand("myst").setExecutor(cmd);
 		getCommand("cwho").setExecutor(cmd);
+		getCommand("warstats").setExecutor(cmd);
 
 
 		//PermsManager
@@ -363,47 +362,79 @@ public class Conflict extends JavaPlugin {
     public static String theerror = "error not set";
     
     private static boolean purgeHasRunAlready = false;
-    static void PurgeInactivePlayers() {
+    public static void PurgeInactivePlayers() {
         // Only need to do this once per server restart.
         if (purgeHasRunAlready) return;
 
-        try {
-            long now = java.lang.System.currentTimeMillis();
-        
-            for (java.util.Iterator<String> it = ABATTON_PLAYERS.iterator(); it.hasNext();) {
-                long lastseen = 0;
-                lastseen = FirstLastSeen.getLastSeenLong(it.next());
+        long now = java.lang.System.currentTimeMillis();
+    
+        for (java.util.Iterator<String> it = ABATTON_PLAYERS.iterator(); it.hasNext();) {
+            long lastseen = 0;
+            String name = it.next();
+            lastseen = getPlayerLastSeenTime(name);
 
-                long days = (now - lastseen) / 1000 / 86400;
-                // Purge anyone who hasn't logged in the last four weeks
-                if (days > 28) {
-                    it.remove();
-                }            
-            }
-            for (java.util.Iterator<String> it = OCEIAN_PLAYERS.iterator(); it.hasNext();) {
-                long lastseen = 0;
-                lastseen = FirstLastSeen.getLastSeenLong(it.next());
-
-                long days = (now - lastseen) / 1000 / 86400;
-                // Purge anyone who hasn't logged in the last four weeks
-                if (days > 28) {
-                    it.remove();
-                }            
-            }
-            for (java.util.Iterator<String> it = SAVANIA_PLAYERS.iterator(); it.hasNext();) {
-                long lastseen = 0;
-                lastseen = FirstLastSeen.getLastSeenLong(it.next());
-
-                long days = (now - lastseen) / 1000 / 86400;
-                // Purge anyone who hasn't logged in the last four weeks
-                if (days > 28) {
-                    it.remove();
-                }            
-            }
+            long days = (now - lastseen) / 86400000;
+            
+            // Purge anyone who hasn't logged in the last four weeks
+            if (days > 28) {
+                info("Removing " + name + " from Abatton (last seen " + days + " days ago)");
+                it.remove();
+            }            
         }
-        catch (java.lang.NoClassDefFoundError e) {
-            severe("Cannot find FirstLastSeen!  Automatic town member purge is disabled.");
+        for (java.util.Iterator<String> it = OCEIAN_PLAYERS.iterator(); it.hasNext();) {
+            long lastseen = 0;
+            String name = it.next();
+            lastseen = getPlayerLastSeenTime(name);
+
+            long days = (now - lastseen) / 86400000;
+
+            // Purge anyone who hasn't logged in the last four weeks
+            if (days > 28) {
+                info("Removing " + name + " from Oceian (last seen " + days + " days ago)");
+                it.remove();
+            }            
+        }
+        for (java.util.Iterator<String> it = SAVANIA_PLAYERS.iterator(); it.hasNext();) {
+            long lastseen = 0;
+            String name = it.next();
+            lastseen = getPlayerLastSeenTime(name);
+
+            long days = (now - lastseen) / 86400000;
+
+            // Purge anyone who hasn't logged in the last four weeks
+            if (days > 28) {
+                info("Removing " + name + " from Savania (last seen " + days + " days ago)");
+                it.remove();
+            }            
         }
         purgeHasRunAlready = true;
+    }
+    
+    static long getPlayerLastSeenTime(String playerName) {
+        // Implementation using FirstLastSeen
+        String filename = "plugins/FirstLastSeen/data/"+playerName.toLowerCase();
+
+        java.io.BufferedReader reader = null;
+        try {
+            reader = new java.io.BufferedReader(new java.io.FileReader(filename));
+            String text = null;
+
+            // repeat until all lines is read
+            while ((text = reader.readLine()) != null) {
+                String[] s = text.split("\\=");
+                if (s.length != 2) continue;
+                if (s[0].equals("LastSeen")) {
+                    return Long.parseLong(s[1]);
+                }
+            }
+        } catch (java.io.FileNotFoundException e) {
+            severe("Can't find last seen file for " + filename);
+            return 0;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try { if (reader != null) { reader.close(); } } catch (IOException e) { e.printStackTrace(); }
+        }
+        return 0;
     }
 }
