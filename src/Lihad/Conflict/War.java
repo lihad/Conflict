@@ -115,15 +115,15 @@ public class War {
                     }
                     if (player.getLocation().distanceSquared(node.location) < 3*3){  
                         if(node.captureCityTemp == CityEnum.None){
-                            node.captureCityTemp = Conflict.GetPlayerCity(player.getName());
+                            node.captureCityTemp = Conflict.getPlayerCity(player.getName());
                         }
                         else if(node.captureCityTemp == CityEnum.Contested){
                             continue;
                         }
-                        else if( Conflict.GetPlayerCity(player.getName()) == node.owner ) {
+                        else if( Conflict.getPlayerCity(player.getName()) == node.owner ) {
                             continue;
                         }
-                        else if( Conflict.GetPlayerCity(player.getName()) == node.captureCityTemp ) {
+                        else if( Conflict.getPlayerCity(player.getName()) == node.captureCityTemp ) {
                             node.captureCounter++;
                             player.sendMessage(ChatColor.GOLD+"Taking point. "+node.captureCounter+"/30");
                         }else{
@@ -178,6 +178,8 @@ public class War {
         // Mix up our prize bag!
         java.util.Collections.shuffle(prizes);
         
+        Bukkit.getServer().broadcastMessage(ChatColor.RED+"Lay down your weapons and shag a wench!  The war has ended!");
+
         for (WarNode node : nodes) {
             
             CityEnum winner = CityEnum.None;
@@ -209,10 +211,9 @@ public class War {
             else if (prize == "enchantments")   { Conflict.TRADE_ENCHANTMENTS = node.location; }
             else if (prize == "richportal")     { Conflict.TRADE_RICHPORTAL = node.location; }
             else if (prize == "mystportal")     { Conflict.TRADE_MYSTPORTAL = node.location; }
-
+            
+            Bukkit.getServer().broadcastMessage("" + ChatColor.GOLD + winner + ChatColor.GRAY + "has won the " + node.name + ", and gains the " + ChatColor.LIGHT_PURPLE + prize + ChatColor.GRAY + " perk!");
         }
-
-        Bukkit.getServer().broadcastMessage(ChatColor.RED+"Lay down your weapons and shag a wench!  The war has ended!");
     }
 
 };

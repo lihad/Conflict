@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import Lihad.Conflict.Conflict;
+import Lihad.Conflict.Conflict.CityEnum;
 import Lihad.Conflict.Util.BeyondUtil;
 
 public class CommandHandler implements CommandExecutor {
@@ -416,10 +417,43 @@ public class CommandHandler implements CommandExecutor {
 			}else((Player)sender).sendMessage("You are not allowed to run this command.");
 			return true;
 		}
-		else if(cmd.getName().equalsIgnoreCase("warstats") && arg.length == 1){
+		else if(cmd.getName().equalsIgnoreCase("warstats") && arg.length == 0){
             if (Conflict.war != null) {
                 Conflict.war.postWarAutoList(sender);
             }
+            return true;
+        }
+        else if(cmd.getName().equalsIgnoreCase("perks")) {
+            CityEnum city = CityEnum.None;
+            if (arg.length == 0 && sender instanceof Player) {
+                city = Conflict.getPlayerCity(((Player)sender).getName());
+            }
+            if (arg.length == 1 && ((Player)sender).isOp()) {
+                try {
+                    city = java.lang.Enum.valueOf(CityEnum.class, arg[0]);
+                }
+                catch (IllegalArgumentException e) {
+                    sender.sendMessage("Unknown city name!");
+                }
+            }
+
+            if (city == CityEnum.None) { return false; }
+            
+            List<String> list = null;
+            if (city == CityEnum.Abatton) { list = Conflict.ABATTON_PERKS; } 
+            else if (city == CityEnum.Savania) { list = Conflict.SAVANIA_PERKS; } 
+            else if (city == CityEnum.Oceian) { list = Conflict.OCEIAN_PERKS; } 
+
+            sender.sendMessage("" + city + " mini-perks: " + list.toString());
+            
+            if (city == CityEnum.Abatton) { list = Conflict.ABATTON_TRADES; } 
+            else if (city == CityEnum.Savania) { list = Conflict.SAVANIA_TRADES; } 
+            else if (city == CityEnum.Oceian) { list = Conflict.OCEIAN_TRADES; } 
+
+            // TODO: Give nodes in this message as well.
+            sender.sendMessage("" + city + " nodes: " + list.toString());
+            
+            return true;
         }
 		return false;
 	}

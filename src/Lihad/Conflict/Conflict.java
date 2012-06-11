@@ -125,7 +125,7 @@ public class Conflict extends JavaPlugin {
         Savania
     };
     
-    public static CityEnum GetPlayerCity(String playerName) {
+    public static CityEnum getPlayerCity(String playerName) {
         if (ABATTON_PLAYERS.contains(playerName)) return CityEnum.Abatton;
         if (OCEIAN_PLAYERS.contains(playerName)) return CityEnum.Oceian;
         if (SAVANIA_PLAYERS.contains(playerName)) return CityEnum.Savania;
@@ -133,7 +133,7 @@ public class Conflict extends JavaPlugin {
     }
     
     public static boolean PlayerCanUseTrade(String playerName, String trade) {
-        CityEnum c = GetPlayerCity(playerName);
+        CityEnum c = getPlayerCity(playerName);
         if (c == CityEnum.Abatton && ABATTON_TRADES.contains(trade)) return true;
         if (c == CityEnum.Oceian  && OCEIAN_TRADES.contains(trade))  return true;
         if (c == CityEnum.Savania && SAVANIA_TRADES.contains(trade)) return true;
@@ -243,6 +243,7 @@ public class Conflict extends JavaPlugin {
 		getCommand("myst").setExecutor(cmd);
 		getCommand("cwho").setExecutor(cmd);
 		getCommand("warstats").setExecutor(cmd);
+		getCommand("perks").setExecutor(cmd);
 
 
 		//PermsManager
