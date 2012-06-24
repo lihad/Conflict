@@ -99,13 +99,23 @@ public class City extends Node {
     
     public void saveConfig(org.bukkit.configuration.ConfigurationSection section) {
 
-        section.set("Players", players);
+        java.util.List<String> setAsList = null;
+        setAsList = new java.util.ArrayList<String>(players);
+
+        section.set("Players", setAsList);
         section.set("Location", BeyondInfo.toString(center));
         section.set("Spawn", BeyondInfo.toString(spawnLocation));
         section.set("Drifter", BeyondInfo.toString(drifterLocation));
-        section.set("Generals", generals);
-        section.set("Trades", trades);
-        section.set("Perks", perks);
+
+        setAsList = new java.util.ArrayList<String>(generals);
+        section.set("Generals", setAsList);
+
+        setAsList = new java.util.ArrayList<String>(trades);
+        section.set("Trades", setAsList);
+
+        setAsList = new java.util.ArrayList<String>(perks);
+        section.set("Perks", setAsList);
+
         section.set("Worth", bankBalance);
         section.set("Protection", spawnProtectRadius);
     }
