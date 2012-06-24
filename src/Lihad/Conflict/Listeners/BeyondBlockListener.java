@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -58,7 +59,7 @@ public class BeyondBlockListener implements Listener {
 					&& !player.isOp() && !Conflict.handler.has(player, "conflict.editnodes")){
 				event.setCancelled(true);
 			}
-			if(!player.isOp() && !Conflict.handler.has(player, "conflict.editnodes" && (
+			if(!player.isOp() && !Conflict.handler.has(player, "conflict.editnodes") && (
                        (Conflict.TRADE_BLACKSMITH.distance(event.getBlock().getLocation()) < 200)
 					|| (Conflict.TRADE_MYSTPORTAL.distance(event.getBlock().getLocation()) < 200)
 					|| (Conflict.TRADE_ENCHANTMENTS.distance(event.getBlock().getLocation()) < 200)
