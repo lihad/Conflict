@@ -22,14 +22,16 @@ public class BeyondBlockListener implements Listener {
 	}
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event){
+        Player player = event.getPlayer();
 		if(event.getBlock().getWorld().getName().equals("survival")){
-            if (((!Conflict.Abatton.getGenerals().contains(event.getPlayer().getName()) && Conflict.Abatton.getLocation().distance(event.getBlock().getLocation()) < Conflict.Abatton.getProtectionRadius())
-					|| (!Conflict.Oceian.getGenerals().contains(event.getPlayer().getName()) && Conflict.Oceian.getLocation().distance(event.getBlock().getLocation()) < Conflict.Oceian.getProtectionRadius())
-					|| (!Conflict.Savania.getGenerals().contains(event.getPlayer().getName()) && Conflict.Savania.getLocation().distance(event.getBlock().getLocation()) < Conflict.Savania.getProtectionRadius())
-			)&& !event.getPlayer().isOp()){
+            if (((!Conflict.Abatton.getGenerals().contains(player.getName()) && Conflict.Abatton.getLocation().distance(event.getBlock().getLocation()) < Conflict.Abatton.getProtectionRadius())
+					|| (!Conflict.Oceian.getGenerals().contains(player.getName()) && Conflict.Oceian.getLocation().distance(event.getBlock().getLocation()) < Conflict.Oceian.getProtectionRadius())
+					|| (!Conflict.Savania.getGenerals().contains(player.getName()) && Conflict.Savania.getLocation().distance(event.getBlock().getLocation()) < Conflict.Savania.getProtectionRadius())
+			)&& !player.isOp() && !Conflict.handler.has(player, "conflict.editnodes")){
 				event.setCancelled(true);
 			}
-			if(!event.getPlayer().isOp() && ((Conflict.TRADE_BLACKSMITH.distance(event.getBlock().getLocation()) < 200)
+			if(!player.isOp() && !Conflict.handler.has(player, "conflict.editnodes") && (
+                       (Conflict.TRADE_BLACKSMITH.distance(event.getBlock().getLocation()) < 200)
 					|| (Conflict.TRADE_MYSTPORTAL.distance(event.getBlock().getLocation()) < 200)
 					|| (Conflict.TRADE_ENCHANTMENTS.distance(event.getBlock().getLocation()) < 200)
 					|| (Conflict.TRADE_RICHPORTAL.distance(event.getBlock().getLocation()) < 200)
@@ -39,42 +41,25 @@ public class BeyondBlockListener implements Listener {
 			}
 		}
 		else if(event.getBlock().getWorld().getName().equals("richworld")){
-			if( !Conflict.PlayerCanUseTrade(event.getPlayer().getName(), "richportal") && !event.getPlayer().isOp()) {
+			if( !Conflict.PlayerCanUseTrade(player.getName(), "richportal") && !player.isOp()) {
 				event.setCancelled(true);
-				event.getPlayer().kickPlayer("Invalid Block Break by Unauthorized Player in Rich World");
+				player.kickPlayer("Invalid Block Break by Unauthorized Player in Rich World");
 			}
 				
 		}
 	}
 	@EventHandler
-	public void onBlockDamage(BlockDamageEvent event){
-		if(event.getBlock().getWorld().getName().equals("survival")){
-            if(( (!Conflict.Abatton.getGenerals().contains(event.getPlayer().getName()) && Conflict.Abatton.getLocation().distance(event.getBlock().getLocation()) < Conflict.Abatton.getProtectionRadius())
-					|| (!Conflict.Oceian.getGenerals().contains(event.getPlayer().getName()) && Conflict.Oceian.getLocation().distance(event.getBlock().getLocation()) < Conflict.Oceian.getProtectionRadius())
-					|| (!Conflict.Savania.getGenerals().contains(event.getPlayer().getName()) && Conflict.Savania.getLocation().distance(event.getBlock().getLocation()) < Conflict.Savania.getProtectionRadius()))
-					&& !event.getPlayer().isOp()){
-				event.setCancelled(true);
-			}
-			if(!event.getPlayer().isOp() && ((Conflict.TRADE_BLACKSMITH.distance(event.getBlock().getLocation()) < 200)
-					|| (Conflict.TRADE_MYSTPORTAL.distance(event.getBlock().getLocation()) < 200)
-					|| (Conflict.TRADE_ENCHANTMENTS.distance(event.getBlock().getLocation()) < 200)
-					|| (Conflict.TRADE_RICHPORTAL.distance(event.getBlock().getLocation()) < 200)
-					|| (Conflict.TRADE_POTIONS.distance(event.getBlock().getLocation()) < 200))
-			){
-				event.setCancelled(true);
-			}
-		}
-	}
-	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event){
+        Player player = event.getPlayer();
 		if(event.getBlock().getWorld().getName().equals("survival")){
-            if(((!Conflict.Abatton.getGenerals().contains(event.getPlayer().getName()) && Conflict.Abatton.getLocation().distance(event.getBlock().getLocation()) < Conflict.Abatton.getProtectionRadius())
-					|| (!Conflict.Oceian.getGenerals().contains(event.getPlayer().getName()) && Conflict.Oceian.getLocation().distance(event.getBlock().getLocation()) < Conflict.Oceian.getProtectionRadius())
-					|| (!Conflict.Savania.getGenerals().contains(event.getPlayer().getName()) && Conflict.Savania.getLocation().distance(event.getBlock().getLocation()) < Conflict.Savania.getProtectionRadius()))
-					&& !event.getPlayer().isOp()){
+            if(((!Conflict.Abatton.getGenerals().contains(player.getName()) && Conflict.Abatton.getLocation().distance(event.getBlock().getLocation()) < Conflict.Abatton.getProtectionRadius())
+					|| (!Conflict.Oceian.getGenerals().contains(player.getName()) && Conflict.Oceian.getLocation().distance(event.getBlock().getLocation()) < Conflict.Oceian.getProtectionRadius())
+					|| (!Conflict.Savania.getGenerals().contains(player.getName()) && Conflict.Savania.getLocation().distance(event.getBlock().getLocation()) < Conflict.Savania.getProtectionRadius()))
+					&& !player.isOp() && !Conflict.handler.has(player, "conflict.editnodes")){
 				event.setCancelled(true);
 			}
-			if(!event.getPlayer().isOp() && ((Conflict.TRADE_BLACKSMITH.distance(event.getBlock().getLocation()) < 200)
+			if(!player.isOp() && !Conflict.handler.has(player, "conflict.editnodes" && (
+                       (Conflict.TRADE_BLACKSMITH.distance(event.getBlock().getLocation()) < 200)
 					|| (Conflict.TRADE_MYSTPORTAL.distance(event.getBlock().getLocation()) < 200)
 					|| (Conflict.TRADE_ENCHANTMENTS.distance(event.getBlock().getLocation()) < 200)
 					|| (Conflict.TRADE_RICHPORTAL.distance(event.getBlock().getLocation()) < 200)
