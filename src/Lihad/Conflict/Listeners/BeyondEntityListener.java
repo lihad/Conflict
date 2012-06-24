@@ -38,29 +38,32 @@ public class BeyondEntityListener implements Listener {
 		//
 		// "PvP"
 		if(event.getEntity().getWorld().getName().equals("survival")){
-			if(Conflict.war != null)return;
 			if((event.getDamager() instanceof Player || (event.getDamager() instanceof Projectile 
 					&& ((Projectile)event.getDamager()).getShooter() instanceof Player)) && event.getEntity() instanceof Player){
 				Player player;
 				Player hurt = (Player)event.getEntity();
 				if(event.getDamager() instanceof Player) player = (Player)event.getDamager();
 				else player = (Player)((Projectile)event.getDamager()).getShooter();
+                if (Conflict.war != null) {
+                    // War is on.  PVP for all
+                    // except reporters
+                    if (Conflict.war.reporters.contains(hurt)) {
+                        event.setCancelled(true);
+                    }
+                    return;
+                }
 				if(player.isOp()){
 					return;
-				}/**else if((Conflict.ABATTON_PLAYERS.contains(player.getName()) && Conflict.ABATTON_PLAYERS.contains(hurt.getName()))
-						|| (Conflict.OCEIAN_PLAYERS.contains(player.getName()) && Conflict.OCEIAN_PLAYERS.contains(hurt.getName()))
-						|| (Conflict.SAVANIA_PLAYERS.contains(player.getName()) && Conflict.SAVANIA_PLAYERS.contains(hurt.getName()))){
-					event.setCancelled(true);
-					*/
+				}
 				else if(player.getLocation().distance(player.getWorld().getSpawnLocation()) > 5000.0){
 					return;
-				}else if((Conflict.ABATTON_PLAYERS.contains(player.getName()) && (Conflict.OCEIAN_LOCATION.distance(hurt.getLocation())<500.0 || Conflict.SAVANIA_LOCATION.distance(hurt.getLocation())<500.0))
-						|| (Conflict.OCEIAN_PLAYERS.contains(player.getName()) && (Conflict.ABATTON_LOCATION.distance(hurt.getLocation())<500.0 || Conflict.SAVANIA_LOCATION.distance(hurt.getLocation())<500.0))
-						|| (Conflict.SAVANIA_PLAYERS.contains(player.getName()) && (Conflict.ABATTON_LOCATION.distance(hurt.getLocation())<500.0 || Conflict.OCEIAN_LOCATION.distance(hurt.getLocation())<500.0))){
+				}else if((Conflict.Abatton.hasPlayer(player.getName()) && (Conflict.Oceian.getLocation().distance(hurt.getLocation())<500.0 || Conflict.Savania.getLocation().distance(hurt.getLocation())<500.0))
+						|| (Conflict.Oceian.hasPlayer(player.getName()) && (Conflict.Abatton.getLocation().distance(hurt.getLocation())<500.0 || Conflict.Savania.getLocation().distance(hurt.getLocation())<500.0))
+						|| (Conflict.Savania.hasPlayer(player.getName()) && (Conflict.Abatton.getLocation().distance(hurt.getLocation())<500.0 || Conflict.Oceian.getLocation().distance(hurt.getLocation())<500.0))){
 					event.setCancelled(true);
-				}else if((Conflict.ABATTON_PLAYERS.contains(player.getName()) && (Conflict.ABATTON_LOCATION.distance(hurt.getLocation())<500.0))
-						|| (Conflict.OCEIAN_PLAYERS.contains(player.getName()) && (Conflict.OCEIAN_LOCATION.distance(hurt.getLocation())<500.0))
-						|| (Conflict.SAVANIA_PLAYERS.contains(player.getName()) && (Conflict.SAVANIA_LOCATION.distance(hurt.getLocation())<500.0))){
+				}else if((Conflict.Abatton.hasPlayer(player.getName()) && (Conflict.Abatton.getLocation().distance(hurt.getLocation())<500.0))
+						|| (Conflict.Oceian.hasPlayer(player.getName()) && (Conflict.Oceian.getLocation().distance(hurt.getLocation())<500.0))
+						|| (Conflict.Savania.hasPlayer(player.getName()) && (Conflict.Savania.getLocation().distance(hurt.getLocation())<500.0))){
 					return;
 				}else if(player.getLocation().distance(player.getWorld().getSpawnLocation()) < 5000.0){
 					event.setCancelled(true);
@@ -70,17 +73,17 @@ public class BeyondEntityListener implements Listener {
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		if(event.getDamager() instanceof Player){
 			Player player = (Player) event.getDamager();
-			if((Conflict.ABATTON_PERKS.contains("strike") && Conflict.ABATTON_PLAYERS.contains(player.getName()))
-					|| (Conflict.OCEIAN_PERKS.contains("strike") && Conflict.OCEIAN_PLAYERS.contains(player.getName()))
-					|| (Conflict.SAVANIA_PERKS.contains("strike") && Conflict.SAVANIA_PLAYERS.contains(player.getName()))){
+			if((Conflict.Abatton.getPerks().contains("strike") && Conflict.Abatton.hasPlayer(player.getName()))
+					|| (Conflict.Oceian.getPerks().contains("strike") && Conflict.Oceian.hasPlayer(player.getName()))
+					|| (Conflict.Savania.getPerks().contains("strike") && Conflict.Savania.hasPlayer(player.getName()))){
 				event.setDamage(event.getDamage()+1);
 			}
 		}
 		if(event.getEntity() instanceof Player){
 			Player player = (Player) event.getEntity();
-			if((Conflict.ABATTON_PERKS.contains("shield") && Conflict.ABATTON_PLAYERS.contains(player.getName()))
-					|| (Conflict.OCEIAN_PERKS.contains("shield") && Conflict.OCEIAN_PLAYERS.contains(player.getName()))
-					|| (Conflict.SAVANIA_PERKS.contains("shield") && Conflict.SAVANIA_PLAYERS.contains(player.getName()))){
+			if((Conflict.Abatton.getPerks().contains("shield") && Conflict.Abatton.hasPlayer(player.getName()))
+					|| (Conflict.Oceian.getPerks().contains("shield") && Conflict.Oceian.hasPlayer(player.getName()))
+					|| (Conflict.Savania.getPerks().contains("shield") && Conflict.Savania.hasPlayer(player.getName()))){
 				event.setDamage(event.getDamage()-1);
 			}
 		}
@@ -132,9 +135,9 @@ public class BeyondEntityListener implements Listener {
 			int random = Conflict.random.nextInt(100);
 			if(random < 2 
 					&& event.getEntity() instanceof PigZombie 
-					&& ((Conflict.ABATTON_PLAYERS.contains(player.getName()) && Conflict.ABATTON_PERKS.contains("weapondrops"))
-							|| (Conflict.OCEIAN_PLAYERS.contains(player.getName()) && Conflict.OCEIAN_PERKS.contains("weapondrops"))
-							|| (Conflict.SAVANIA_PLAYERS.contains(player.getName()) && Conflict.SAVANIA_PERKS.contains("weapondrops")))){
+					&& ((Conflict.Abatton.hasPlayer(player.getName()) && Conflict.Abatton.getPerks().contains("weapondrops"))
+							|| (Conflict.Oceian.hasPlayer(player.getName()) && Conflict.Oceian.getPerks().contains("weapondrops"))
+							|| (Conflict.Savania.hasPlayer(player.getName()) && Conflict.Savania.getPerks().contains("weapondrops")))){
 				ItemStack stack = new ItemStack(BeyondUtil.weaponTypeRandomizer(), 1);
 				while(stack.getEnchantments().isEmpty()){
 					stack.addUnsafeEnchantment(BeyondUtil.weaponEnchantRandomizer(), BeyondUtil.weaponLevelRandomizer());
@@ -147,9 +150,9 @@ public class BeyondEntityListener implements Listener {
 				player.sendMessage("Hooray! A "+ChatColor.BLUE.toString()+stack.getType().toString()+ChatColor.WHITE.toString()+" dropped! Rarity Index: "+BeyondUtil.getColorOfRarity(BeyondUtil.rarity(stack))+BeyondUtil.rarity(stack));
 			}else if(random >= 2 && random < 4 
 					&& event.getEntity() instanceof PigZombie 
-					&& ((Conflict.ABATTON_PLAYERS.contains(player.getName()) && Conflict.ABATTON_PERKS.contains("armordrops"))
-							|| (Conflict.OCEIAN_PLAYERS.contains(player.getName()) && Conflict.OCEIAN_PERKS.contains("armordrops"))
-							|| (Conflict.SAVANIA_PLAYERS.contains(player.getName()) && Conflict.SAVANIA_PERKS.contains("armordrops")))){
+					&& ((Conflict.Abatton.hasPlayer(player.getName()) && Conflict.Abatton.getPerks().contains("armordrops"))
+							|| (Conflict.Oceian.hasPlayer(player.getName()) && Conflict.Oceian.getPerks().contains("armordrops"))
+							|| (Conflict.Savania.hasPlayer(player.getName()) && Conflict.Savania.getPerks().contains("armordrops")))){
 				ItemStack stack = new ItemStack(BeyondUtil.armorTypeRandomizer(), 1);
 				stack.addUnsafeEnchantment(BeyondUtil.armorEnchantRandomizer(), BeyondUtil.armorLevelRandomizer());
 				int next = Conflict.random.nextInt(100);
@@ -160,9 +163,9 @@ public class BeyondEntityListener implements Listener {
 				player.sendMessage("Hooray! A "+ChatColor.BLUE.toString()+stack.getType().toString()+ChatColor.WHITE.toString()+" dropped! Rarity Index: "+BeyondUtil.getColorOfRarity(BeyondUtil.rarity(stack))+BeyondUtil.rarity(stack));
 			}else if(random < 2 
 					&& event.getEntity() instanceof Zombie && !(event.getEntity() instanceof PigZombie)
-					&& ((Conflict.ABATTON_PLAYERS.contains(player.getName()) && Conflict.ABATTON_PERKS.contains("tooldrops"))
-							|| (Conflict.OCEIAN_PLAYERS.contains(player.getName()) && Conflict.OCEIAN_PERKS.contains("tooldrops"))
-							|| (Conflict.SAVANIA_PLAYERS.contains(player.getName()) && Conflict.SAVANIA_PERKS.contains("tooldrops")))){
+					&& ((Conflict.Abatton.hasPlayer(player.getName()) && Conflict.Abatton.getPerks().contains("tooldrops"))
+							|| (Conflict.Oceian.hasPlayer(player.getName()) && Conflict.Oceian.getPerks().contains("tooldrops"))
+							|| (Conflict.Savania.hasPlayer(player.getName()) && Conflict.Savania.getPerks().contains("tooldrops")))){
 				ItemStack stack = new ItemStack(BeyondUtil.toolTypeRandomizer(), 1);
 				stack.addUnsafeEnchantment(BeyondUtil.toolEnchantRandomizer(), BeyondUtil.toolLevelRandomizer());
 				int next = Conflict.random.nextInt(100);
@@ -173,18 +176,18 @@ public class BeyondEntityListener implements Listener {
 				player.sendMessage("Hooray! A "+ChatColor.BLUE.toString()+stack.getType().toString()+ChatColor.WHITE.toString()+" dropped! Rarity Index: "+BeyondUtil.getColorOfRarity(BeyondUtil.rarity(stack))+BeyondUtil.rarity(stack));
 			}else if(random >= 2 && random < 4 
 					&& event.getEntity() instanceof Zombie && !(event.getEntity() instanceof PigZombie)
-					&& ((Conflict.ABATTON_PLAYERS.contains(player.getName()) && Conflict.ABATTON_PERKS.contains("potiondrops"))
-							|| (Conflict.OCEIAN_PLAYERS.contains(player.getName()) && Conflict.OCEIAN_PERKS.contains("potiondrops"))
-							|| (Conflict.SAVANIA_PLAYERS.contains(player.getName()) && Conflict.SAVANIA_PERKS.contains("potiondrops")))){
+					&& ((Conflict.Abatton.hasPlayer(player.getName()) && Conflict.Abatton.getPerks().contains("potiondrops"))
+							|| (Conflict.Oceian.hasPlayer(player.getName()) && Conflict.Oceian.getPerks().contains("potiondrops"))
+							|| (Conflict.Savania.hasPlayer(player.getName()) && Conflict.Savania.getPerks().contains("potiondrops")))){
 				Potion potion = new Potion(BeyondUtil.potionTypeRandomizer(), BeyondUtil.potionTierRandomizer(), BeyondUtil.potionSplashRandomizer());
 				ItemStack stack = new ItemStack(Material.POTION, 1);
 				potion.apply(stack);
 				event.getDrops().add(stack);
 			}else if(random < 2 
 					&& event.getEntity() instanceof Skeleton 
-					&& ((Conflict.ABATTON_PLAYERS.contains(player.getName()) && Conflict.ABATTON_PERKS.contains("bowdrops"))
-							|| (Conflict.OCEIAN_PLAYERS.contains(player.getName()) && Conflict.OCEIAN_PERKS.contains("bowdrops"))
-							|| (Conflict.SAVANIA_PLAYERS.contains(player.getName()) && Conflict.SAVANIA_PERKS.contains("bowdrops")))){
+					&& ((Conflict.Abatton.hasPlayer(player.getName()) && Conflict.Abatton.getPerks().contains("bowdrops"))
+							|| (Conflict.Oceian.hasPlayer(player.getName()) && Conflict.Oceian.getPerks().contains("bowdrops"))
+							|| (Conflict.Savania.hasPlayer(player.getName()) && Conflict.Savania.getPerks().contains("bowdrops")))){
 				ItemStack stack = new ItemStack(Material.BOW, 1);
 				stack.addUnsafeEnchantment(BeyondUtil.bowEnchantRandomizer(), BeyondUtil.bowLevelRandomizer());
 				int next = Conflict.random.nextInt(100);
@@ -194,9 +197,9 @@ public class BeyondEntityListener implements Listener {
 				event.getEntity().getWorld().dropItemNaturally(event.getEntity().getLocation(), stack);
 			}else if(random < 2
 					&& event.getEntity() instanceof Sheep 
-					&& ((Conflict.ABATTON_PLAYERS.contains(player.getName()) && Conflict.ABATTON_PERKS.contains("golddrops"))
-							|| (Conflict.OCEIAN_PLAYERS.contains(player.getName()) && Conflict.OCEIAN_PERKS.contains("golddrops"))
-							|| (Conflict.SAVANIA_PLAYERS.contains(player.getName()) && Conflict.SAVANIA_PERKS.contains("golddrops")))){
+					&& ((Conflict.Abatton.hasPlayer(player.getName()) && Conflict.Abatton.getPerks().contains("golddrops"))
+							|| (Conflict.Oceian.hasPlayer(player.getName()) && Conflict.Oceian.getPerks().contains("golddrops"))
+							|| (Conflict.Savania.hasPlayer(player.getName()) && Conflict.Savania.getPerks().contains("golddrops")))){
 				ItemStack stack = new ItemStack(Material.GOLD_INGOT, 1);
 				event.getEntity().getWorld().dropItemNaturally(event.getEntity().getLocation(), stack);
 			}

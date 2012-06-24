@@ -13,11 +13,24 @@ import org.bukkit.Location;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import Lihad.Conflict.Conflict.CityEnum;
-
 public class War {
 
-	public static Calendar cal = Calendar.getInstance();
+    enum CityEnum {
+        None,
+        Contested,
+        Abatton,
+        Oceian,
+        Savania
+    };
+    
+    public static CityEnum getPlayerCityEnum(String playerName) {
+        if (Conflict.Abatton.hasPlayer(playerName)) return CityEnum.Abatton;
+        if (Conflict.Oceian.hasPlayer(playerName)) return CityEnum.Oceian;
+        if (Conflict.Savania.hasPlayer(playerName)) return CityEnum.Savania;
+        return null;
+    }
+    
+    public static Calendar cal = Calendar.getInstance();
 
     public static boolean warShouldStart() {
 
@@ -46,7 +59,7 @@ public class War {
         public String name;
         public Location location;
         public int captureCounter = 0;
-        public CityEnum owner = Conflict.CityEnum.None;
+        public CityEnum owner = CityEnum.None;
         public CityEnum captureCityTemp;
 
         public Map<CityEnum, Integer> cityCounters = new HashMap<CityEnum, Integer>();
@@ -60,24 +73,26 @@ public class War {
 
     public List<WarNode> nodes = new LinkedList<WarNode>();
     boolean allNodesConquered = false;
+
+    public java.util.Set<Player> reporters = new java.util.HashSet<Player>();
     
     public War() {
     
-        for (Conflict.Node n : Conflict.nodes) {
-            WarNode wn = new WarNode(n.name, n.location);
+        for (Node n : Conflict.nodes) {
+            WarNode wn = new WarNode(n.name, n.getLocation());
             this.nodes.add(wn);
         }
     }
     
     public void postWarAutoList(org.bukkit.command.CommandSender sender){
         for (WarNode node : nodes) {
-            String message = ChatColor.GOLD+"Node "+ node.name +" Tally | ";
+            String message = ChatColor.GOLD + node.name +" Tally | ";
 
             if (node.conquered) {
                 message += ChatColor.GREEN + "Conquered by " + node.owner;
             }
             else if (node.cityCounters.isEmpty()) {
-                message += ChatColor.DARK_AQUA + "No city has claimed this node!";
+                message += ChatColor.DARK_AQUA + "Not claimed by any city!";
             }
             else {
                 for (Map.Entry entry : node.cityCounters.entrySet()) {
@@ -115,15 +130,15 @@ public class War {
                     }
                     if (player.getLocation().distanceSquared(node.location) < 3*3){  
                         if(node.captureCityTemp == CityEnum.None){
-                            node.captureCityTemp = Conflict.getPlayerCity(player.getName());
+                            node.captureCityTemp = getPlayerCityEnum(player.getName());
                         }
                         else if(node.captureCityTemp == CityEnum.Contested){
                             continue;
                         }
-                        else if( Conflict.getPlayerCity(player.getName()) == node.owner ) {
+                        else if( getPlayerCityEnum(player.getName()) == node.owner ) {
                             continue;
                         }
-                        else if( Conflict.getPlayerCity(player.getName()) == node.captureCityTemp ) {
+                        else if( getPlayerCityEnum(player.getName()) == node.captureCityTemp ) {
                             node.captureCounter++;
                             player.sendMessage(ChatColor.GOLD+"Taking point. "+node.captureCounter+"/30");
                         }else{
@@ -201,9 +216,9 @@ public class War {
             String prize = prizes.pop();
             
             // TODO: Fix this once city objects are in
-            if      (winner == CityEnum.Abatton) { Conflict.ABATTON_TRADES.add(prize); }
-            else if (winner == CityEnum.Oceian)  { Conflict.OCEIAN_TRADES.add(prize); }
-            else if (winner == CityEnum.Savania) { Conflict.SAVANIA_TRADES.add(prize); }
+            if      (winner == CityEnum.Abatton) { Conflict.Abatton.addTrade(prize); }
+            else if (winner == CityEnum.Oceian)  { Conflict.Oceian.addTrade(prize); }
+            else if (winner == CityEnum.Savania) { Conflict.Savania.addTrade(prize); }
             
             // And move the trade location to the node.
             if      (prize == "blacksmith")     { Conflict.TRADE_BLACKSMITH = node.location; }
@@ -212,7 +227,7 @@ public class War {
             else if (prize == "richportal")     { Conflict.TRADE_RICHPORTAL = node.location; }
             else if (prize == "mystportal")     { Conflict.TRADE_MYSTPORTAL = node.location; }
             
-            Bukkit.getServer().broadcastMessage("" + ChatColor.GOLD + winner + ChatColor.GRAY + "has won the " + node.name + ", and gains the " + ChatColor.LIGHT_PURPLE + prize + ChatColor.GRAY + " perk!");
+            Bukkit.getServer().broadcastMessage("" + ChatColor.GOLD + winner + ChatColor.GRAY + " has won the " + node.name + ", and gains the " + ChatColor.LIGHT_PURPLE + prize + ChatColor.GRAY + " perk!");
         }
     }
 

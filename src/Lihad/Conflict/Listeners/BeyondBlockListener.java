@@ -23,12 +23,9 @@ public class BeyondBlockListener implements Listener {
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event){
 		if(event.getBlock().getWorld().getName().equals("survival")){
-			if(((!Conflict.ABATTON_PLAYERS.contains(event.getPlayer().getName()) && Conflict.ABATTON_LOCATION.distance(event.getBlock().getLocation()) < 500)
-					|| (!Conflict.OCEIAN_PLAYERS.contains(event.getPlayer().getName()) && Conflict.OCEIAN_LOCATION.distance(event.getBlock().getLocation()) < 500)
-					|| (!Conflict.SAVANIA_PLAYERS.contains(event.getPlayer().getName()) && Conflict.SAVANIA_LOCATION.distance(event.getBlock().getLocation()) < 500)
-					|| (!Conflict.ABATTON_GENERALS.contains(event.getPlayer().getName()) && Conflict.ABATTON_LOCATION.distance(event.getBlock().getLocation()) < Conflict.ABATTON_PROTECTION)
-					|| (!Conflict.OCEIAN_GENERALS.contains(event.getPlayer().getName()) && Conflict.OCEIAN_LOCATION.distance(event.getBlock().getLocation()) < Conflict.OCEIAN_PROTECTION)
-					|| (!Conflict.SAVANIA_GENERALS.contains(event.getPlayer().getName()) && Conflict.SAVANIA_LOCATION.distance(event.getBlock().getLocation()) < Conflict.SAVANIA_PROTECTION)
+            if (((!Conflict.Abatton.getGenerals().contains(event.getPlayer().getName()) && Conflict.Abatton.getLocation().distance(event.getBlock().getLocation()) < Conflict.Abatton.getProtectionRadius())
+					|| (!Conflict.Oceian.getGenerals().contains(event.getPlayer().getName()) && Conflict.Oceian.getLocation().distance(event.getBlock().getLocation()) < Conflict.Oceian.getProtectionRadius())
+					|| (!Conflict.Savania.getGenerals().contains(event.getPlayer().getName()) && Conflict.Savania.getLocation().distance(event.getBlock().getLocation()) < Conflict.Savania.getProtectionRadius())
 			)&& !event.getPlayer().isOp()){
 				event.setCancelled(true);
 			}
@@ -52,12 +49,9 @@ public class BeyondBlockListener implements Listener {
 	@EventHandler
 	public void onBlockDamage(BlockDamageEvent event){
 		if(event.getBlock().getWorld().getName().equals("survival")){
-			if(((!Conflict.ABATTON_PLAYERS.contains(event.getPlayer().getName()) && Conflict.ABATTON_LOCATION.distance(event.getBlock().getLocation()) < 500)
-					|| (!Conflict.OCEIAN_PLAYERS.contains(event.getPlayer().getName()) && Conflict.OCEIAN_LOCATION.distance(event.getBlock().getLocation()) < 500)
-					|| (!Conflict.SAVANIA_PLAYERS.contains(event.getPlayer().getName()) && Conflict.SAVANIA_LOCATION.distance(event.getBlock().getLocation()) < 500)
-					|| (!Conflict.ABATTON_GENERALS.contains(event.getPlayer().getName()) && Conflict.ABATTON_LOCATION.distance(event.getBlock().getLocation()) < Conflict.ABATTON_PROTECTION)
-					|| (!Conflict.OCEIAN_GENERALS.contains(event.getPlayer().getName()) && Conflict.OCEIAN_LOCATION.distance(event.getBlock().getLocation()) < Conflict.OCEIAN_PROTECTION)
-					|| (!Conflict.SAVANIA_GENERALS.contains(event.getPlayer().getName()) && Conflict.SAVANIA_LOCATION.distance(event.getBlock().getLocation()) < Conflict.SAVANIA_PROTECTION))
+            if(( (!Conflict.Abatton.getGenerals().contains(event.getPlayer().getName()) && Conflict.Abatton.getLocation().distance(event.getBlock().getLocation()) < Conflict.Abatton.getProtectionRadius())
+					|| (!Conflict.Oceian.getGenerals().contains(event.getPlayer().getName()) && Conflict.Oceian.getLocation().distance(event.getBlock().getLocation()) < Conflict.Oceian.getProtectionRadius())
+					|| (!Conflict.Savania.getGenerals().contains(event.getPlayer().getName()) && Conflict.Savania.getLocation().distance(event.getBlock().getLocation()) < Conflict.Savania.getProtectionRadius()))
 					&& !event.getPlayer().isOp()){
 				event.setCancelled(true);
 			}
@@ -74,12 +68,9 @@ public class BeyondBlockListener implements Listener {
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event){
 		if(event.getBlock().getWorld().getName().equals("survival")){
-			if(((!Conflict.ABATTON_PLAYERS.contains(event.getPlayer().getName()) && Conflict.ABATTON_LOCATION.distance(event.getBlock().getLocation()) < 500)
-					|| (!Conflict.OCEIAN_PLAYERS.contains(event.getPlayer().getName()) && Conflict.OCEIAN_LOCATION.distance(event.getBlock().getLocation()) < 500)
-					|| (!Conflict.SAVANIA_PLAYERS.contains(event.getPlayer().getName()) && Conflict.SAVANIA_LOCATION.distance(event.getBlock().getLocation()) < 500)
-					|| (!Conflict.ABATTON_GENERALS.contains(event.getPlayer().getName()) && Conflict.ABATTON_LOCATION.distance(event.getBlock().getLocation()) < Conflict.ABATTON_PROTECTION)
-					|| (!Conflict.OCEIAN_GENERALS.contains(event.getPlayer().getName()) && Conflict.OCEIAN_LOCATION.distance(event.getBlock().getLocation()) < Conflict.OCEIAN_PROTECTION)
-					|| (!Conflict.SAVANIA_GENERALS.contains(event.getPlayer().getName()) && Conflict.SAVANIA_LOCATION.distance(event.getBlock().getLocation()) < Conflict.SAVANIA_PROTECTION))
+            if(((!Conflict.Abatton.getGenerals().contains(event.getPlayer().getName()) && Conflict.Abatton.getLocation().distance(event.getBlock().getLocation()) < Conflict.Abatton.getProtectionRadius())
+					|| (!Conflict.Oceian.getGenerals().contains(event.getPlayer().getName()) && Conflict.Oceian.getLocation().distance(event.getBlock().getLocation()) < Conflict.Oceian.getProtectionRadius())
+					|| (!Conflict.Savania.getGenerals().contains(event.getPlayer().getName()) && Conflict.Savania.getLocation().distance(event.getBlock().getLocation()) < Conflict.Savania.getProtectionRadius()))
 					&& !event.getPlayer().isOp()){
 				event.setCancelled(true);
 			}

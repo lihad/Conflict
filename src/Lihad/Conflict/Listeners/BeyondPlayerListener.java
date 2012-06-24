@@ -2,7 +2,6 @@ package Lihad.Conflict.Listeners;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
@@ -50,28 +49,28 @@ public class BeyondPlayerListener implements Listener {
 				event.getPlayer().sendMessage(ChatColor.RED+"You need to join a Capital before continuing...");
 				event.getPlayer().sendMessage(ChatColor.RED+"Type "+ChatColor.GRAY+"/abatton"+ChatColor.RED+" or "+ChatColor.GRAY+"/oceian"+ChatColor.RED+" or "+ChatColor.GRAY+"/savania");
 			}
-			if(Conflict.ABATTON_LOCATION.distance(event.getTo()) < 500.0
-					&& Conflict.ABATTON_LOCATION.distance(event.getFrom()) >= 500.0){
+			if(Conflict.Abatton.getLocation().distance(event.getTo()) < 500.0
+					&& Conflict.Abatton.getLocation().distance(event.getFrom()) >= 500.0){
 				event.getPlayer().sendMessage(ChatColor.GRAY.toString()+"You have entered the Capital of Abatton");
 			}
-			else if(Conflict.ABATTON_LOCATION.distance(event.getTo()) > 500.0
-					&& Conflict.ABATTON_LOCATION.distance(event.getFrom()) <= 500.0){
+			else if(Conflict.Abatton.getLocation().distance(event.getTo()) > 500.0
+					&& Conflict.Abatton.getLocation().distance(event.getFrom()) <= 500.0){
 				event.getPlayer().sendMessage(ChatColor.GRAY.toString()+"You have left the Capital of Abatton");
 			}
-			if(Conflict.OCEIAN_LOCATION.distance(event.getTo()) < 500.0
-					&& Conflict.OCEIAN_LOCATION.distance(event.getFrom()) >= 500.0){
+			if(Conflict.Oceian.getLocation().distance(event.getTo()) < 500.0
+					&& Conflict.Oceian.getLocation().distance(event.getFrom()) >= 500.0){
 				event.getPlayer().sendMessage(ChatColor.GRAY.toString()+"You have entered the Capital of Oceian");
 			}
-			else if(Conflict.OCEIAN_LOCATION.distance(event.getTo()) > 500.0
-					&& Conflict.OCEIAN_LOCATION.distance(event.getFrom()) <= 500.0){
+			else if(Conflict.Oceian.getLocation().distance(event.getTo()) > 500.0
+					&& Conflict.Oceian.getLocation().distance(event.getFrom()) <= 500.0){
 				event.getPlayer().sendMessage(ChatColor.GRAY.toString()+"You have left the Capital of Oceian");
 			}
-			if(Conflict.SAVANIA_LOCATION.distance(event.getTo()) < 500.0
-					&& Conflict.SAVANIA_LOCATION.distance(event.getFrom()) >= 500.0){
+			if(Conflict.Savania.getLocation().distance(event.getTo()) < 500.0
+					&& Conflict.Savania.getLocation().distance(event.getFrom()) >= 500.0){
 				event.getPlayer().sendMessage(ChatColor.GRAY.toString()+"You have entered the Capital of Savania");
 			}
-			else if(Conflict.SAVANIA_LOCATION.distance(event.getTo()) > 500.0
-					&& Conflict.SAVANIA_LOCATION.distance(event.getFrom()) <= 500.0){
+			else if(Conflict.Savania.getLocation().distance(event.getTo()) > 500.0
+					&& Conflict.Savania.getLocation().distance(event.getFrom()) <= 500.0){
 				event.getPlayer().sendMessage(ChatColor.GRAY.toString()+"You have left the Capital of Savania");
 			}
 			if(event.getPlayer().getWorld().getSpawnLocation().distance(event.getTo()) > 5000.0
@@ -86,8 +85,8 @@ public class BeyondPlayerListener implements Listener {
 	}
 	@EventHandler
 	public static void onPlayerJoin(PlayerJoinEvent event){
-		if(!Conflict.ABATTON_PLAYERS.contains(event.getPlayer().getName()) && !Conflict.OCEIAN_PLAYERS.contains(event.getPlayer().getName())
-				&& !Conflict.SAVANIA_PLAYERS.contains(event.getPlayer().getName())
+		if(!Conflict.Abatton.hasPlayer(event.getPlayer().getName()) && !Conflict.Oceian.hasPlayer(event.getPlayer().getName())
+				&& !Conflict.Savania.hasPlayer(event.getPlayer().getName())
 				&& !Conflict.handler.inGroup(event.getPlayer().getWorld().getName(), event.getPlayer().getName(), "Drifter")){
 			if(!Conflict.UNASSIGNED_PLAYERS.contains(event.getPlayer().getName()))Conflict.UNASSIGNED_PLAYERS.add(event.getPlayer().getName());
 		}
@@ -123,9 +122,9 @@ public class BeyondPlayerListener implements Listener {
 				|| event.getTo().distance(Conflict.TRADE_RICHPORTAL) < 200) && !Conflict.handler.has(event.getPlayer(), "conflict.teleport")){
 			event.setTo(event.getFrom());
 		}
-		else if(event.getTo().getWorld().getName().equals("survival") && ((event.getTo().distance(Conflict.ABATTON_LOCATION) < 500 && !Conflict.ABATTON_PLAYERS.contains(event.getPlayer().getName()))
-				|| (event.getTo().distance(Conflict.OCEIAN_LOCATION) < 500 && !Conflict.OCEIAN_PLAYERS.contains(event.getPlayer().getName()))
-				|| (event.getTo().distance(Conflict.SAVANIA_LOCATION) < 500 && !Conflict.SAVANIA_PLAYERS.contains(event.getPlayer().getName()))) && !Conflict.handler.has(event.getPlayer(), "conflict.teleport")){
+		else if(event.getTo().getWorld().getName().equals("survival") && ((event.getTo().distance(Conflict.Abatton.getLocation()) < 500 && !Conflict.Abatton.hasPlayer(event.getPlayer().getName()))
+				|| (event.getTo().distance(Conflict.Oceian.getLocation()) < 500 && !Conflict.Oceian.hasPlayer(event.getPlayer().getName()))
+				|| (event.getTo().distance(Conflict.Savania.getLocation()) < 500 && !Conflict.Savania.hasPlayer(event.getPlayer().getName()))) && !Conflict.handler.has(event.getPlayer(), "conflict.teleport")){
 				event.setTo(event.getFrom());
 			}
 		else if(event.getTo().getWorld().getName().equals("richworld") && event.getCause().equals(TeleportCause.ENDER_PEARL)){
@@ -136,9 +135,9 @@ public class BeyondPlayerListener implements Listener {
 	public static void onPlayerInteractEntity(PlayerInteractEntityEvent event){
 		//if(event.getRightClicked() instanceof Villager && event.getPlayer().getInventory().contains(Material.DIAMOND_BLOCK)
 		if(event.getRightClicked() instanceof Villager && event.getPlayer().getLevel() >= 25
-				&& ((Conflict.ABATTON_PLAYERS.contains(event.getPlayer().getName()) && Conflict.ABATTON_PERKS.contains("enchantup"))
-				|| (Conflict.OCEIAN_PLAYERS.contains(event.getPlayer().getName()) && Conflict.OCEIAN_PERKS.contains("enchantup"))
-				|| (Conflict.SAVANIA_PLAYERS.contains(event.getPlayer().getName()) && Conflict.SAVANIA_PERKS.contains("enchantup")))){
+				&& ((Conflict.Abatton.hasPlayer(event.getPlayer().getName()) && Conflict.Abatton.getPerks().contains("enchantup"))
+				|| (Conflict.Oceian.hasPlayer(event.getPlayer().getName()) && Conflict.Oceian.getPerks().contains("enchantup"))
+				|| (Conflict.Savania.hasPlayer(event.getPlayer().getName()) && Conflict.Savania.getPerks().contains("enchantup")))){
 			if(event.getPlayer().getItemInHand() != null){
 				if(!event.getPlayer().getItemInHand().getEnchantments().isEmpty()){
 					Enchantment enchantment = (Enchantment) event.getPlayer().getItemInHand().getEnchantments().keySet().toArray()[(Conflict.random.nextInt(event.getPlayer().getItemInHand().getEnchantments().size()))];
@@ -173,9 +172,9 @@ public class BeyondPlayerListener implements Listener {
 			List<Entity> entities = event.getPlayer().getNearbyEntities(20, 20, 20);
 			for(int i=0;i<entities.size();i++){
 				if(entities.get(i) instanceof Player 
-						&& ((Conflict.ABATTON_PLAYERS.contains(((Player)entities.get(i)).getName()) && Conflict.ABATTON_PLAYERS.contains(event.getPlayer().getName()))
-								|| (Conflict.OCEIAN_PLAYERS.contains(((Player)entities.get(i)).getName()) && Conflict.OCEIAN_PLAYERS.contains(event.getPlayer().getName()))
-								|| (Conflict.SAVANIA_PLAYERS.contains(((Player)entities.get(i)).getName()) && Conflict.SAVANIA_PLAYERS.contains(event.getPlayer().getName())))
+						&& ((Conflict.Abatton.hasPlayer(((Player)entities.get(i)).getName()) && Conflict.Abatton.hasPlayer(event.getPlayer().getName()))
+								|| (Conflict.Oceian.hasPlayer(((Player)entities.get(i)).getName()) && Conflict.Oceian.hasPlayer(event.getPlayer().getName()))
+								|| (Conflict.Savania.hasPlayer(((Player)entities.get(i)).getName()) && Conflict.Savania.hasPlayer(event.getPlayer().getName())))
 				){
 					((Player)entities.get(i)).giveExp(event.getAmount());
 				}
@@ -281,71 +280,71 @@ public class BeyondPlayerListener implements Listener {
                 
             }
 		}
-        else if(event.getClickedBlock() != null && event.getClickedBlock().getLocation().equals(Conflict.ABATTON_LOCATION.getBlock().getLocation())){
+        else if(event.getClickedBlock() != null && event.getClickedBlock().getLocation().equals(Conflict.Abatton.getLocation().getBlock().getLocation())){
 			if(player.getItemInHand().getType() == Material.GOLD_INGOT){
 				player.sendMessage("You gave "+ChatColor.YELLOW.toString()+"1 "+ChatColor.WHITE.toString()+"Gold Bar to "+ChatColor.GREEN.toString()+"Abatton");
 				if(player.getItemInHand().getAmount() == 1){
 					player.getInventory().setItemInHand(null);
-					Conflict.ABATTON_WORTH++;
+					Conflict.Abatton.addMoney(1);
 				}else if(player.isSneaking()){
-					Conflict.ABATTON_WORTH = Conflict.ABATTON_WORTH + player.getItemInHand().getAmount();
+					Conflict.Abatton.addMoney(player.getItemInHand().getAmount());
 					player.getInventory().setItemInHand(null);
 				}else{
 					player.getItemInHand().setAmount(player.getItemInHand().getAmount()-1);
 					player.getInventory().setItemInHand(player.getItemInHand());
-					Conflict.ABATTON_WORTH++;
+					Conflict.Abatton.addMoney(1);
 				}
 				player.updateInventory();
 			}
-			player.sendMessage("Abatton has "+ChatColor.GREEN.toString()+Conflict.ABATTON_WORTH+" Gold!");
-		}else if(event.getClickedBlock() != null && event.getClickedBlock().getLocation().equals(Conflict.OCEIAN_LOCATION.getBlock().getLocation())){
+			player.sendMessage("Abatton has "+ChatColor.GREEN.toString()+Conflict.Abatton.getMoney()+" Gold!");
+		}else if(event.getClickedBlock() != null && event.getClickedBlock().getLocation().equals(Conflict.Oceian.getLocation().getBlock().getLocation())){
 			if(player.getItemInHand().getType() == Material.GOLD_INGOT){
 				player.sendMessage("You gave "+ChatColor.YELLOW.toString()+"1 "+ChatColor.WHITE.toString()+"Gold Bar to "+ChatColor.GREEN.toString()+"Oceian");
 				if(player.getItemInHand().getAmount() == 1){
 					player.getInventory().setItemInHand(null);
-					Conflict.OCEIAN_WORTH++;
+					Conflict.Oceian.addMoney(1);
 				}else if(player.isSneaking()){
-					Conflict.OCEIAN_WORTH = Conflict.OCEIAN_WORTH + player.getItemInHand().getAmount();
+					Conflict.Oceian.addMoney(player.getItemInHand().getAmount());
 					player.getInventory().setItemInHand(null);
 				}else{
 					player.getItemInHand().setAmount(player.getItemInHand().getAmount()-1);
 					player.getInventory().setItemInHand(player.getItemInHand());
-					Conflict.OCEIAN_WORTH++;
+					Conflict.Oceian.addMoney(1);
 				}
 				player.updateInventory();
 			}
-			player.sendMessage("Oceian has "+ChatColor.GREEN.toString()+Conflict.OCEIAN_WORTH+" Gold!");
-		}else if(event.getClickedBlock() != null && event.getClickedBlock().getLocation().equals(Conflict.SAVANIA_LOCATION.getBlock().getLocation())){
+			player.sendMessage("Oceian has "+ChatColor.GREEN.toString()+Conflict.Oceian.getMoney()+" Gold!");
+		}else if(event.getClickedBlock() != null && event.getClickedBlock().getLocation().equals(Conflict.Savania.getLocation().getBlock().getLocation())){
 			if(player.getItemInHand().getType() == Material.GOLD_INGOT){
 				player.sendMessage("You gave "+ChatColor.YELLOW.toString()+"1 "+ChatColor.WHITE.toString()+"Gold Bar to "+ChatColor.GREEN.toString()+"Savania");
 				if(player.getItemInHand().getAmount() == 1){
 					player.getInventory().setItemInHand(null);
-					Conflict.SAVANIA_WORTH++;
+					Conflict.Savania.addMoney(1);
 				}else if(player.isSneaking()){
-					Conflict.SAVANIA_WORTH = Conflict.SAVANIA_WORTH + player.getItemInHand().getAmount();
+					Conflict.Savania.addMoney(player.getItemInHand().getAmount());
 					player.getInventory().setItemInHand(null);
 				}else{
 					player.getItemInHand().setAmount(player.getItemInHand().getAmount()-1);
 					player.getInventory().setItemInHand(player.getItemInHand());
-					Conflict.SAVANIA_WORTH++;
+					Conflict.Savania.addMoney(1);
 				}
 				player.updateInventory();
 			}
-			player.sendMessage("Savania has "+ChatColor.GREEN.toString()+Conflict.SAVANIA_WORTH+" Gold!");
-		}else if(event.getClickedBlock() != null && event.getClickedBlock().getLocation().equals(Conflict.ABATTON_LOCATION_DRIFTER.getBlock().getLocation())){
+			player.sendMessage("Savania has "+ChatColor.GREEN.toString()+Conflict.Savania.getMoney()+" Gold!");
+		}else if(event.getClickedBlock() != null && event.getClickedBlock().getLocation().equals(Conflict.Abatton.getSpongeLocation().getBlock().getLocation())){
 			try{
 				if(Conflict.handler.inGroup(player.getWorld().getName(), player.getName(), "Drifter")
 						&& !Conflict.handler.inGroup(player.getWorld().getName(), player.getName(), "Peasant")){
-					if(((Conflict.OCEIAN_PLAYERS.size()-Conflict.ABATTON_PLAYERS.size()) < -5) || (Conflict.SAVANIA_PLAYERS.size()-Conflict.ABATTON_PLAYERS.size()) < -5){
+					if(((Conflict.Oceian.getPopulation()-Conflict.Abatton.getPopulation()) < -5) || (Conflict.Savania.getPopulation()-Conflict.Abatton.getPopulation()) < -5){
 						player.sendMessage(ChatColor.BLUE.toString()+"This Capital is Over Capacity!  Try joining one of the others, or wait and try later.");
 
 					}else{
 						System.out.println("-------------------UPGRADE-DEBUG-----------");
 						System.out.println("Sponge hit by player: "+player);
 						plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "pex promote "+player.getName());
-						Conflict.ABATTON_PLAYERS.add(player.getName());
+						Conflict.Abatton.addPlayer(player.getName());
 						plugin.getServer().broadcastMessage(player.getName()+ChatColor.GOLD.toString()+" has joined the Capital of "+ChatColor.WHITE.toString()+"Abatton"+ChatColor.GOLD.toString());
-						if(Conflict.ABATTON_LOCATION_SPAWN != null) player.teleport(Conflict.ABATTON_LOCATION_SPAWN);
+						if(Conflict.Abatton.getSpawn() != null) player.teleport(Conflict.Abatton.getSpawn());
 						player.sendMessage(ChatColor.BLUE.toString()+"Congrats!  You've been accepted!!! You can leave this area now");
 						player.getInventory().addItem(new ItemStack(Material.COOKED_BEEF,10));
 						player.getInventory().addItem(new ItemStack(Material.IRON_SWORD,1));
@@ -359,19 +358,19 @@ public class BeyondPlayerListener implements Listener {
 					}
 				}
 			}catch(NullPointerException e){}
-		}else if(event.getClickedBlock() != null && event.getClickedBlock().getLocation().equals(Conflict.OCEIAN_LOCATION_DRIFTER.getBlock().getLocation())){
+		}else if(event.getClickedBlock() != null && event.getClickedBlock().getLocation().equals(Conflict.Oceian.getSpongeLocation().getBlock().getLocation())){
 			try{
 				if(Conflict.handler.inGroup(player.getWorld().getName(), player.getName(), "Drifter")
 						&& !Conflict.handler.inGroup(player.getWorld().getName(), player.getName(), "Peasant")){
-					if((Conflict.ABATTON_PLAYERS.size()-Conflict.OCEIAN_PLAYERS.size()) < -5 || (Conflict.SAVANIA_PLAYERS.size()-Conflict.OCEIAN_PLAYERS.size()) < -5){
+					if((Conflict.Abatton.getPopulation()-Conflict.Oceian.getPopulation()) < -5 || (Conflict.Savania.getPopulation()-Conflict.Oceian.getPopulation()) < -5){
 						player.sendMessage(ChatColor.BLUE.toString()+"This Capital is Over Capacity!  Try joining one of the others, or wait and try later.");
 					}else{
 						System.out.println("-------------------UPGRADE-DEBUG-----------");
 						System.out.println("Sponge hit by player: "+player);
 						plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "pex promote "+player.getName());
-						Conflict.OCEIAN_PLAYERS.add(player.getName());
+						Conflict.Oceian.addPlayer(player.getName());
 						plugin.getServer().broadcastMessage(player.getName()+ChatColor.GOLD.toString()+" has joined the Capital of "+ChatColor.WHITE.toString()+"Oceian"+ChatColor.GOLD.toString());
-						if(Conflict.OCEIAN_LOCATION_SPAWN != null) player.teleport(Conflict.OCEIAN_LOCATION_SPAWN);
+						if(Conflict.Oceian.getSpawn() != null) player.teleport(Conflict.Oceian.getSpawn());
 						player.sendMessage(ChatColor.BLUE.toString()+"Congrats!  You've been accepted!!! You can leave this area now");
 						player.getInventory().addItem(new ItemStack(Material.COOKED_BEEF,10));
 						player.getInventory().addItem(new ItemStack(Material.IRON_SWORD,1));
@@ -385,19 +384,19 @@ public class BeyondPlayerListener implements Listener {
 					}
 				}
 			}catch(NullPointerException e){}
-		}else if(event.getClickedBlock() != null && event.getClickedBlock().getLocation().equals(Conflict.SAVANIA_LOCATION_DRIFTER.getBlock().getLocation())){
+		}else if(event.getClickedBlock() != null && event.getClickedBlock().getLocation().equals(Conflict.Savania.getSpongeLocation().getBlock().getLocation())){
 			try{
 				if(Conflict.handler.inGroup(player.getWorld().getName(), player.getName(), "Drifter")
 						&& !Conflict.handler.inGroup(player.getWorld().getName(), player.getName(), "Peasant")){
-					if((Conflict.ABATTON_PLAYERS.size()-Conflict.SAVANIA_PLAYERS.size()) < -5 || (Conflict.OCEIAN_PLAYERS.size()-Conflict.SAVANIA_PLAYERS.size()) < -5){
+					if((Conflict.Abatton.getPopulation()-Conflict.Savania.getPopulation()) < -5 || (Conflict.Oceian.getPopulation()-Conflict.Savania.getPopulation()) < -5){
 						player.sendMessage(ChatColor.BLUE.toString()+"This Capital is Over Capacity!  Try joining one of the others, or wait and try later.");
 					}else{
 						System.out.println("-------------------UPGRADE-DEBUG-----------");
 						System.out.println("Sponge hit by player: "+player);
 						plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "pex promote "+player.getName());
-						Conflict.SAVANIA_PLAYERS.add(player.getName());
+						Conflict.Savania.addPlayer(player.getName());
 						plugin.getServer().broadcastMessage(player.getName()+ChatColor.GOLD.toString()+" has joined the Capital of "+ChatColor.WHITE.toString()+"Savania"+ChatColor.GOLD.toString());
-						if(Conflict.SAVANIA_LOCATION_SPAWN != null) player.teleport(Conflict.SAVANIA_LOCATION_SPAWN);
+						if(Conflict.Savania.getSpawn() != null) player.teleport(Conflict.Savania.getSpawn());
 						player.sendMessage(ChatColor.BLUE.toString()+"Congrats!  You've been accepted!!! You can leave this area now");
 						player.getInventory().addItem(new ItemStack(Material.COOKED_BEEF,10));
 						player.getInventory().addItem(new ItemStack(Material.IRON_SWORD,1));
@@ -418,9 +417,9 @@ public class BeyondPlayerListener implements Listener {
 		if(event.getPlayer().getWorld().getName().equals("survival") && (event.getRespawnLocation().distance(Conflict.TRADE_BLACKSMITH) < 200 || event.getRespawnLocation().distance(Conflict.TRADE_ENCHANTMENTS) < 200
 				|| event.getRespawnLocation().distance(Conflict.TRADE_MYSTPORTAL) < 200 || event.getRespawnLocation().distance(Conflict.TRADE_POTIONS) < 200
 				|| event.getRespawnLocation().distance(Conflict.TRADE_RICHPORTAL) < 200 || event.getRespawnLocation().equals(event.getPlayer().getWorld().getSpawnLocation()))){
-			if(Conflict.ABATTON_PLAYERS.contains(event.getPlayer().getName()))event.setRespawnLocation(Conflict.ABATTON_LOCATION_SPAWN);
-			else if(Conflict.OCEIAN_PLAYERS.contains(event.getPlayer().getName()))event.setRespawnLocation(Conflict.OCEIAN_LOCATION_SPAWN);
-			else if(Conflict.SAVANIA_PLAYERS.contains(event.getPlayer().getName()))event.setRespawnLocation(Conflict.SAVANIA_LOCATION_SPAWN);
+			if(Conflict.Abatton.hasPlayer(event.getPlayer().getName()))event.setRespawnLocation(Conflict.Abatton.getSpawn());
+			else if(Conflict.Oceian.hasPlayer(event.getPlayer().getName()))event.setRespawnLocation(Conflict.Oceian.getSpawn());
+			else if(Conflict.Savania.hasPlayer(event.getPlayer().getName()))event.setRespawnLocation(Conflict.Savania.getSpawn());
 		}
 	}
 }

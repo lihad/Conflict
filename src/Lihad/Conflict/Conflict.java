@@ -46,51 +46,24 @@ public class Conflict extends JavaPlugin {
 	public static PermissionManager ex;
 	private static Logger log = Logger.getLogger("Minecraft");
 
-    //public static City Abatton = new City();
-    //public static City Oceian = new City();
-    //public static City Savania = new City();
+    public static City Abatton = new City("Abatton");
+    public static City Oceian = new City("Oceian");
+    public static City Savania = new City("Savania");
+    public static City[] cities = {Abatton, Oceian, Savania};
     
-	public static List<String> ABATTON_PLAYERS = new LinkedList<String>();
-	public static Location ABATTON_LOCATION;
-	public static Location ABATTON_LOCATION_SPAWN;
-	public static Location ABATTON_LOCATION_DRIFTER;
-	public static List<String> ABATTON_GENERALS = new LinkedList<String>();
-	public static List<String> ABATTON_TRADES = new LinkedList<String>();
-	public static List<String> ABATTON_TRADES_TEMP = new LinkedList<String>();
-	public static List<String> ABATTON_PERKS = new LinkedList<String>();
-	public static int ABATTON_WORTH;
-	public static int ABATTON_PROTECTION;
-	public static List<String> OCEIAN_PLAYERS = new LinkedList<String>();
-	public static Location OCEIAN_LOCATION;
-	public static Location OCEIAN_LOCATION_SPAWN;
-	public static Location OCEIAN_LOCATION_DRIFTER;
-	public static List<String> OCEIAN_GENERALS = new LinkedList<String>();
-	public static List<String> OCEIAN_TRADES = new LinkedList<String>();
-	public static List<String> OCEIAN_TRADES_TEMP = new LinkedList<String>();
-	public static List<String> OCEIAN_PERKS = new LinkedList<String>();
-	public static int OCEIAN_WORTH;
-	public static int OCEIAN_PROTECTION;
-	public static List<String> SAVANIA_PLAYERS = new LinkedList<String>();
-	public static Location SAVANIA_LOCATION;
-	public static Location SAVANIA_LOCATION_SPAWN;
-	public static Location SAVANIA_LOCATION_DRIFTER;
-	public static List<String> SAVANIA_GENERALS = new LinkedList<String>();
-	public static List<String> SAVANIA_TRADES = new LinkedList<String>();
-	public static List<String> SAVANIA_TRADES_TEMP = new LinkedList<String>();
-	public static List<String> SAVANIA_PERKS = new LinkedList<String>();
-	public static int SAVANIA_WORTH;
-	public static int SAVANIA_PROTECTION;
-	public static Location TRADE_BLACKSMITH;
-	public static Location TRADE_POTIONS;
-	public static Location TRADE_ENCHANTMENTS;
-	public static Location TRADE_RICHPORTAL;
-	public static Location TRADE_MYSTPORTAL;
+    public static Perk Blacksmith = new LocationPerk("Blacksmith");
+    public static Perk Potions = new LocationPerk("Potions");
+    public static Perk Enchantments = new LocationPerk("Enchantments");
+    public static Perk RichPortal = new PortalPerk("RichPortal");
+    public static Perk MystPortal = new PortalPerk("MystPortal");
     
-    public static class Node {
-        public String name;
-        public Location location;
-        public Node(String n, Location l) { name = n; location = l; }
-    };
+    //public static List<PerkNode> perkNodes = new LinkedList<PerkNode>();
+    
+    public static Location TRADE_BLACKSMITH;
+    public static Location TRADE_POTIONS;
+    public static Location TRADE_ENCHANTMENTS;
+    public static Location TRADE_RICHPORTAL;
+    public static Location TRADE_MYSTPORTAL;
     
     public static List<Node> nodes = new LinkedList<Node>();
 
@@ -101,12 +74,6 @@ public class Conflict extends JavaPlugin {
 	public static Map<String, Integer> TRADE_POTIONS_PLAYER_USES = new HashMap<String, Integer>();
 	public static Map<String, Integer> TRADE_ENCHANTMENTS_PLAYER_USES = new HashMap<String, Integer>();
 
-	public static Map<String, Integer> TRADE_BLACKSMITH_CAP_COUNTER = new HashMap<String, Integer>();
-	public static Map<String, Integer> TRADE_POTIONS_CAP_COUNTER = new HashMap<String, Integer>();
-	public static Map<String, Integer> TRADE_ENCHANTMENTS_CAP_COUNTER = new HashMap<String, Integer>();
-	public static Map<String, Integer> TRADE_RICHPORTAL_CAP_COUNTER = new HashMap<String, Integer>();
-	public static Map<String, Integer> TRADE_MYSTPORTAL_CAP_COUNTER = new HashMap<String, Integer>();
-
     public static War war = null;
 
 	public static int TASK_ID_EVENT;
@@ -114,29 +81,20 @@ public class Conflict extends JavaPlugin {
 	public static boolean IS_EVENT_RUNNING = false;
 
 	public static CommandExecutor cmd;
-	public static BeyondInfo info;
     public static Random random = new Random();
     
-    public enum CityEnum {
-        None,
-        Contested,
-        Abatton,
-        Oceian,
-        Savania
-    };
-    
-    public static CityEnum getPlayerCity(String playerName) {
-        if (ABATTON_PLAYERS.contains(playerName)) return CityEnum.Abatton;
-        if (OCEIAN_PLAYERS.contains(playerName)) return CityEnum.Oceian;
-        if (SAVANIA_PLAYERS.contains(playerName)) return CityEnum.Savania;
-        return CityEnum.None;
+    public static City getPlayerCity(String playerName) {
+        if (Abatton.hasPlayer(playerName)) return Abatton;
+        if (Oceian.hasPlayer(playerName)) return Oceian;
+        if (Savania.hasPlayer(playerName)) return Savania;
+        return null;
     }
     
     public static boolean PlayerCanUseTrade(String playerName, String trade) {
-        CityEnum c = getPlayerCity(playerName);
-        if (c == CityEnum.Abatton && ABATTON_TRADES.contains(trade)) return true;
-        if (c == CityEnum.Oceian  && OCEIAN_TRADES.contains(trade))  return true;
-        if (c == CityEnum.Savania && SAVANIA_TRADES.contains(trade)) return true;
+        City c = getPlayerCity(playerName);
+        if (c == Abatton && Abatton.getTrades().contains(trade)) return true;
+        if (c == Oceian  && Oceian.getTrades().contains(trade))  return true;
+        if (c == Savania && Savania.getTrades().contains(trade)) return true;
         return false;
     }
 
@@ -155,32 +113,17 @@ public class Conflict extends JavaPlugin {
 	}
 	@Override
 	public void onEnable() {
-		TRADE_ENCHANTMENTS_CAP_COUNTER.put("Abatton", 0);
-		TRADE_ENCHANTMENTS_CAP_COUNTER.put("Oceian", 0);
-		TRADE_ENCHANTMENTS_CAP_COUNTER.put("Savania", 0);
-		TRADE_POTIONS_CAP_COUNTER.put("Abatton", 0);
-		TRADE_POTIONS_CAP_COUNTER.put("Oceian", 0);
-		TRADE_POTIONS_CAP_COUNTER.put("Savania", 0);
-		TRADE_BLACKSMITH_CAP_COUNTER.put("Abatton", 0);
-		TRADE_BLACKSMITH_CAP_COUNTER.put("Oceian", 0);
-		TRADE_BLACKSMITH_CAP_COUNTER.put("Savania", 0);
-		TRADE_RICHPORTAL_CAP_COUNTER.put("Abatton", 0);
-		TRADE_RICHPORTAL_CAP_COUNTER.put("Oceian", 0);
-		TRADE_RICHPORTAL_CAP_COUNTER.put("Savania", 0);
-		TRADE_MYSTPORTAL_CAP_COUNTER.put("Abatton", 0);
-		TRADE_MYSTPORTAL_CAP_COUNTER.put("Oceian", 0);
-		TRADE_MYSTPORTAL_CAP_COUNTER.put("Savania", 0);
 		//InfoManager
 		information = new YamlConfiguration();
-		info = new BeyondInfo(this);
-        loadInfoFile();
+        loadInfoFile(information, infoFile);
+        BeyondInfo.loader();
 		//TimerManager
-		if(ABATTON_LOCATION == null || OCEIAN_LOCATION == null || SAVANIA_LOCATION == null){
+		if(Abatton.getLocation() == null || Oceian.getLocation() == null || Savania.getLocation() == null){
 			severe("Unable to find all Capital Locations.  Booted in SAFE MODE for Timers");
 		}else if(TRADE_BLACKSMITH == null || TRADE_POTIONS == null || TRADE_ENCHANTMENTS == null
 				|| TRADE_RICHPORTAL == null || TRADE_MYSTPORTAL == null){
 			severe("Unable to find all Trade Locations.  Booted in SAFE MODE for Timers");
-		}else if(ABATTON_LOCATION_DRIFTER == null || OCEIAN_LOCATION_DRIFTER == null || SAVANIA_LOCATION_DRIFTER == null){
+		}else if(Abatton.getSpongeLocation() == null || Oceian.getSpongeLocation() == null || Savania.getSpongeLocation() == null){
 			severe("Unable to find all Drifter Locations.  Booted in SAFE MODE for Timers");
 		}else{
 			this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
@@ -196,7 +139,7 @@ public class Conflict extends JavaPlugin {
                     if(war != null){
                         war.postWarAutoList(null);
                     }
-                    PurgeInactivePlayers();
+                    purgeInactivePlayers();
                     saveInfoFile();
 				}
 			},1200L, 5500L);
@@ -205,9 +148,9 @@ public class Conflict extends JavaPlugin {
                     // War timer - runs every second
                     if(war == null){
                         if(War.warShouldStart()){
-							ABATTON_TRADES.clear();
-							OCEIAN_TRADES.clear();
-							SAVANIA_TRADES.clear();
+							Abatton.clearTrades();
+							Oceian.clearTrades();
+							Savania.clearTrades();
 							war = new War();
 							getServer().broadcastMessage(ChatColor.RED+"Mount your Pigs! Strap on your Diamond Armor!  It Has BEGUN!!!");
 						}
@@ -244,6 +187,7 @@ public class Conflict extends JavaPlugin {
 		getCommand("cwho").setExecutor(cmd);
 		getCommand("warstats").setExecutor(cmd);
 		getCommand("perks").setExecutor(cmd);
+		getCommand("bnn").setExecutor(cmd);
 
 
 		//PermsManager
@@ -251,7 +195,7 @@ public class Conflict extends JavaPlugin {
 		setupPermissionsEx();
 
 		//PluginManager
-		if(ABATTON_LOCATION == null || OCEIAN_LOCATION == null || SAVANIA_LOCATION == null){
+		if(Abatton.getLocation() == null || Oceian.getLocation() == null || Savania.getLocation() == null){
 			severe("Unable to find all Capital Locations.  Booted in SAFE MODE for Listeners");
 			PluginManager pm = getServer().getPluginManager();
 			pm.registerEvents(safeListener, this);
@@ -260,7 +204,7 @@ public class Conflict extends JavaPlugin {
 			PluginManager pm = getServer().getPluginManager();
 			pm.registerEvents(safeListener, this);
 			severe("Unable to find all Trade Locations.  Booted in SAFE MODE for Listeners");
-		}else if(ABATTON_LOCATION_DRIFTER == null || OCEIAN_LOCATION_DRIFTER == null || SAVANIA_LOCATION_DRIFTER == null){
+		}else if(Abatton.getSpongeLocation() == null || Oceian.getSpongeLocation() == null || Savania.getSpongeLocation() == null){
 			PluginManager pm = getServer().getPluginManager();
 			pm.registerEvents(safeListener, this);
 			severe("Unable to find all Drifter Locations.  Booted in SAFE MODE for Listeners");
@@ -347,9 +291,9 @@ public class Conflict extends JavaPlugin {
 		}
 	}
     
-    public static void loadInfoFile() {
+    public static void loadInfoFile(YamlConfiguration config, File file) {
         try {
-            information.load(infoFile);
+            config.load(file);
         } catch (java.io.FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -357,61 +301,23 @@ public class Conflict extends JavaPlugin {
         } catch (InvalidConfigurationException e) {
             e.printStackTrace();
         }
-        BeyondInfo.loader();
     }
 
     public static String theerror = "error not set";
     
     private static boolean purgeHasRunAlready = false;
-    public static void PurgeInactivePlayers() {
+    public static void purgeInactivePlayers() {
         // Only need to do this once per server restart.
         if (purgeHasRunAlready) return;
 
-        long now = java.lang.System.currentTimeMillis();
-    
-        for (java.util.Iterator<String> it = ABATTON_PLAYERS.iterator(); it.hasNext();) {
-            long lastseen = 0;
-            String name = it.next();
-            lastseen = getPlayerLastSeenTime(name);
+        Abatton.purgeInactivePlayers();
+        Oceian.purgeInactivePlayers();
+        Savania.purgeInactivePlayers();
 
-            long days = (now - lastseen) / 86400000;
-            
-            // Purge anyone who hasn't logged in the last four weeks
-            if (days > 28) {
-                info("Removing " + name + " from Abatton (last seen " + days + " days ago)");
-                it.remove();
-            }            
-        }
-        for (java.util.Iterator<String> it = OCEIAN_PLAYERS.iterator(); it.hasNext();) {
-            long lastseen = 0;
-            String name = it.next();
-            lastseen = getPlayerLastSeenTime(name);
-
-            long days = (now - lastseen) / 86400000;
-
-            // Purge anyone who hasn't logged in the last four weeks
-            if (days > 28) {
-                info("Removing " + name + " from Oceian (last seen " + days + " days ago)");
-                it.remove();
-            }            
-        }
-        for (java.util.Iterator<String> it = SAVANIA_PLAYERS.iterator(); it.hasNext();) {
-            long lastseen = 0;
-            String name = it.next();
-            lastseen = getPlayerLastSeenTime(name);
-
-            long days = (now - lastseen) / 86400000;
-
-            // Purge anyone who hasn't logged in the last four weeks
-            if (days > 28) {
-                info("Removing " + name + " from Savania (last seen " + days + " days ago)");
-                it.remove();
-            }            
-        }
         purgeHasRunAlready = true;
     }
     
-    static long getPlayerLastSeenTime(String playerName) {
+    public static long getPlayerLastSeenTime(String playerName) {
         // Implementation using FirstLastSeen
         String filename = "plugins/FirstLastSeen/data/"+playerName.toLowerCase();
 
