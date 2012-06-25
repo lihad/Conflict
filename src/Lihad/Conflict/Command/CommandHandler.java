@@ -40,7 +40,9 @@ public class CommandHandler implements CommandExecutor {
 			}else if(Conflict.getCity(arg[1]) != null
 					|| arg[1].equalsIgnoreCase("blacksmith") || arg[1].equalsIgnoreCase("potions") || arg[1].equalsIgnoreCase("enchantments")
 					|| arg[1].equalsIgnoreCase("richportal") || arg[1].equalsIgnoreCase("mystportal")
-					|| arg[1].equalsIgnoreCase("drifterabatton") || arg[1].equalsIgnoreCase("drifteroceian") || arg[1].equalsIgnoreCase("driftersavania")){
+					|| (arg[1].length() > 7 
+						&& arg[1].substring(0, 7).equalsIgnoreCase("drifter") 
+						&& Conflict.getCity(arg[1].substring(7)) != null)){
 				(player).sendMessage(ChatColor.LIGHT_PURPLE.toString()+"Please select a position");
 				Conflict.PLAYER_SET_SELECT.put((player).getName(), arg[1]);
 			}
