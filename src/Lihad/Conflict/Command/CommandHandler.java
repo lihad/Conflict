@@ -31,7 +31,8 @@ public class CommandHandler implements CommandExecutor {
 		// // Console can't send Conflict commands.  Sorry.
 		// return false;
 		// }
-		Player player = (Player)sender;
+		Player player = null;
+		if(sender instanceof Player)player = (Player)sender;
 
 		if(cmd.getName().equalsIgnoreCase("point") && arg.length == 2 && arg[0].equalsIgnoreCase("set") && sender instanceof Player && (player).isOp()){
 			if(!Conflict.PLAYER_SET_SELECT.isEmpty() && Conflict.PLAYER_SET_SELECT.containsKey((player).getName())){
