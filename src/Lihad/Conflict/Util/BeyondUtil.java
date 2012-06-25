@@ -298,11 +298,10 @@ public class BeyondUtil {
 
     public static ItemStack addRandomEnchant(ItemStack item) {
         
-        if (item.getAmount() == 1) { 
+        if (item.getAmount() != 1) { 
             // Can't operate on stacks
             return null;
         }
-        
         Enchantment e = null;
         
         if (isSword(item)) { e = weaponEnchantRandomizer(); }

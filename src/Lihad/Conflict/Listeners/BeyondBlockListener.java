@@ -32,11 +32,11 @@ public class BeyondBlockListener implements Listener {
 				event.setCancelled(true);
 			}
 			if(!player.isOp() && !Conflict.handler.has(player, "conflict.debug") && (
-                       (Conflict.TRADE_BLACKSMITH.distance(event.getBlock().getLocation()) < 200)
-					|| (Conflict.TRADE_MYSTPORTAL.distance(event.getBlock().getLocation()) < 200)
-					|| (Conflict.TRADE_ENCHANTMENTS.distance(event.getBlock().getLocation()) < 200)
-					|| (Conflict.TRADE_RICHPORTAL.distance(event.getBlock().getLocation()) < 200)
-					|| (Conflict.TRADE_POTIONS.distance(event.getBlock().getLocation()) < 200))
+                   (Conflict.Blacksmith     .getNode().isInRadius(event.getBlock().getLocation()))
+                || (Conflict.MystPortal     .getNode().isInRadius(event.getBlock().getLocation()))
+                || (Conflict.Enchantments   .getNode().isInRadius(event.getBlock().getLocation()))
+                || (Conflict.RichPortal     .getNode().isInRadius(event.getBlock().getLocation()))
+                || (Conflict.Potions        .getNode().isInRadius(event.getBlock().getLocation())))
 			){
 				event.setCancelled(true);
 			}
@@ -60,11 +60,11 @@ public class BeyondBlockListener implements Listener {
 				event.setCancelled(true);
 			}
 			if(!player.isOp() && !Conflict.handler.has(player, "conflict.debug") && (
-                       (Conflict.TRADE_BLACKSMITH.distance(event.getBlock().getLocation()) < 200)
-					|| (Conflict.TRADE_MYSTPORTAL.distance(event.getBlock().getLocation()) < 200)
-					|| (Conflict.TRADE_ENCHANTMENTS.distance(event.getBlock().getLocation()) < 200)
-					|| (Conflict.TRADE_RICHPORTAL.distance(event.getBlock().getLocation()) < 200)
-					|| (Conflict.TRADE_POTIONS.distance(event.getBlock().getLocation()) < 200))
+                   (Conflict.Blacksmith     .getNode().isInRadius(event.getBlock().getLocation()))
+                || (Conflict.MystPortal     .getNode().isInRadius(event.getBlock().getLocation()))
+                || (Conflict.Enchantments   .getNode().isInRadius(event.getBlock().getLocation()))
+                || (Conflict.RichPortal     .getNode().isInRadius(event.getBlock().getLocation()))
+                || (Conflict.Potions        .getNode().isInRadius(event.getBlock().getLocation())))
 			){
 				event.setCancelled(true);
 			}
@@ -73,11 +73,12 @@ public class BeyondBlockListener implements Listener {
 	@EventHandler
 	public void onEntityExplode(EntityExplodeEvent event){
 		if(event.getLocation().getWorld().getName().equals("survival")){
-			if((Conflict.TRADE_BLACKSMITH.distance(event.getLocation()) < 200)
-					|| (Conflict.TRADE_MYSTPORTAL.distance(event.getLocation()) < 200)
-					|| (Conflict.TRADE_ENCHANTMENTS.distance(event.getLocation()) < 200)
-					|| (Conflict.TRADE_RICHPORTAL.distance(event.getLocation()) < 200)
-					|| (Conflict.TRADE_POTIONS.distance(event.getLocation()) < 200)
+			if(
+                   (Conflict.Blacksmith     .getNode().isInRadius(event.getLocation()))
+                || (Conflict.MystPortal     .getNode().isInRadius(event.getLocation()))
+                || (Conflict.Enchantments   .getNode().isInRadius(event.getLocation()))
+                || (Conflict.RichPortal     .getNode().isInRadius(event.getLocation()))
+                || (Conflict.Potions        .getNode().isInRadius(event.getLocation()))
 			){
 				event.setCancelled(true);
 			}
@@ -88,11 +89,12 @@ public class BeyondBlockListener implements Listener {
 		if(event.getPlayer().getWorld().getName().equals("survival") && event.getPlayer().getItemInHand() != null 
 				&& (event.getPlayer().getItemInHand().getType() == Material.LAVA_BUCKET 
 				|| event.getPlayer().getItemInHand().getType() == Material.WATER_BUCKET)){
-			if((Conflict.TRADE_BLACKSMITH.distance(event.getPlayer().getLocation()) < 200)
-					|| (Conflict.TRADE_MYSTPORTAL.distance(event.getPlayer().getLocation()) < 200)
-					|| (Conflict.TRADE_ENCHANTMENTS.distance(event.getPlayer().getLocation()) < 200)
-					|| (Conflict.TRADE_RICHPORTAL.distance(event.getPlayer().getLocation()) < 200)
-					|| (Conflict.TRADE_POTIONS.distance(event.getPlayer().getLocation()) < 200)
+			if(
+                   (Conflict.Blacksmith     .getNode().isInRadius(event.getPlayer().getLocation()))
+                || (Conflict.MystPortal     .getNode().isInRadius(event.getPlayer().getLocation()))
+                || (Conflict.Enchantments   .getNode().isInRadius(event.getPlayer().getLocation()))
+                || (Conflict.RichPortal     .getNode().isInRadius(event.getPlayer().getLocation()))
+                || (Conflict.Potions        .getNode().isInRadius(event.getPlayer().getLocation()))
 			){
 				event.setCancelled(true);
 			}

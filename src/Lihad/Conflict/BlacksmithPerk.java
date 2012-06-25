@@ -8,7 +8,8 @@ public class BlacksmithPerk extends BlockPerk {
 
     public BlacksmithPerk(String n) { super(n); }
 
-    public void Activate(Player player) {
+    @Override
+    public void activate(Player player) {
 
         if(player.getItemInHand().getDurability() != 0)  {
 

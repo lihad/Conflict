@@ -8,7 +8,8 @@ public class PotionPerk extends BlockPerk {
 
     public PotionPerk(String n) { super(n); }
 
-    public void Activate(Player player) {
+    @Override
+    public void activate(Player player) {
 
         if(player.getItemInHand().getType() == Material.GLASS_BOTTLE){
 

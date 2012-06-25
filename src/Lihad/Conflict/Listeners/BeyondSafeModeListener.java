@@ -29,11 +29,11 @@ public class BeyondSafeModeListener implements Listener {
 			if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("Abatton"))Conflict.Abatton.setLocation(event.getClickedBlock().getLocation());
 			else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("Oceian"))Conflict.Oceian.setLocation(event.getClickedBlock().getLocation());
 			else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("Savania"))Conflict.Savania.setLocation(event.getClickedBlock().getLocation());
-			else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("blacksmith"))Conflict.TRADE_BLACKSMITH = event.getClickedBlock().getLocation();
-			else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("potions"))Conflict.TRADE_POTIONS = event.getClickedBlock().getLocation();
-			else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("enchantments"))Conflict.TRADE_ENCHANTMENTS = event.getClickedBlock().getLocation();
-			else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("richportal"))Conflict.TRADE_RICHPORTAL = event.getClickedBlock().getLocation();
-			else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("mystportal"))Conflict.TRADE_MYSTPORTAL = event.getClickedBlock().getLocation();
+			else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("blacksmith"))Conflict.Blacksmith.getNode().setLocation(event.getClickedBlock().getLocation());
+			else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("potions"))Conflict.Potions.getNode().setLocation(event.getClickedBlock().getLocation());
+			else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("enchantments"))Conflict.Enchantments.getNode().setLocation(event.getClickedBlock().getLocation());
+			else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("richportal"))Conflict.RichPortal.getNode().setLocation(event.getClickedBlock().getLocation());
+			else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("mystportal"))Conflict.MystPortal.getNode().setLocation(event.getClickedBlock().getLocation());
 			else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("drifterabatton"))Conflict.Abatton.setSpongeLocation(event.getClickedBlock().getLocation());
 			else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("drifteroceian"))Conflict.Oceian.setSpongeLocation(event.getClickedBlock().getLocation());
 			else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("driftersavania"))Conflict.Savania.setSpongeLocation(event.getClickedBlock().getLocation());

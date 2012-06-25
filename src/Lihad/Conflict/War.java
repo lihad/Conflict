@@ -221,11 +221,11 @@ public class War {
             else if (winner == CityEnum.Savania) { Conflict.Savania.addTrade(prize); }
             
             // And move the trade location to the node.
-            if      (prize == "blacksmith")     { Conflict.TRADE_BLACKSMITH = node.location; }
-            else if (prize == "potions")        { Conflict.TRADE_POTIONS = node.location; }
-            else if (prize == "enchantments")   { Conflict.TRADE_ENCHANTMENTS = node.location; }
-            else if (prize == "richportal")     { Conflict.TRADE_RICHPORTAL = node.location; }
-            else if (prize == "mystportal")     { Conflict.TRADE_MYSTPORTAL = node.location; }
+            if      (prize == "blacksmith")     { Conflict.Blacksmith       .getNode().setLocation(node.location); }
+            else if (prize == "potions")        { Conflict.Potions          .getNode().setLocation(node.location); }
+            else if (prize == "enchantments")   { Conflict.Enchantments     .getNode().setLocation(node.location); }
+            else if (prize == "richportal")     { Conflict.RichPortal       .getNode().setLocation(node.location); }
+            else if (prize == "mystportal")     { Conflict.MystPortal       .getNode().setLocation(node.location); }
             
             Bukkit.getServer().broadcastMessage("" + ChatColor.GOLD + winner + ChatColor.GRAY + " has won the " + node.name + ", and gains the " + ChatColor.LIGHT_PURPLE + prize + ChatColor.GRAY + " perk!");
         }

@@ -61,12 +61,6 @@ public class Conflict extends JavaPlugin {
     public static BlockPerk[] blockPerks = {(BlockPerk)Blacksmith, (BlockPerk)Potions, (BlockPerk)Enchantments};
     public static PortalPerk[] portalPerks = {(PortalPerk)RichPortal, (PortalPerk)MystPortal};
     
-    public static Location TRADE_BLACKSMITH;
-    public static Location TRADE_POTIONS;
-    public static Location TRADE_ENCHANTMENTS;
-    public static Location TRADE_RICHPORTAL;
-    public static Location TRADE_MYSTPORTAL;
-    
     public static List<Node> nodes = new LinkedList<Node>();
 
 	public static List<String> UNASSIGNED_PLAYERS = new LinkedList<String>(); 
@@ -162,11 +156,11 @@ public class Conflict extends JavaPlugin {
         		severe("Unable to find drifter location for " + cities[i].name);
         	}
         }
-		if(TRADE_BLACKSMITH == null || TRADE_POTIONS == null || TRADE_ENCHANTMENTS == null
-				|| TRADE_RICHPORTAL == null || TRADE_MYSTPORTAL == null) {
-			severe("Unable to find all trade locations.");
-			safeMode = true;
-		}
+        // if(TRADE_BLACKSMITH == null || TRADE_POTIONS == null || TRADE_ENCHANTMENTS == null
+                // || TRADE_RICHPORTAL == null || TRADE_MYSTPORTAL == null) {
+            // severe("Unable to find all trade locations.");
+            // safeMode = true;
+        // }
 		if (!safeMode) {
 			this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
 				public void run() {
@@ -241,8 +235,8 @@ public class Conflict extends JavaPlugin {
 			severe("Unable to find all Capital Locations.  Booted in SAFE MODE for Listeners");
 			PluginManager pm = getServer().getPluginManager();
 			pm.registerEvents(safeListener, this);
-		}else if(TRADE_BLACKSMITH == null || TRADE_POTIONS == null || TRADE_ENCHANTMENTS == null
-				|| TRADE_RICHPORTAL == null || TRADE_MYSTPORTAL == null){
+		}else if(Blacksmith.getNode() == null || Potions.getNode() == null || Enchantments.getNode() == null
+				|| RichPortal.getNode() == null || MystPortal.getNode() == null){
 			PluginManager pm = getServer().getPluginManager();
 			pm.registerEvents(safeListener, this);
 			severe("Unable to find all Trade Locations.  Booted in SAFE MODE for Listeners");

@@ -9,7 +9,8 @@ public class EnchantmentPerk extends BlockPerk {
 
     public EnchantmentPerk(String n) { super(n); }
 
-    public void Activate(Player player) {
+    @Override
+    public void activate(Player player) {
 
         int uses = 0;
         if( Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.containsKey(player.getName()) ) {

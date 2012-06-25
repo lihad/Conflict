@@ -95,7 +95,7 @@ public class BeyondPlayerListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public static void onPlayerPortal(PlayerPortalEvent event){
-		if(event.getCause().equals(TeleportCause.NETHER_PORTAL) && event.getFrom().getWorld().getName().equals("survival") && Conflict.TRADE_MYSTPORTAL.distance(event.getFrom()) < 10){
+		if(event.getCause().equals(TeleportCause.NETHER_PORTAL) && event.getFrom().getWorld().getName().equals("survival") && Conflict.MystPortal.getNode().getLocation().distance(event.getFrom()) < 10){
 			if( Conflict.PlayerCanUseTrade(event.getPlayer().getName(), "mystportal") ) {
 				event.getPlayer().sendMessage("Shaaaaazaaam!");
 				event.getPlayer().teleport(new Location(plugin.getServer().getWorld("mystworld"), 0.0, 0.0, 0.0));
@@ -108,9 +108,13 @@ public class BeyondPlayerListener implements Listener {
 	}
 	@EventHandler   
 	public static void onPlayerTeleport(PlayerTeleportEvent event){
-		if(event.getTo().getWorld().getName().equals("survival") && (event.getTo().distance(Conflict.TRADE_BLACKSMITH) < 200 || event.getTo().distance(Conflict.TRADE_ENCHANTMENTS) < 200
-				|| event.getTo().distance(Conflict.TRADE_MYSTPORTAL) < 200 || event.getTo().distance(Conflict.TRADE_POTIONS) < 200
-				|| event.getTo().distance(Conflict.TRADE_RICHPORTAL) < 200) && !Conflict.handler.has(event.getPlayer(), "conflict.teleport")){
+		if(event.getTo().getWorld().getName().equals("survival") && (
+            Conflict.Blacksmith.getNode().isInRadius(event.getTo()) || 
+            Conflict.Potions.getNode().isInRadius(event.getTo()) || 
+            Conflict.Enchantments.getNode().isInRadius(event.getTo()) || 
+            Conflict.MystPortal.getNode().isInRadius(event.getTo()) || 
+            Conflict.RichPortal.getNode().isInRadius(event.getTo())
+            ) && !Conflict.handler.has(event.getPlayer(), "conflict.teleport")){
 			event.setTo(event.getFrom());
 		}
 		else if(event.getTo().getWorld().getName().equals("survival") && ((event.getTo().distance(Conflict.Abatton.getLocation()) < 500 && !Conflict.Abatton.hasPlayer(event.getPlayer().getName()))
@@ -175,10 +179,19 @@ public class BeyondPlayerListener implements Listener {
 
 	@EventHandler
 	public static void onPlayerInteract(PlayerInteractEvent event){
+        
+        if (event.getClickedBlock() == null) {
+            // WTF, Bukkit!
+            return;
+        }
+        Block block = event.getClickedBlock();
         Player player = event.getPlayer();
+
         for (BlockPerk p : Conflict.blockPerks) {
-            if (p.getNode() == null) { continue; }
-            if (event.getClickedBlock().getLocation() != p.getNode().getLocation()) { continue; }
+            if (p.getNode() == null) { 
+                continue; 
+            }
+            if (!block.getLocation().equals(p.getNode().getLocation())) { continue; }
             if (!Conflict.PlayerCanUseTrade(event.getPlayer().getName(), p.getName())) { 
                 event.getPlayer().sendMessage("You can't use this perk!");
                 continue;
@@ -186,7 +199,7 @@ public class BeyondPlayerListener implements Listener {
             p.activate(event.getPlayer());
         }
                
-        if(event.getClickedBlock() != null && event.getClickedBlock().getLocation().equals(Conflict.Abatton.getLocation().getBlock().getLocation())){
+        if(block.getLocation().equals(Conflict.Abatton.getLocation().getBlock().getLocation())){
 			if(player.getItemInHand().getType() == Material.GOLD_INGOT){
 				player.sendMessage("You gave "+ChatColor.YELLOW.toString()+"1 "+ChatColor.WHITE.toString()+"Gold Bar to "+ChatColor.GREEN.toString()+"Abatton");
 				if(player.getItemInHand().getAmount() == 1){
@@ -203,7 +216,7 @@ public class BeyondPlayerListener implements Listener {
 				player.updateInventory();
 			}
 			player.sendMessage("Abatton has "+ChatColor.GREEN.toString()+Conflict.Abatton.getMoney()+" Gold!");
-		}else if(event.getClickedBlock() != null && event.getClickedBlock().getLocation().equals(Conflict.Oceian.getLocation().getBlock().getLocation())){
+		}else if(block.getLocation().equals(Conflict.Oceian.getLocation().getBlock().getLocation())){
 			if(player.getItemInHand().getType() == Material.GOLD_INGOT){
 				player.sendMessage("You gave "+ChatColor.YELLOW.toString()+"1 "+ChatColor.WHITE.toString()+"Gold Bar to "+ChatColor.GREEN.toString()+"Oceian");
 				if(player.getItemInHand().getAmount() == 1){
@@ -220,7 +233,7 @@ public class BeyondPlayerListener implements Listener {
 				player.updateInventory();
 			}
 			player.sendMessage("Oceian has "+ChatColor.GREEN.toString()+Conflict.Oceian.getMoney()+" Gold!");
-		}else if(event.getClickedBlock() != null && event.getClickedBlock().getLocation().equals(Conflict.Savania.getLocation().getBlock().getLocation())){
+		}else if(block.getLocation().equals(Conflict.Savania.getLocation().getBlock().getLocation())){
 			if(player.getItemInHand().getType() == Material.GOLD_INGOT){
 				player.sendMessage("You gave "+ChatColor.YELLOW.toString()+"1 "+ChatColor.WHITE.toString()+"Gold Bar to "+ChatColor.GREEN.toString()+"Savania");
 				if(player.getItemInHand().getAmount() == 1){
@@ -237,7 +250,7 @@ public class BeyondPlayerListener implements Listener {
 				player.updateInventory();
 			}
 			player.sendMessage("Savania has "+ChatColor.GREEN.toString()+Conflict.Savania.getMoney()+" Gold!");
-		}else if(event.getClickedBlock() != null && event.getClickedBlock().getLocation().equals(Conflict.Abatton.getSpongeLocation().getBlock().getLocation())){
+		}else if(block.getLocation().equals(Conflict.Abatton.getSpongeLocation().getBlock().getLocation())){
 			try{
 				if(Conflict.handler.inGroup(player.getWorld().getName(), player.getName(), "Drifter")
 						&& !Conflict.handler.inGroup(player.getWorld().getName(), player.getName(), "Peasant")){
@@ -264,7 +277,7 @@ public class BeyondPlayerListener implements Listener {
 					}
 				}
 			}catch(NullPointerException e){}
-		}else if(event.getClickedBlock() != null && event.getClickedBlock().getLocation().equals(Conflict.Oceian.getSpongeLocation().getBlock().getLocation())){
+		}else if(block.getLocation().equals(Conflict.Oceian.getSpongeLocation().getBlock().getLocation())){
 			try{
 				if(Conflict.handler.inGroup(player.getWorld().getName(), player.getName(), "Drifter")
 						&& !Conflict.handler.inGroup(player.getWorld().getName(), player.getName(), "Peasant")){
@@ -290,7 +303,7 @@ public class BeyondPlayerListener implements Listener {
 					}
 				}
 			}catch(NullPointerException e){}
-		}else if(event.getClickedBlock() != null && event.getClickedBlock().getLocation().equals(Conflict.Savania.getSpongeLocation().getBlock().getLocation())){
+		}else if(block.getLocation().equals(Conflict.Savania.getSpongeLocation().getBlock().getLocation())){
 			try{
 				if(Conflict.handler.inGroup(player.getWorld().getName(), player.getName(), "Drifter")
 						&& !Conflict.handler.inGroup(player.getWorld().getName(), player.getName(), "Peasant")){
@@ -320,9 +333,14 @@ public class BeyondPlayerListener implements Listener {
 	}
 	@EventHandler
 	public static void onPlayerRespawn(PlayerRespawnEvent event){
-		if(event.getPlayer().getWorld().getName().equals("survival") && (event.getRespawnLocation().distance(Conflict.TRADE_BLACKSMITH) < 200 || event.getRespawnLocation().distance(Conflict.TRADE_ENCHANTMENTS) < 200
-				|| event.getRespawnLocation().distance(Conflict.TRADE_MYSTPORTAL) < 200 || event.getRespawnLocation().distance(Conflict.TRADE_POTIONS) < 200
-				|| event.getRespawnLocation().distance(Conflict.TRADE_RICHPORTAL) < 200 || event.getRespawnLocation().equals(event.getPlayer().getWorld().getSpawnLocation()))){
+		if(event.getPlayer().getWorld().getName().equals("survival") && (
+            Conflict.Blacksmith.getNode().isInRadius(event.getRespawnLocation()) || 
+            Conflict.Potions.getNode().isInRadius(event.getRespawnLocation()) || 
+            Conflict.Enchantments.getNode().isInRadius(event.getRespawnLocation()) || 
+            Conflict.MystPortal.getNode().isInRadius(event.getRespawnLocation()) || 
+            Conflict.RichPortal.getNode().isInRadius(event.getRespawnLocation()) ||
+            event.getRespawnLocation().equals(event.getPlayer().getWorld().getSpawnLocation()))) 
+        {
 			if(Conflict.Abatton.hasPlayer(event.getPlayer().getName()))event.setRespawnLocation(Conflict.Abatton.getSpawn());
 			else if(Conflict.Oceian.hasPlayer(event.getPlayer().getName()))event.setRespawnLocation(Conflict.Oceian.getSpawn());
 			else if(Conflict.Savania.hasPlayer(event.getPlayer().getName()))event.setRespawnLocation(Conflict.Savania.getSpawn());
