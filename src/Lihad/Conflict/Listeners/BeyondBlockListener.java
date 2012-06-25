@@ -28,10 +28,10 @@ public class BeyondBlockListener implements Listener {
             if (((!Conflict.Abatton.getGenerals().contains(player.getName()) && Conflict.Abatton.getLocation().distance(event.getBlock().getLocation()) < Conflict.Abatton.getProtectionRadius())
 					|| (!Conflict.Oceian.getGenerals().contains(player.getName()) && Conflict.Oceian.getLocation().distance(event.getBlock().getLocation()) < Conflict.Oceian.getProtectionRadius())
 					|| (!Conflict.Savania.getGenerals().contains(player.getName()) && Conflict.Savania.getLocation().distance(event.getBlock().getLocation()) < Conflict.Savania.getProtectionRadius())
-			)&& !player.isOp() && !Conflict.handler.has(player, "conflict.editnodes")){
+			)&& !player.isOp() && !Conflict.handler.has(player, "conflict.debug")){
 				event.setCancelled(true);
 			}
-			if(!player.isOp() && !Conflict.handler.has(player, "conflict.editnodes") && (
+			if(!player.isOp() && !Conflict.handler.has(player, "conflict.debug") && (
                        (Conflict.TRADE_BLACKSMITH.distance(event.getBlock().getLocation()) < 200)
 					|| (Conflict.TRADE_MYSTPORTAL.distance(event.getBlock().getLocation()) < 200)
 					|| (Conflict.TRADE_ENCHANTMENTS.distance(event.getBlock().getLocation()) < 200)
@@ -56,10 +56,10 @@ public class BeyondBlockListener implements Listener {
             if(((!Conflict.Abatton.getGenerals().contains(player.getName()) && Conflict.Abatton.getLocation().distance(event.getBlock().getLocation()) < Conflict.Abatton.getProtectionRadius())
 					|| (!Conflict.Oceian.getGenerals().contains(player.getName()) && Conflict.Oceian.getLocation().distance(event.getBlock().getLocation()) < Conflict.Oceian.getProtectionRadius())
 					|| (!Conflict.Savania.getGenerals().contains(player.getName()) && Conflict.Savania.getLocation().distance(event.getBlock().getLocation()) < Conflict.Savania.getProtectionRadius()))
-					&& !player.isOp() && !Conflict.handler.has(player, "conflict.editnodes")){
+					&& !player.isOp() && !Conflict.handler.has(player, "conflict.debug")){
 				event.setCancelled(true);
 			}
-			if(!player.isOp() && !Conflict.handler.has(player, "conflict.editnodes") && (
+			if(!player.isOp() && !Conflict.handler.has(player, "conflict.debug") && (
                        (Conflict.TRADE_BLACKSMITH.distance(event.getBlock().getLocation()) < 200)
 					|| (Conflict.TRADE_MYSTPORTAL.distance(event.getBlock().getLocation()) < 200)
 					|| (Conflict.TRADE_ENCHANTMENTS.distance(event.getBlock().getLocation()) < 200)
