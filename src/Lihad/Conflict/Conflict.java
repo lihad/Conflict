@@ -85,17 +85,16 @@ public class Conflict extends JavaPlugin {
     public static Random random = new Random();
     
     public static City getPlayerCity(String playerName) {
-        if (Abatton.hasPlayer(playerName)) return Abatton;
-        if (Oceian.hasPlayer(playerName)) return Oceian;
-        if (Savania.hasPlayer(playerName)) return Savania;
+    	for (int i=0; i<cities.length; i++)
+    		if (cities[i].hasPlayer(playerName))
+    			return cities [i];
         return null;
     }
     
     public static boolean PlayerCanUseTrade(String playerName, String trade) {
         City c = getPlayerCity(playerName);
-        if (c == Abatton && Abatton.getTrades().contains(trade)) return true;
-        if (c == Oceian  && Oceian.getTrades().contains(trade))  return true;
-        if (c == Savania && Savania.getTrades().contains(trade)) return true;
+        if (c != null)
+        	return (c.getTrades().contains(trade));
         return false;
     }
 
@@ -119,14 +118,23 @@ public class Conflict extends JavaPlugin {
         loadInfoFile(information, infoFile);
         BeyondInfo.loader();
 		//TimerManager
-		if(Abatton.getLocation() == null || Oceian.getLocation() == null || Savania.getLocation() == null){
-			severe("Unable to find all Capital Locations.  Booted in SAFE MODE for Timers");
-		}else if(TRADE_BLACKSMITH == null || TRADE_POTIONS == null || TRADE_ENCHANTMENTS == null
-				|| TRADE_RICHPORTAL == null || TRADE_MYSTPORTAL == null){
-			severe("Unable to find all Trade Locations.  Booted in SAFE MODE for Timers");
-		}else if(Abatton.getSpongeLocation() == null || Oceian.getSpongeLocation() == null || Savania.getSpongeLocation() == null){
-			severe("Unable to find all Drifter Locations.  Booted in SAFE MODE for Timers");
-		}else{
+        boolean safeMode = false;
+        for (int i=0; i<cities.length; i++) {
+        	if (cities[i].getLocation() == null) {
+        		safeMode = true;
+        		severe("Unable to find capital location for " + cities[i].name);
+        	}
+        	else if (cities[i].getSpongeLocation() == null) {
+        		safeMode = true;
+        		severe("Unable to find drifter location for " + cities[i].name);
+        	}
+        }
+		if(TRADE_BLACKSMITH == null || TRADE_POTIONS == null || TRADE_ENCHANTMENTS == null
+				|| TRADE_RICHPORTAL == null || TRADE_MYSTPORTAL == null) {
+			severe("Unable to find all trade locations.");
+			safeMode = true;
+		}
+		if (!safeMode) {
 			this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
 				public void run() {
 					TRADE_BLACKSMITH_PLAYER_USES.clear();
