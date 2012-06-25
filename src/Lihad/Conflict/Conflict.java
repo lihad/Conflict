@@ -11,6 +11,7 @@ import java.util.Random;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -91,11 +92,36 @@ public class Conflict extends JavaPlugin {
         return null;
     }
     
+    /**
+     * Returns the City with the given name, or null if nonexistent.  e.g. Use this as an existence test
+     * for processing commands.
+     * @param cityName - The name of the city you are looking for
+     * @return City - The City with the given name, or null if not found.
+     */
     public static City getCity(String cityName) {
     	for (int i=0; i<cities.length; i++)
     		if (cities[i].getName().equalsIgnoreCase(cityName))
     			return cities [i];
         return null;
+    }
+    
+    /**
+     * Returns the (hopefully) formatted player name, null if does not exist.  e.g. Use this as an existence test
+     * to see if a player with that name has ever logged on before.
+     * @param playerName - the name you want to search for
+     * @return String - the name of the online or offline player, null if none.
+     */
+    public String getFormattedPlayerName(String playerName) {
+    	String returnMe = null;
+    	Player player = getServer().getPlayer(playerName);
+    	if (player != null) {
+    		returnMe = player.getName();
+    	} else {
+    		OfflinePlayer offlinePlayer = getServer().getOfflinePlayer(playerName);
+    		if (offlinePlayer != null)
+    			returnMe = offlinePlayer.getName();
+    	}
+    	return returnMe;
     }
     
     public static boolean PlayerCanUseTrade(String playerName, String trade) {
