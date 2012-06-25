@@ -91,6 +91,13 @@ public class Conflict extends JavaPlugin {
         return null;
     }
     
+    public static City getCity(String cityName) {
+    	for (int i=0; i<cities.length; i++)
+    		if (cities[i].getName().equalsIgnoreCase(cityName))
+    			return cities [i];
+        return null;
+    }
+    
     public static boolean PlayerCanUseTrade(String playerName, String trade) {
         City c = getPlayerCity(playerName);
         if (c != null)
