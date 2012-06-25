@@ -146,7 +146,7 @@ public class BeyondPlayerListener implements Listener {
 						event.getPlayer().updateInventory();
 					}
 					else{
-						event.getPlayer().getItemInHand().addUnsafeEnchantment(enchantment, event.getPlayer().getItemInHand().getEnchantmentLevel(enchantment)-5);
+						event.getPlayer().getItemInHand().addUnsafeEnchantment(enchantment, 1);
 						event.getPlayer().sendMessage(ChatColor.AQUA+"Oh no!  That enchant was way too high for me to handle...");
 						event.getPlayer().setLevel(event.getPlayer().getLevel() - 10);
 					}
