@@ -333,6 +333,16 @@ public class CommandHandler implements CommandExecutor {
 		else if(cmd.getName().equalsIgnoreCase("bnn") && Conflict.war != null && arg.length == 2 && arg[0].equalsIgnoreCase("reporter") && arg[1].equalsIgnoreCase("enable") && (sender instanceof Player)) {
 			Conflict.war.reporters.add(player);                
 		}
+        else if (cmd.getName().equalsIgnoreCase("ccd") && Conflict.handler.has(player, "conflict.debug")) {
+            // Random debug info for running Conflict instance
+            if (arg.length == 0) {
+                return false;
+            }
+            if (arg[0].equalsIgnoreCase("version")) {
+                player.sendMessage("Conflict version " + org.bukkit.Bukkit.getPluginManager().getPlugin("Conflict").getDescription().getVersion());
+                return true;
+            }
+        }
 		return false;
 	}
 }

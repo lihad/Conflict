@@ -217,6 +217,7 @@ public class Conflict extends JavaPlugin {
 		getCommand("gear").setExecutor(cmd);
 		getCommand("cc").setExecutor(cmd);
 		getCommand("cca").setExecutor(cmd);
+		getCommand("ccd").setExecutor(cmd);
 		getCommand("nulls").setExecutor(cmd);
 		getCommand("protectcity").setExecutor(cmd);
 		getCommand("myst").setExecutor(cmd);
