@@ -93,7 +93,10 @@ public class CommandHandler implements CommandExecutor {
 			return true;
 		}else if(cmd.getName().equalsIgnoreCase("cca") && ((sender instanceof Player && (player).isOp()) || sender instanceof ConsoleCommandSender)){
 			if(arg.length == 1 && arg[0].equalsIgnoreCase("count")){
-				sender.sendMessage("Counts - [AB - "+Conflict.Abatton.getPopulation()+" OC - "+Conflict.Oceian.getPopulation()+" SA - "+Conflict.Savania.getPopulation()+"]");
+				sender.sendMessage("Count:");
+				for (int i=0; i<Conflict.cities.length; i++) {
+					sender.sendMessage(Conflict.cities[i].getName() + " - " + Conflict.cities[i].getPopulation());
+				}
 			}else if(arg.length == 1 && arg[0].equalsIgnoreCase("trade")){
 				for (int i=0; i<Conflict.cities.length; i++) {
 					sender.sendMessage(Conflict.cities[i].getName() + " - " + Conflict.cities[i].getTrades());
