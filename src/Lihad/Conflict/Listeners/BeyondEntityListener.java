@@ -139,13 +139,11 @@ public class BeyondEntityListener implements Listener {
 							|| (Conflict.Oceian.hasPlayer(player.getName()) && Conflict.Oceian.getPerks().contains("weapondrops"))
 							|| (Conflict.Savania.hasPlayer(player.getName()) && Conflict.Savania.getPerks().contains("weapondrops")))){
 				ItemStack stack = new ItemStack(BeyondUtil.weaponTypeRandomizer(), 1);
-				while(stack.getEnchantments().isEmpty()){
-					stack.addUnsafeEnchantment(BeyondUtil.weaponEnchantRandomizer(), BeyondUtil.weaponLevelRandomizer());
-					int next = Conflict.random.nextInt(100);
-					if(next<30)stack.addUnsafeEnchantment(BeyondUtil.weaponEnchantRandomizer(),BeyondUtil.weaponLevelRandomizer());
-					if(next<20)stack.addUnsafeEnchantment(BeyondUtil.weaponEnchantRandomizer(), BeyondUtil.weaponLevelRandomizer());
-					if(next<5)stack.addUnsafeEnchantment(BeyondUtil.weaponEnchantRandomizer(), BeyondUtil.weaponLevelRandomizer());
-				}
+                BeyondUtil.addRandomEnchant(stack);
+                int next = Conflict.random.nextInt(100);
+                if(next<30) BeyondUtil.addRandomEnchant(stack);
+                if(next<20) BeyondUtil.addRandomEnchant(stack);
+                if(next<5) BeyondUtil.addRandomEnchant(stack);
 				event.getDrops().add(stack);
 				player.sendMessage("Hooray! A "+ChatColor.BLUE.toString()+stack.getType().toString()+ChatColor.WHITE.toString()+" dropped! Rarity Index: "+BeyondUtil.getColorOfRarity(BeyondUtil.rarity(stack))+BeyondUtil.rarity(stack));
 			}else if(random >= 2 && random < 4 
@@ -154,11 +152,11 @@ public class BeyondEntityListener implements Listener {
 							|| (Conflict.Oceian.hasPlayer(player.getName()) && Conflict.Oceian.getPerks().contains("armordrops"))
 							|| (Conflict.Savania.hasPlayer(player.getName()) && Conflict.Savania.getPerks().contains("armordrops")))){
 				ItemStack stack = new ItemStack(BeyondUtil.armorTypeRandomizer(), 1);
-				stack.addUnsafeEnchantment(BeyondUtil.armorEnchantRandomizer(), BeyondUtil.armorLevelRandomizer());
-				int next = Conflict.random.nextInt(100);
-				if(next<30)stack.addUnsafeEnchantment(BeyondUtil.armorEnchantRandomizer(), BeyondUtil.armorLevelRandomizer());							
-				if(next<20)stack.addUnsafeEnchantment(BeyondUtil.armorEnchantRandomizer(), BeyondUtil.armorLevelRandomizer());
-				if(next<5)stack.addUnsafeEnchantment(BeyondUtil.armorEnchantRandomizer(), BeyondUtil.armorLevelRandomizer());
+                BeyondUtil.addRandomEnchant(stack);
+                int next = Conflict.random.nextInt(100);
+                if(next<30) BeyondUtil.addRandomEnchant(stack);
+                if(next<20) BeyondUtil.addRandomEnchant(stack);
+                if(next<5) BeyondUtil.addRandomEnchant(stack);
 				event.getDrops().add(stack);
 				player.sendMessage("Hooray! A "+ChatColor.BLUE.toString()+stack.getType().toString()+ChatColor.WHITE.toString()+" dropped! Rarity Index: "+BeyondUtil.getColorOfRarity(BeyondUtil.rarity(stack))+BeyondUtil.rarity(stack));
 			}else if(random < 2 
@@ -167,11 +165,11 @@ public class BeyondEntityListener implements Listener {
 							|| (Conflict.Oceian.hasPlayer(player.getName()) && Conflict.Oceian.getPerks().contains("tooldrops"))
 							|| (Conflict.Savania.hasPlayer(player.getName()) && Conflict.Savania.getPerks().contains("tooldrops")))){
 				ItemStack stack = new ItemStack(BeyondUtil.toolTypeRandomizer(), 1);
-				stack.addUnsafeEnchantment(BeyondUtil.toolEnchantRandomizer(), BeyondUtil.toolLevelRandomizer());
-				int next = Conflict.random.nextInt(100);
-				if(next<40)stack.addUnsafeEnchantment(BeyondUtil.toolEnchantRandomizer(), BeyondUtil.toolLevelRandomizer());
-				if(next<25)stack.addUnsafeEnchantment(BeyondUtil.toolEnchantRandomizer(), BeyondUtil.toolLevelRandomizer());
-				if(next<10)stack.addUnsafeEnchantment(BeyondUtil.toolEnchantRandomizer(), BeyondUtil.toolLevelRandomizer());
+                BeyondUtil.addRandomEnchant(stack);
+                int next = Conflict.random.nextInt(100);
+                if(next<30) BeyondUtil.addRandomEnchant(stack);
+                if(next<20) BeyondUtil.addRandomEnchant(stack);
+                if(next<5) BeyondUtil.addRandomEnchant(stack);
 				event.getDrops().add(stack);
 				player.sendMessage("Hooray! A "+ChatColor.BLUE.toString()+stack.getType().toString()+ChatColor.WHITE.toString()+" dropped! Rarity Index: "+BeyondUtil.getColorOfRarity(BeyondUtil.rarity(stack))+BeyondUtil.rarity(stack));
 			}else if(random >= 2 && random < 4 
@@ -189,11 +187,11 @@ public class BeyondEntityListener implements Listener {
 							|| (Conflict.Oceian.hasPlayer(player.getName()) && Conflict.Oceian.getPerks().contains("bowdrops"))
 							|| (Conflict.Savania.hasPlayer(player.getName()) && Conflict.Savania.getPerks().contains("bowdrops")))){
 				ItemStack stack = new ItemStack(Material.BOW, 1);
-				stack.addUnsafeEnchantment(BeyondUtil.bowEnchantRandomizer(), BeyondUtil.bowLevelRandomizer());
-				int next = Conflict.random.nextInt(100);
-				if(next<40)stack.addUnsafeEnchantment(BeyondUtil.bowEnchantRandomizer(), BeyondUtil.bowLevelRandomizer());
-				if(next<25)stack.addUnsafeEnchantment(BeyondUtil.bowEnchantRandomizer(), BeyondUtil.bowLevelRandomizer());
-				if(next<10)stack.addUnsafeEnchantment(BeyondUtil.bowEnchantRandomizer(), BeyondUtil.bowLevelRandomizer());
+                BeyondUtil.addRandomEnchant(stack);
+                int next = Conflict.random.nextInt(100);
+                if(next<30) BeyondUtil.addRandomEnchant(stack);
+                if(next<20) BeyondUtil.addRandomEnchant(stack);
+                if(next<5) BeyondUtil.addRandomEnchant(stack);
 				event.getEntity().getWorld().dropItemNaturally(event.getEntity().getLocation(), stack);
 			}else if(random < 2
 					&& event.getEntity() instanceof Sheep 

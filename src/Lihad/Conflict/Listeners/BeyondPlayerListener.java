@@ -31,6 +31,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.Potion;
 
 import Lihad.Conflict.Conflict;
+import Lihad.Conflict.BlockPerk;
 import Lihad.Conflict.Util.BeyondUtil;
 
 public class BeyondPlayerListener implements Listener {
@@ -94,17 +95,7 @@ public class BeyondPlayerListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public static void onPlayerPortal(PlayerPortalEvent event){
-		if(event.getCause().equals(TeleportCause.NETHER_PORTAL) && event.getFrom().getWorld().getName().equals("survival") &&  Conflict.TRADE_RICHPORTAL.distance(event.getFrom()) < 10){
-			if( Conflict.PlayerCanUseTrade(event.getPlayer().getName(), "richportal") ) {
-				event.getPlayer().sendMessage("Shaaaaazaaam!");
-				event.getPlayer().teleport(new Location(plugin.getServer().getWorld("richworld"), 0.0, 80.0, 0.0));
-				event.setTo(new Location(plugin.getServer().getWorld("richworld"), 0.0, 80.0, 0.0));
-				event.setCancelled(true);
-			}else{
-				event.getPlayer().sendMessage("Epic Fail");
-			}
-		}
-		else if(event.getCause().equals(TeleportCause.NETHER_PORTAL) && event.getFrom().getWorld().getName().equals("survival") && Conflict.TRADE_MYSTPORTAL.distance(event.getFrom()) < 10){
+		if(event.getCause().equals(TeleportCause.NETHER_PORTAL) && event.getFrom().getWorld().getName().equals("survival") && Conflict.TRADE_MYSTPORTAL.distance(event.getFrom()) < 10){
 			if( Conflict.PlayerCanUseTrade(event.getPlayer().getName(), "mystportal") ) {
 				event.getPlayer().sendMessage("Shaaaaazaaam!");
 				event.getPlayer().teleport(new Location(plugin.getServer().getWorld("mystworld"), 0.0, 0.0, 0.0));
@@ -141,7 +132,7 @@ public class BeyondPlayerListener implements Listener {
 			if(event.getPlayer().getItemInHand() != null){
 				if(!event.getPlayer().getItemInHand().getEnchantments().isEmpty()){
 					Enchantment enchantment = (Enchantment) event.getPlayer().getItemInHand().getEnchantments().keySet().toArray()[(Conflict.random.nextInt(event.getPlayer().getItemInHand().getEnchantments().size()))];
-					if(event.getPlayer().getItemInHand().getEnchantmentLevel(enchantment) < 10){
+					if(event.getPlayer().getItemInHand().getEnchantmentLevel(enchantment) < 5){
 						event.getPlayer().getItemInHand().addUnsafeEnchantment(enchantment, event.getPlayer().getItemInHand().getEnchantmentLevel(enchantment)+1);
 						event.getPlayer().sendMessage(ChatColor.AQUA+"WOOT!! "+enchantment.toString()+" is now level "+event.getPlayer().getItemInHand().getEnchantmentLevel(enchantment));
 						//ItemStack stack = event.getPlayer().getInventory().getItem(event.getPlayer().getInventory().first(Material.DIAMOND_BLOCK));
@@ -185,102 +176,17 @@ public class BeyondPlayerListener implements Listener {
 	@EventHandler
 	public static void onPlayerInteract(PlayerInteractEvent event){
         Player player = event.getPlayer();
-		if(event.getClickedBlock() != null && event.getClickedBlock().getLocation().equals(Conflict.TRADE_BLACKSMITH.getBlock().getLocation())
-				&& Conflict.PlayerCanUseTrade(player.getName(), "blacksmith")) {
-			if(player.getItemInHand().getDurability() != 0)  {
-
-                int uses = 0;
-                if( Conflict.TRADE_BLACKSMITH_PLAYER_USES.containsKey(player.getName()) ) {
-                    uses = Conflict.TRADE_BLACKSMITH_PLAYER_USES.get(player.getName());
-                }
-                
-				if( uses >= 5) {
-                   player.sendMessage("You have accessed blacksmith too many times today");
-                    event.setCancelled(true);
-                    return;
-                }
-
-               player.getItemInHand().setDurability((short) 0);
-                uses++;
-                
-                Conflict.TRADE_BLACKSMITH_PLAYER_USES.put(player.getName(), uses);
-
-                }
-			else player.sendMessage("This item is either unable to be repaired or is at max durability");
-			player.updateInventory();
-		}else if(event.getClickedBlock() != null && event.getClickedBlock().getLocation().equals(Conflict.TRADE_ENCHANTMENTS.getBlock().getLocation())
-				&& Conflict.PlayerCanUseTrade(player.getName(), "enchantments")) {
-                
-            int uses = 0;
-            if( Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.containsKey(player.getName()) ) {
-                uses = Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.get(player.getName());
+        for (BlockPerk p : Conflict.blockPerks) {
+            if (p.getNode() == null) { continue; }
+            if (event.getClickedBlock().getLocation() != p.getNode().getLocation()) { continue; }
+            if (!Conflict.PlayerCanUseTrade(event.getPlayer().getName(), p.getName())) { 
+                event.getPlayer().sendMessage("You can't use this perk!");
+                continue;
             }
-
-            if( uses >= 5) {
-                player.sendMessage("You have accessed enchantments too many times today");
-                event.setCancelled(true);
-                return;
-            }
-
-            ItemStack stack = player.getItemInHand();
-			if(stack.getType() == Material.DIAMOND_SWORD && stack.getAmount() == 1){
-                player.getItemInHand().addUnsafeEnchantment(BeyondUtil.weaponEnchantRandomizer(), BeyondUtil.weaponLevelRandomizer());
-                uses++;
-			}
-			else if((stack.getType() == Material.DIAMOND_HELMET || stack.getType() == Material.DIAMOND_CHESTPLATE 
-					|| stack.getType() == Material.DIAMOND_LEGGINGS || stack.getType() == Material.DIAMOND_BOOTS)&& stack.getAmount() == 1){
-                player.getItemInHand().addUnsafeEnchantment(BeyondUtil.armorEnchantRandomizer(),BeyondUtil.armorLevelRandomizer());
-                uses++;
-			}
-			else if((stack.getType() == Material.DIAMOND_AXE || stack.getType() == Material.DIAMOND_PICKAXE 
-					|| stack.getType() == Material.DIAMOND_SPADE || stack.getType() == Material.DIAMOND_HOE)&& stack.getAmount() == 1){
-                player.getItemInHand().addUnsafeEnchantment(BeyondUtil.toolEnchantRandomizer(),BeyondUtil.toolLevelRandomizer());
-                uses++;
-			}
-			else if(stack.getType() == Material.BOW && stack.getAmount() == 1){
-                player.getItemInHand().addUnsafeEnchantment(BeyondUtil.bowEnchantRandomizer(),BeyondUtil.bowLevelRandomizer());
-                uses++;
-			}
-			else {
-                player.sendMessage("Bad Item.  Try something else");
-            }
-            Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.put(player.getName(), uses);
-			player.updateInventory();
-            
-		}else if(event.getClickedBlock() != null && event.getClickedBlock().getLocation().equals(Conflict.TRADE_POTIONS.getBlock().getLocation())
-				&& Conflict.PlayerCanUseTrade(player.getName(), "potions")) {
-
-            if(player.getItemInHand().getType() == Material.GLASS_BOTTLE){
-
-                int uses = 0;
-                if( Conflict.TRADE_POTIONS_PLAYER_USES.containsKey(player.getName()) ) {
-                    uses = Conflict.TRADE_POTIONS_PLAYER_USES.get(player.getName());
-                }
-
-                if( uses >= 256) {
-                    player.sendMessage("You have accessed potions too many times today");
-                    event.setCancelled(true);
-                    return;
-                }
-
-                // Transform as many bottles as we can, up to either the stack size or the number of remaining uses
-                int numPotions = java.lang.Math.min(player.getItemInHand().getAmount(), 256 - uses);
-                
-                if (numPotions < player.getItemInHand().getAmount()) {
-                    ItemStack leftover = new ItemStack(Material.GLASS_BOTTLE, player.getItemInHand().getAmount() - numPotions);
-                    player.getWorld().dropItemNaturally(player.getLocation(), leftover);
-                }
-                
-                ItemStack stack = new ItemStack(Material.EXP_BOTTLE, numPotions);
-                player.setItemInHand(stack);
-                uses += numPotions;
-
-                Conflict.TRADE_POTIONS_PLAYER_USES.put(player.getName(), uses);
-                player.updateInventory();
-                
-            }
-		}
-        else if(event.getClickedBlock() != null && event.getClickedBlock().getLocation().equals(Conflict.Abatton.getLocation().getBlock().getLocation())){
+            p.activate(event.getPlayer());
+        }
+               
+        if(event.getClickedBlock() != null && event.getClickedBlock().getLocation().equals(Conflict.Abatton.getLocation().getBlock().getLocation())){
 			if(player.getItemInHand().getType() == Material.GOLD_INGOT){
 				player.sendMessage("You gave "+ChatColor.YELLOW.toString()+"1 "+ChatColor.WHITE.toString()+"Gold Bar to "+ChatColor.GREEN.toString()+"Abatton");
 				if(player.getItemInHand().getAmount() == 1){

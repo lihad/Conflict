@@ -18,8 +18,9 @@ public class Node {
     Location center;
 
     public int getRadius() { return this.radius; }
-    public int getRadiusSquared() { return radiusSquared; }
     public void setRadius(int r) { radius = r; radiusSquared = r*r; }
+    
+    public boolean isInRadius(Location l) { return (center.distanceSquared(l) <= radiusSquared); }
 
     public String getName() { return name; }
     

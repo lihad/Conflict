@@ -51,13 +51,14 @@ public class Conflict extends JavaPlugin {
     public static City Savania = new City("Savania");
     public static City[] cities = {Abatton, Oceian, Savania};
     
-    public static Perk Blacksmith = new LocationPerk("Blacksmith");
-    public static Perk Potions = new LocationPerk("Potions");
-    public static Perk Enchantments = new LocationPerk("Enchantments");
-    public static Perk RichPortal = new PortalPerk("RichPortal");
-    public static Perk MystPortal = new PortalPerk("MystPortal");
+    public static Perk Blacksmith = new BlacksmithPerk("blacksmith");
+    public static Perk Potions = new PotionPerk("potions");
+    public static Perk Enchantments = new EnchantmentPerk("enchantments");
+    public static Perk RichPortal = new PortalPerk("richportal");
+    public static Perk MystPortal = new PortalPerk("mystportal");
     
-    //public static List<PerkNode> perkNodes = new LinkedList<PerkNode>();
+    public static BlockPerk[] blockPerks = {(BlockPerk)Blacksmith, (BlockPerk)Potions, (BlockPerk)Enchantments};
+    public static PortalPerk[] portalPerks = {(PortalPerk)RichPortal, (PortalPerk)MystPortal};
     
     public static Location TRADE_BLACKSMITH;
     public static Location TRADE_POTIONS;
