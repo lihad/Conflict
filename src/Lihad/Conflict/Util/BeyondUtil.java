@@ -341,6 +341,7 @@ public class BeyondUtil {
             case STONE_SWORD:
             case WOOD_SWORD:
                 possible.addAll(Arrays.asList(weaponEnchants));
+                break;
             case DIAMOND_HELMET:
             case DIAMOND_CHESTPLATE:
             case DIAMOND_LEGGINGS:
@@ -358,6 +359,16 @@ public class BeyondUtil {
             case LEATHER_LEGGINGS:
             case LEATHER_BOOTS:
                 possible.addAll(Arrays.asList(armorEnchants));
+                break;
+            case DIAMOND_AXE:
+            case GOLD_AXE:
+            case IRON_AXE:
+            case WOOD_AXE:
+                // Axes are usually tools, but might be weapons.
+                possible.addAll(Arrays.asList(toolEnchants));
+                possible.addAll(Arrays.asList(toolEnchants));
+                possible.addAll(Arrays.asList(toolEnchants));
+                possible.addAll(Arrays.asList(weaponEnchants));
             case DIAMOND_PICKAXE:
             case DIAMOND_SPADE:
             case DIAMOND_HOE:
@@ -371,18 +382,10 @@ public class BeyondUtil {
             case WOOD_SPADE:
             case WOOD_HOE:
                 possible.addAll(Arrays.asList(toolEnchants));
-            case DIAMOND_AXE:
-            case GOLD_AXE:
-            case IRON_AXE:
-            case WOOD_AXE:
-                // Axes are usually tools, but might be weapons.
-                possible.addAll(Arrays.asList(toolEnchants));
-                possible.addAll(Arrays.asList(toolEnchants));
-                possible.addAll(Arrays.asList(toolEnchants));
-                possible.addAll(Arrays.asList(toolEnchants));
-                possible.addAll(Arrays.asList(weaponEnchants));
+                break;
             case BOW:
                 possible.addAll(Arrays.asList(bowEnchants));
+                break;
             default:
                 // Shouldn't get here.  Throw sharpness on it.
                 possible.add(Enchantment.DAMAGE_ALL);
