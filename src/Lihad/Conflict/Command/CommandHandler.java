@@ -96,6 +96,7 @@ public class CommandHandler implements CommandExecutor {
                     else {
                         sender.sendMessage("Command not available from console.");
                     }
+                    return true;
                 }
 			}
 		}
