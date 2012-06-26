@@ -50,7 +50,7 @@ public class CommandHandler implements CommandExecutor {
 			return true;
 		}else if(cmd.getName().equalsIgnoreCase("cwho")){
 			if(arg.length == 1){
-				City city = Conflict.getCity(arg[1]);
+				City city = Conflict.getCity(arg[0]);
 				if (city != null) {
 					List<Player> players = Arrays.asList(plugin.getServer().getOnlinePlayers());
 					String message = "";
