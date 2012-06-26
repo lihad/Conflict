@@ -27,6 +27,7 @@ import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.Potion;
 
@@ -136,7 +137,7 @@ public class BeyondPlayerListener implements Listener {
 			if(event.getPlayer().getItemInHand() != null){
 				if(!event.getPlayer().getItemInHand().getEnchantments().isEmpty()){
 					Enchantment enchantment = (Enchantment) event.getPlayer().getItemInHand().getEnchantments().keySet().toArray()[(Conflict.random.nextInt(event.getPlayer().getItemInHand().getEnchantments().size()))];
-					if(event.getPlayer().getItemInHand().getEnchantmentLevel(enchantment) < 5){
+					if(event.getPlayer().getItemInHand().getEnchantmentLevel(enchantment) < BeyondUtil.maxEnchantLevel(enchantment)){
 						event.getPlayer().getItemInHand().addUnsafeEnchantment(enchantment, event.getPlayer().getItemInHand().getEnchantmentLevel(enchantment)+1);
 						event.getPlayer().sendMessage(ChatColor.AQUA+"WOOT!! "+enchantment.toString()+" is now level "+event.getPlayer().getItemInHand().getEnchantmentLevel(enchantment));
 						//ItemStack stack = event.getPlayer().getInventory().getItem(event.getPlayer().getInventory().first(Material.DIAMOND_BLOCK));
@@ -346,4 +347,28 @@ public class BeyondPlayerListener implements Listener {
 			else if(Conflict.Savania.hasPlayer(event.getPlayer().getName()))event.setRespawnLocation(Conflict.Savania.getSpawn());
 		}
 	}
+    
+    @EventHandler
+    public static void onInventoryClose(org.bukkit.event.inventory.InventoryCloseEvent event) {
+        Player player = (Player)event.getPlayer();
+        if (event.getView().getType() == InventoryType.CRAFTING) {
+            if (!player.isOp() && !Conflict.handler.has(player, "conflict.debug")) {
+                BeyondUtil.nerfOverenchantedPlayerInventory(player);
+            }
+        }
+        else if (event.getView().getType() == InventoryType.CHEST) {
+            if (!player.isOp() && !Conflict.handler.has(player, "conflict.debug")) {
+                BeyondUtil.nerfOverenchantedInventory(event.getInventory());
+            }
+        }
+    }
+    
+    @EventHandler
+    public static void onPlayerItemPickup(org.bukkit.event.player.PlayerPickupItemEvent event) {
+        Player player = (Player)event.getPlayer();
+        if (!player.isOp() && !Conflict.handler.has(player, "conflict.debug")) {
+            ItemStack i = event.getItem().getItemStack();
+            BeyondUtil.nerfOverenchantedItem(i);
+        }
+    }
 }

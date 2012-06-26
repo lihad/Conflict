@@ -82,13 +82,21 @@ public class CommandHandler implements CommandExecutor {
 	}
 
 	private boolean handleCCD(CommandSender sender, String[] arg) {
-		if (sender instanceof Player && arg.length > 0) {
-			if (Conflict.handler.has((Player)sender, "conflict.debug")) {
+        if (sender.isOp() || (sender instanceof Player && Conflict.handler.has((Player)sender, "conflict.debug"))) {
+            if (arg.length > 0) {
 				// Random debug info for running Conflict instance
 				if (arg[0].equalsIgnoreCase("version")) {
 					sender.sendMessage("Conflict version " + org.bukkit.Bukkit.getPluginManager().getPlugin("Conflict").getDescription().getVersion());
 					return true;
 				}
+                if (arg[0].equalsIgnoreCase("nerfme")) {
+                    if (sender instanceof Player) { 
+                        BeyondUtil.nerfOverenchantedPlayerInventory((Player)sender);
+                    }
+                    else {
+                        sender.sendMessage("Command not available from console.");
+                    }
+                }
 			}
 		}
 		return false;

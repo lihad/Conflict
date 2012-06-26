@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Arrays;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -12,6 +13,7 @@ import org.bukkit.block.Chest;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.potion.Potion.Tier;
 import org.bukkit.potion.PotionType;
 
@@ -189,112 +191,19 @@ public class BeyondUtil {
         }
     }
     
-    public static boolean isSword(ItemStack item) {
-        switch(item.getType()) {
-            case DIAMOND_SWORD:
-            case IRON_SWORD:
-            case STONE_SWORD:
-            case WOOD_SWORD:
-                return true;
-            default:
-                return false;
-        }
-    }
-    
-    public static boolean isArmor(ItemStack item) {
-        switch(item.getType()) {
-            case DIAMOND_HELMET:
-            case DIAMOND_CHESTPLATE:
-            case DIAMOND_LEGGINGS:
-            case DIAMOND_BOOTS:
-            case GOLD_HELMET:
-            case GOLD_CHESTPLATE:
-            case GOLD_LEGGINGS:
-            case GOLD_BOOTS:
-            case IRON_HELMET:
-            case IRON_CHESTPLATE:
-            case IRON_LEGGINGS:
-            case IRON_BOOTS:
-            case LEATHER_HELMET:
-            case LEATHER_CHESTPLATE:
-            case LEATHER_LEGGINGS:
-            case LEATHER_BOOTS:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    public static boolean isTool(ItemStack item) {
-        switch(item.getType()) {
-            case DIAMOND_AXE:
-            case DIAMOND_PICKAXE:
-            case DIAMOND_SPADE:
-            case DIAMOND_HOE:
-            case GOLD_AXE:
-            case GOLD_PICKAXE:
-            case GOLD_SPADE:
-            case GOLD_HOE:
-            case IRON_AXE:
-            case IRON_PICKAXE:
-            case IRON_SPADE:
-            case IRON_HOE:
-            case WOOD_AXE:
-            case WOOD_PICKAXE:
-            case WOOD_SPADE:
-            case WOOD_HOE:
-                return true;
-            default:
-                return false;
-        }
-    }
-    
-    public static boolean isBow(ItemStack item) {
-        switch(item.getType()) {
-            case BOW:
-                return true;
-            default:
-                return false;
-        }
-    }
-    
     static int enchantLevelRandomizer(Enchantment e) {
-        if (
-            e == Enchantment.ARROW_INFINITE ||
-            e == Enchantment.SILK_TOUCH
-        ) {
-            return 1;
-        }
-        else if (
-            e == Enchantment.LOOT_BONUS_MOBS || 
-            e == Enchantment.KNOCKBACK ||
-            e == Enchantment.FIRE_ASPECT ||
-            e == Enchantment.DAMAGE_UNDEAD ||
-            e == Enchantment.DAMAGE_ARTHROPODS ||
-            e == Enchantment.DAMAGE_ALL ||
-            e == Enchantment.ARROW_DAMAGE ||
-            e == Enchantment.ARROW_FIRE ||
-            e == Enchantment.ARROW_KNOCKBACK ||
-            e == Enchantment.LOOT_BONUS_MOBS ||
-            e == Enchantment.PROTECTION_FIRE ||
-            e == Enchantment.PROTECTION_PROJECTILE ||
-            e == Enchantment.PROTECTION_ENVIRONMENTAL ||
-            e == Enchantment.PROTECTION_EXPLOSIONS ||
-            e == Enchantment.LOOT_BONUS_BLOCKS 
-        ) {
-            return lowLevelRandomizer();
-        }
-        else if (
-            e == Enchantment.DURABILITY ||
-            e == Enchantment.DIG_SPEED
-        ) {
-            return highLevelRandomizer();
-        }
-        else {
-            return 0;
-        }
+        double p = Conflict.random.nextDouble();
+        // square power distribution - Bunches up probabilities toward the bottom
+        p = p * p;
+        int level = (int)(((double)maxEnchantLevel(e)) * p) + 1;
+        return level;
     }
-                
+    
+    public static int maxEnchantLevel(Enchantment e) {
+        if (e.equals(Enchantment.DURABILITY)) { return 10; }
+        if (e.equals(Enchantment.DIG_SPEED)) { return 10; }
+        return e.getMaxLevel();
+    }
 
     public static ItemStack addRandomEnchant(ItemStack item) {
         
@@ -304,10 +213,7 @@ public class BeyondUtil {
         }
         Enchantment e = null;
         
-        if (isSword(item)) { e = weaponEnchantRandomizer(); }
-        else if (isArmor(item)) { e = armorEnchantRandomizer(); }
-        else if (isTool(item)) { e = toolEnchantRandomizer(); }
-        else if (isBow(item)) { e = bowEnchantRandomizer(); }
+        e = enchantRandomizer(item);
         
         int level = enchantLevelRandomizer(e);
         
@@ -356,49 +262,7 @@ public class BeyondUtil {
 		else if(next<60)return Material.STONE_SWORD;
 		else return Material.WOOD_SWORD;
 	}
-	public static Enchantment weaponEnchantRandomizer(){
-		int next = Conflict.random.nextInt(6);
-		switch(next){
-		case 0: return Enchantment.LOOT_BONUS_MOBS;
-		case 1: return Enchantment.KNOCKBACK;
-		case 2: return Enchantment.FIRE_ASPECT;
-		case 3: return Enchantment.DAMAGE_UNDEAD;
-		case 4: return Enchantment.DAMAGE_ARTHROPODS;
-		case 5: return Enchantment.DAMAGE_ALL;
-		}
-		return Enchantment.DAMAGE_ALL;
-	}
-	public static int highLevelRandomizer(){
-		int next = Conflict.random.nextInt(100);
-		if(next<1)return 10;
-		else if(next<3)return 9;
-		else if(next<6)return 8;
-		else if(next<10)return 7;
-		else if(next<15)return 6;
-		else if(next<20)return 5;
-		else if(next<30)return 4;
-		else if(next<40)return 3;
-		else if(next<50)return 2;
-		else return 1;
-	}
-	public static int lowLevelRandomizer(){
-		int next = Conflict.random.nextInt(100);
-		if(next<10)return 4;
-		if(next<30)return 3;
-		if(next<60)return 2;
-		else return 1;
-	}
-	public static Enchantment bowEnchantRandomizer(){
-		int next = Conflict.random.nextInt(5);
-		switch(next){
-		case 0: return Enchantment.ARROW_DAMAGE;
-		case 1: return Enchantment.ARROW_FIRE;
-		case 2: return Enchantment.ARROW_INFINITE;
-		case 3: return Enchantment.ARROW_KNOCKBACK;
-		case 4: return Enchantment.LOOT_BONUS_MOBS;
-		}
-		return Enchantment.DAMAGE_ALL;
-	}
+    
 	public static Material armorTypeRandomizer(){
 		int next = Conflict.random.nextInt(100);
 		if(next<2)return Material.DIAMOND_CHESTPLATE;
@@ -418,16 +282,6 @@ public class BeyondUtil {
 		else if(next<86)return Material.LEATHER_HELMET;
 		else return Material.LEATHER_LEGGINGS;
 	}
-	public static Enchantment armorEnchantRandomizer(){
-		int next = Conflict.random.nextInt(4);
-		switch(next){
-		case 0: return Enchantment.PROTECTION_FIRE;
-		case 1: return Enchantment.PROTECTION_PROJECTILE;
-		case 2: return Enchantment.PROTECTION_ENVIRONMENTAL;
-		case 3: return Enchantment.PROTECTION_EXPLOSIONS;
-		}
-		return Enchantment.PROTECTION_EXPLOSIONS;
-	}
 	public static Material toolTypeRandomizer(){
 		int next = Conflict.random.nextInt(100);
 		if(next<4)return Material.DIAMOND_AXE;
@@ -446,13 +300,128 @@ public class BeyondUtil {
 		else if(next<85)return Material.WOOD_AXE;
 		else return Material.WOOD_SPADE;
 	}
-	public static Enchantment toolEnchantRandomizer(){
-		int next = Conflict.random.nextInt(3);
-		switch(next){
-		case 0: return Enchantment.DURABILITY;
-		case 1: return Enchantment.LOOT_BONUS_BLOCKS;
-		case 2: return Enchantment.DIG_SPEED;
-		}
-		return Enchantment.PROTECTION_EXPLOSIONS; // ?!
-	}
+
+    public static Enchantment enchantRandomizer(ItemStack item){
+
+        final Enchantment[] weaponEnchants = new Enchantment[] {
+            Enchantment.LOOT_BONUS_MOBS,
+            Enchantment.KNOCKBACK,
+            Enchantment.FIRE_ASPECT,
+            Enchantment.DAMAGE_UNDEAD,
+            Enchantment.DAMAGE_ARTHROPODS,
+            Enchantment.DAMAGE_ALL
+        };
+        
+        final Enchantment[] armorEnchants = new Enchantment[] {
+            Enchantment.PROTECTION_FIRE,
+            Enchantment.PROTECTION_PROJECTILE,
+            Enchantment.PROTECTION_ENVIRONMENTAL,
+            Enchantment.PROTECTION_EXPLOSIONS
+        };
+        
+        final Enchantment[] bowEnchants = new Enchantment[] {
+            Enchantment.ARROW_DAMAGE,
+            Enchantment.ARROW_FIRE,
+            Enchantment.ARROW_INFINITE,
+            Enchantment.ARROW_KNOCKBACK,
+            Enchantment.LOOT_BONUS_MOBS
+        };
+        
+        final Enchantment[] toolEnchants = new Enchantment[] {
+            Enchantment.DURABILITY,
+            Enchantment.LOOT_BONUS_BLOCKS,
+            Enchantment.DIG_SPEED
+        };
+    
+        ArrayList<Enchantment> possible = new ArrayList<Enchantment>();
+
+        switch(item.getType()) {
+            case DIAMOND_SWORD:
+            case IRON_SWORD:
+            case STONE_SWORD:
+            case WOOD_SWORD:
+                possible.addAll(Arrays.asList(weaponEnchants));
+            case DIAMOND_HELMET:
+            case DIAMOND_CHESTPLATE:
+            case DIAMOND_LEGGINGS:
+            case DIAMOND_BOOTS:
+            case GOLD_HELMET:
+            case GOLD_CHESTPLATE:
+            case GOLD_LEGGINGS:
+            case GOLD_BOOTS:
+            case IRON_HELMET:
+            case IRON_CHESTPLATE:
+            case IRON_LEGGINGS:
+            case IRON_BOOTS:
+            case LEATHER_HELMET:
+            case LEATHER_CHESTPLATE:
+            case LEATHER_LEGGINGS:
+            case LEATHER_BOOTS:
+                possible.addAll(Arrays.asList(armorEnchants));
+            case DIAMOND_PICKAXE:
+            case DIAMOND_SPADE:
+            case DIAMOND_HOE:
+            case GOLD_PICKAXE:
+            case GOLD_SPADE:
+            case GOLD_HOE:
+            case IRON_PICKAXE:
+            case IRON_SPADE:
+            case IRON_HOE:
+            case WOOD_PICKAXE:
+            case WOOD_SPADE:
+            case WOOD_HOE:
+                possible.addAll(Arrays.asList(toolEnchants));
+            case DIAMOND_AXE:
+            case GOLD_AXE:
+            case IRON_AXE:
+            case WOOD_AXE:
+                // Axes are usually tools, but might be weapons.
+                possible.addAll(Arrays.asList(toolEnchants));
+                possible.addAll(Arrays.asList(toolEnchants));
+                possible.addAll(Arrays.asList(toolEnchants));
+                possible.addAll(Arrays.asList(toolEnchants));
+                possible.addAll(Arrays.asList(weaponEnchants));
+            case BOW:
+                possible.addAll(Arrays.asList(bowEnchants));
+            default:
+                // Shouldn't get here.  Throw sharpness on it.
+                possible.add(Enchantment.DAMAGE_ALL);
+        }
+        int chosen = Conflict.random.nextInt(possible.size());
+        
+        return possible.get(chosen);
+    }
+    
+    public static void nerfOverenchantedPlayerInventory(Player player) {
+        for (ItemStack i : player.getInventory().getContents()) {
+            if (i != null) nerfOverenchantedItem(i);
+        }
+        for (ItemStack i : player.getInventory().getArmorContents()) {
+            if (i != null) nerfOverenchantedItem(i);
+        }
+    }
+
+    public static void nerfOverenchantedInventory(Inventory inv) {
+        for (ItemStack i : inv.getContents()) {
+            if (i != null) nerfOverenchantedItem(i);
+        }
+    }
+
+    public static void nerfOverenchantedItem(ItemStack i) {
+        if (i != null) {
+            Map<Enchantment, Integer> enchantments = i.getEnchantments();
+            if (enchantments != null) {
+                for (Map.Entry entry : enchantments.entrySet()) {
+                    Enchantment e = (Enchantment)entry.getKey();
+                    int level = (Integer)entry.getValue();
+                    int max = BeyondUtil.maxEnchantLevel(e);
+                    if (level > max) {
+                        i.addUnsafeEnchantment(e, max);
+                    }
+                }
+            }
+        }
+    }
+
+    
 }
