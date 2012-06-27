@@ -173,7 +173,7 @@ public class Conflict extends JavaPlugin {
 				public void run() {
                     // Maintenance timer - runs every 5 mins
                     if(war != null){
-                        war.postWarAutoList(null);
+                        war.executeMaintenanceTick();
                     }
                     purgeInactivePlayers();
                     saveInfoFile();
@@ -183,7 +183,7 @@ public class Conflict extends JavaPlugin {
 				public void run() {
                     // War timer - runs every second
                     if(war == null){
-                        if(War.warShouldStart()){
+                        if(War.isItWartime()){
 							Abatton.clearTrades();
 							Oceian.clearTrades();
 							Savania.clearTrades();
@@ -222,9 +222,8 @@ public class Conflict extends JavaPlugin {
 		getCommand("protectcity").setExecutor(cmd);
 		getCommand("myst").setExecutor(cmd);
 		getCommand("cwho").setExecutor(cmd);
-		getCommand("warstats").setExecutor(cmd);
 		getCommand("perks").setExecutor(cmd);
-		getCommand("bnn").setExecutor(cmd);
+		getCommand("war").setExecutor(new War());
 
 
 		//PermsManager
@@ -252,6 +251,7 @@ public class Conflict extends JavaPlugin {
 			pm.registerEvents(playerListener, this);
 			pm.registerEvents(entityListener, this);
 			pm.registerEvents(safeListener, this);
+            pm.registerEvents(new War(), this);
 		}
 	}
 	public void setupPermissions() {

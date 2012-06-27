@@ -9,7 +9,12 @@ import Lihad.Conflict.Information.BeyondInfo;
 
 public class City extends Node {
 
-    public City(String n) { super(n); }
+    public City(String n) { 
+        super(n); 
+        
+        // HACK HACK - Read this from conf, once it's in
+        setRadius(500);
+    }
 
 	Set<String> players = new HashSet<String>();
 	Location spawnLocation;

@@ -63,17 +63,8 @@ public class CommandHandler implements CommandExecutor {
 		}else if(cmd.getName().equalsIgnoreCase("purchase")) {
 			return handlePurchase(sender, arg);
 		}
-		else if(cmd.getName().equalsIgnoreCase("warstats") && arg.length == 0){
-			if (Conflict.war != null) {
-				Conflict.war.postWarAutoList(sender);
-			}
-			return true;
-		}
 		else if(cmd.getName().equalsIgnoreCase("perks")) {
 			return handlePerks(sender, arg);
-		}
-		else if(cmd.getName().equalsIgnoreCase("bnn")) {
-			return handleBNN(sender, arg);
 		}
 		else if (cmd.getName().equalsIgnoreCase("ccd")) {
 			return handleCCD(sender, arg);
@@ -84,11 +75,11 @@ public class CommandHandler implements CommandExecutor {
 	private boolean handleCCD(CommandSender sender, String[] arg) {
         if (sender.isOp() || (sender instanceof Player && Conflict.handler.has((Player)sender, "conflict.debug"))) {
             if (arg.length > 0) {
-				// Random debug info for running Conflict instance
-				if (arg[0].equalsIgnoreCase("version")) {
-					sender.sendMessage("Conflict version " + org.bukkit.Bukkit.getPluginManager().getPlugin("Conflict").getDescription().getVersion());
-					return true;
-				}
+                // Random debug info for running Conflict instance
+                if (arg[0].equalsIgnoreCase("version")) {
+                    sender.sendMessage("Conflict version " + org.bukkit.Bukkit.getPluginManager().getPlugin("Conflict").getDescription().getVersion());
+                    return true;
+                }
                 if (arg[0].equalsIgnoreCase("nerfme")) {
                     if (sender instanceof Player) { 
                         BeyondUtil.nerfOverenchantedPlayerInventory((Player)sender);
@@ -98,24 +89,6 @@ public class CommandHandler implements CommandExecutor {
                     }
                     return true;
                 }
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Processes a /bnn command.
-	 * @param sender - The sender of the command.
-	 * @param arg - The arguments.
-	 * @return boolean - True if responded to, false if not.
-	 */
-	private boolean handleBNN(CommandSender sender, String[] arg) {
-		if (sender instanceof Player) {
-			Player player = (Player) sender;
-			if (Conflict.war != null && arg.length == 2 && arg[0].equalsIgnoreCase("reporter") 
-					&& arg[1].equalsIgnoreCase("enable")) {
-				Conflict.war.reporters.add(player);
-				return true;
 			}
 		}
 		return false;

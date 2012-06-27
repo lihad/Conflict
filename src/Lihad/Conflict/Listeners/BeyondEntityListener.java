@@ -31,46 +31,8 @@ public class BeyondEntityListener implements Listener {
 	public BeyondEntityListener(Conflict instance) {
 		plugin = instance;
 	}
-	@EventHandler
-	public void onEntityDamageByEntity(EntityDamageByEntityEvent event){
-		//
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		//
-		// "PvP"
-		if(event.getEntity().getWorld().getName().equals("survival")){
-			if((event.getDamager() instanceof Player || (event.getDamager() instanceof Projectile 
-					&& ((Projectile)event.getDamager()).getShooter() instanceof Player)) && event.getEntity() instanceof Player){
-				Player player;
-				Player hurt = (Player)event.getEntity();
-				if(event.getDamager() instanceof Player) player = (Player)event.getDamager();
-				else player = (Player)((Projectile)event.getDamager()).getShooter();
-                if (Conflict.war != null) {
-                    // War is on.  PVP for all
-                    // except reporters
-                    if (Conflict.war.reporters.contains(hurt)) {
-                        event.setCancelled(true);
-                    }
-                    return;
-                }
-				if(player.isOp()){
-					return;
-				}
-				else if(player.getLocation().distance(player.getWorld().getSpawnLocation()) > 5000.0){
-					return;
-				}else if((Conflict.Abatton.hasPlayer(player.getName()) && (Conflict.Oceian.getLocation().distance(hurt.getLocation())<500.0 || Conflict.Savania.getLocation().distance(hurt.getLocation())<500.0))
-						|| (Conflict.Oceian.hasPlayer(player.getName()) && (Conflict.Abatton.getLocation().distance(hurt.getLocation())<500.0 || Conflict.Savania.getLocation().distance(hurt.getLocation())<500.0))
-						|| (Conflict.Savania.hasPlayer(player.getName()) && (Conflict.Abatton.getLocation().distance(hurt.getLocation())<500.0 || Conflict.Oceian.getLocation().distance(hurt.getLocation())<500.0))){
-					event.setCancelled(true);
-				}else if((Conflict.Abatton.hasPlayer(player.getName()) && (Conflict.Abatton.getLocation().distance(hurt.getLocation())<500.0))
-						|| (Conflict.Oceian.hasPlayer(player.getName()) && (Conflict.Oceian.getLocation().distance(hurt.getLocation())<500.0))
-						|| (Conflict.Savania.hasPlayer(player.getName()) && (Conflict.Savania.getLocation().distance(hurt.getLocation())<500.0))){
-					return;
-				}else if(player.getLocation().distance(player.getWorld().getSpawnLocation()) < 5000.0){
-					event.setCancelled(true);
-				}
-			}
-		}
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    @EventHandler
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event){
 		if(event.getDamager() instanceof Player){
 			Player player = (Player) event.getDamager();
 			if((Conflict.Abatton.getPerks().contains("strike") && Conflict.Abatton.hasPlayer(player.getName()))
