@@ -363,7 +363,7 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 				if((node.captureTeamTemp != null) && (node.captureTeamTemp != Contested) && node.captureCounter >= 30) {
 					node.owner = node.captureTeamTemp;
 					node.captureCounter = 0;
-					Bukkit.getServer().broadcastMessage("" + ChatColor.RED + node.owner + " has taken control of " + node.name + "!");
+					Bukkit.getServer().broadcastMessage("" + ChatColor.RED + node.owner.getName() + " has taken control of " + node.name + "!");
 
 					if (!node.teamCounters.containsKey(node.owner)) {
 						node.teamCounters.put(node.owner, 0);
