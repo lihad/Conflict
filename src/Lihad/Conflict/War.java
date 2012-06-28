@@ -272,6 +272,27 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 		Bukkit.getServer().broadcastMessage(ChatColor.BLUE.toString() + warNotices[noticeIndex] + ChatColor.GOLD + "WAR is starting in " + mins + " minutes!");
 		Bukkit.getServer().broadcastMessage(ChatColor.GRAY.toString() + "Type /war join to get in on the action.");
 	}
+	
+	public void postWarTeams(org.bukkit.command.CommandSender sender){
+		for (Team team : this.teams) {
+			String message = ChatColor.GOLD + team.getName() +" Members | ";
+
+			boolean noComma = true;
+			for (Player player: team.getPlayers()) {
+				if (!noComma)
+					message+=ChatColor.GOLD + ",";
+				else
+					noComma = false;
+				message += ChatColor.GREEN + player.getName();
+			}
+			if (sender != null) {
+				sender.sendMessage(message);
+			}
+			else {
+				Bukkit.getServer().broadcastMessage(message);
+			}
+		}
+	}
 
 	public void postWarScoreboard(org.bukkit.command.CommandSender sender){
 		for (WarNode node : nodes) {
@@ -527,6 +548,7 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 				if (arg.length == 0) {
 					sender.sendMessage("/war join  -- Join current war");
 					sender.sendMessage("/war stats -- See current war scoreboard");
+					sender.sendMessage("/war teams -- See the current teams");
 				}
 				else if (arg[0].equalsIgnoreCase("stats")) {
 					Conflict.war.postWarScoreboard(sender);
@@ -541,6 +563,9 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 					else {
 						sender.sendMessage("Console can't join wars! You don't have enough gear.");
 					}
+				}
+				else if (arg[0].equalsIgnoreCase("teams")) {
+					Conflict.war.postWarTeams(sender);
 				}
 			}
 			return true;
