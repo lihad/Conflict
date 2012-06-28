@@ -221,7 +221,7 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 		// Repeatedly finds smallest team and adds a player
 		while(unassignedPlayers.size() > 0) {
 			Team smallestTeam = null;
-			int smallestValue = 10000000;
+			int smallestValue = Integer.MAX_VALUE;
 			for (Team t : teams) {
 				int size = t.size();
 				// If sizes are equal, 60% chance we'll switch our guess.  This way it doesn't load up the first team always.
