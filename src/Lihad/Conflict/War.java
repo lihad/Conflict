@@ -125,6 +125,7 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 	List<Team> teams = new ArrayList<Team>();
 	boolean allNodesConquered = false;
 	Date beginTime = null;
+    Map<String, Team> loggedPlayers = new HashMap<String, Team>();
 
 	static final Team Contested = new Team("Contested");
 
@@ -165,13 +166,15 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 	}
 
 	public void unregisterPlayer(Player p) {
-		Team t = Conflict.war.getPlayerTeam(p);
+		Team t = getPlayerTeam(p);
 		if (t != null) {
 			t.removePlayer(p);
 		}
 		else if (unassignedPlayers.contains(p)) {
 			unassignedPlayers.remove(p);
 		}
+        // Remember the team they were on, so they get put there if they re-join
+        loggedPlayers.put(p.getName(), getPlayerTeam(p));
 	}
 
 	void begin() {
@@ -220,20 +223,26 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 
 		// Repeatedly finds smallest team and adds a player
 		while(unassignedPlayers.size() > 0) {
-			Team smallestTeam = null;
-			int smallestValue = Integer.MAX_VALUE;
-			for (Team t : teams) {
-				int size = t.size();
-				// If sizes are equal, 60% chance we'll switch our guess.  This way it doesn't load up the first team always.
-				if (size < smallestValue || ((size == smallestValue) && (Conflict.random.nextInt(100) < 60))) {
-					smallestValue = size;
-					smallestTeam = t;
-				}
-			}
-			Player p = unassignedPlayers.pop();
-			smallestTeam.addPlayer(p);
+            Player p = unassignedPlayers.pop();
+            Team team = null;
+
+            if (loggedPlayers.containsKey(p.getName())) {
+                team = loggedPlayers.get(p.getName());
+            }
+            else {
+                int smallestValue = Integer.MAX_VALUE;
+                for (Team t : teams) {
+                    int size = t.size();
+                    // If sizes are equal, 60% chance we'll switch our guess.  This way it doesn't load up the first team always.
+                    if (size < smallestValue || ((size == smallestValue) && (Conflict.random.nextInt(100) < 60))) {
+                        smallestValue = size;
+                        team = t;
+                    }
+                }
+                team.addPlayer(p);
+            }
 			if (broadcastAdditions) {
-				Bukkit.getServer().broadcastMessage(ChatColor.AQUA.toString() + p.getName() + ChatColor.GRAY + " has joined the war on team " + ChatColor.GOLD + smallestTeam.getName());
+				Bukkit.getServer().broadcastMessage(ChatColor.AQUA.toString() + p.getName() + ChatColor.GRAY + " has joined the war on team " + ChatColor.GOLD + team.getName());
 			}
 		}
 	}
@@ -468,6 +477,12 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 		}
 	}
 
+    // ------------------------------------
+    // handlers ------------------
+    
+    // WARNING: Note about handlers - These handlers are run on a blank instance of War.  The 'this' pointer is NOT valid.
+    // If you need any War members or methods, you need to use Conflict.war (and check for null first)
+    
 	@org.bukkit.event.EventHandler
 	public void onEntityDamageByEntity(org.bukkit.event.entity.EntityDamageByEntityEvent event){
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -537,7 +552,7 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 	public void onPlayerQuit(org.bukkit.event.player.PlayerQuitEvent event) {
 		// Players that quit during war may switch teams...  Not sure how to fix this.
 		if (Conflict.war != null) {
-			Conflict.war.unregisterPlayer(event.getPlayer());
+            Conflict.war.unregisterPlayer(event.getPlayer());
 		}
 	}
 
