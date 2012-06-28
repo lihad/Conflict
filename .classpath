@@ -2,9 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="C:/Users/Kyle/Downloads/bukkit-1.2.3-R0.3-20120316.090458-11.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Kyle/Documents/Permissions.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Kyle/Documents/PermissionsEx.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Kyle/Documents/Herochat.jar"/>
+	<classpathentry kind="lib" path="C:/Users/ジョーレン/Workspace/Lib/bukkit-1.2.5-R4.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/ジョーレン/Workspace/Lib/Permissions.jar"/>
+	<classpathentry kind="lib" path="C:/Users/ジョーレン/Workspace/Lib/PermissionsEx.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

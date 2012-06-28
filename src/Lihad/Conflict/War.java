@@ -29,11 +29,11 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 		if (now.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY) {
 			Calendar startTime = Calendar.getInstance();
 			startTime.set(Calendar.HOUR_OF_DAY, 18);
-			startTime.set(Calendar.MINUTE, 20);
+			startTime.set(Calendar.MINUTE, 50);
 
 			Calendar endTime = Calendar.getInstance();
-			endTime.set(Calendar.HOUR_OF_DAY, 18);
-			endTime.set(Calendar.MINUTE, 30);
+			endTime.set(Calendar.HOUR_OF_DAY, 21);
+			endTime.set(Calendar.MINUTE, 0);
 
 			return ((now.compareTo(startTime) > 0) && (now.compareTo(endTime) < 0));
 		}
