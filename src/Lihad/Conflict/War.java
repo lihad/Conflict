@@ -310,7 +310,7 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 					int count = (Integer)entry.getValue();
 
 					String countText = (team == node.owner) ? ("" + ChatColor.YELLOW + "[" + count + "]") : ("" + ChatColor.WHITE + count);
-					message += "" + ChatColor.AQUA + team + ": " + countText + "; ";
+					message += "" + ChatColor.AQUA + team.getName() + ": " + countText + "; ";
 				}
 			}
 
