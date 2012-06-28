@@ -278,7 +278,7 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 			String message = ChatColor.GOLD + node.name +" Tally | ";
 
 			if (node.conquered) {
-				message += ChatColor.GREEN + "Conquered by " + node.owner;
+				message += ChatColor.GREEN + "Conquered by " + node.owner.getName();
 			}
 			else if (node.teamCounters.isEmpty()) {
 				message += ChatColor.DARK_AQUA + "Not claimed by any team!";
