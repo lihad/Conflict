@@ -32,8 +32,8 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
             startTime.set(Calendar.MINUTE, 50);
             
             Calendar endTime = Calendar.getInstance();
-            startTime.set(Calendar.HOUR_OF_DAY, 21);
-            startTime.set(Calendar.MINUTE, 0);
+            endTime.set(Calendar.HOUR_OF_DAY, 21);
+            endTime.set(Calendar.MINUTE, 0);
 
             return ((now.compareTo(startTime) > 0) && (now.compareTo(endTime) < 0));
         }
@@ -43,8 +43,8 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
             startTime.set(Calendar.MINUTE, 50);
             
             Calendar endTime = Calendar.getInstance();
-            startTime.set(Calendar.HOUR_OF_DAY, 15);
-            startTime.set(Calendar.MINUTE, 0);
+            endTime.set(Calendar.HOUR_OF_DAY, 15);
+            endTime.set(Calendar.MINUTE, 0);
 
             return ((now.compareTo(startTime) > 0) && (now.compareTo(endTime) < 0));
         }
