@@ -401,8 +401,8 @@ public class CommandHandler implements CommandExecutor {
 						city.getGenerals().add(playerName);
 						Conflict.ex.getUser(playerName).setPrefix(ChatColor.WHITE + "["
 								+ ChatColor.LIGHT_PURPLE + city.getName().substring(0, 2).toUpperCase()
-								+ "-General" + ChatColor.WHITE + "]", null);
-						sender.sendMessage("Player " + playerName + " is now one of " + city.getName() + "'s Generals");
+								+ "-Mayor" + ChatColor.WHITE + "]", null);
+						sender.sendMessage("Player " + playerName + " is now one of " + city.getName() + "'s Mayors");
 					}else{
 						sender.sendMessage("Player " + playerName + " is not a member of " + arg[1]);
 					}
@@ -417,9 +417,9 @@ public class CommandHandler implements CommandExecutor {
 					if (city != null && oldCity != null && city.equals(oldCity)) { //player is a member of the town you are assigning them as general to
 						if (city.getGenerals().contains(playerName)) {
 							Conflict.ex.getUser(playerName).setPrefix("", null);
-							sender.sendMessage("Player " + playerName + " is no longer one of " + city.getName() + "'s Generals");
+							sender.sendMessage("Player " + playerName + " is no longer one of " + city.getName() + "'s Mayors");
 						} else {
-							sender.sendMessage("Player " + playerName + " was already not a general for " + city.getName());
+							sender.sendMessage("Player " + playerName + " was already not a mayor for " + city.getName());
 						}
 					}else{
 						sender.sendMessage("Player " + playerName + " is not a member of " + arg[1]);
@@ -448,7 +448,7 @@ public class CommandHandler implements CommandExecutor {
 				}else{
 					sender.sendMessage("Invalid city.  Try one of: " + Conflict.cities);
 				}
-			}else if(arg.length == 1 && arg[0].equalsIgnoreCase("generals")){
+			}else if(arg.length == 1 && arg[0].equalsIgnoreCase("mayors")){
 				for (int i=0; i<Conflict.cities.length; i++) {
 					sender.sendMessage(Conflict.cities[i].getName() + " - " + Conflict.cities[i].getGenerals());
 				}
