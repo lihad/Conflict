@@ -22,6 +22,11 @@ public class City extends Node {
 	Set<String> generals = new HashSet<String>();
 	Set<String> trades = new HashSet<String>();
 	Set<String> perks = new HashSet<String>();
+	
+	/**
+	 * The password to enter the city's chat channel.
+	 */
+	String password = "";
 	int bankBalance;
 	int spawnProtectRadius;
     
@@ -72,7 +77,23 @@ public class City extends Node {
     public void addPerk(String p) { perks.add(p); }
     public void clearPerks() { perks.clear(); }
 
-    public int getMoney() { return bankBalance; }
+    /**
+     * Gets the password to join the city's chat.
+     * @return password
+     */
+    public String getPassword() {
+		return password;
+	}
+
+    /**
+     * Sets the password to join the city's chat.
+     * @param password
+     */
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public int getMoney() { return bankBalance; }
     public void setMoney(int money) { bankBalance = money; }
     public void addMoney(int money) { bankBalance += money; }
     public void subtractMoney(int money) { bankBalance -= money; }
@@ -100,6 +121,8 @@ public class City extends Node {
 
         bankBalance = section.getInt("Worth");
         spawnProtectRadius = section.getInt("Protection");
+        
+        setPassword(section.getString("Password"));
     }
     
     public void saveConfig(org.bukkit.configuration.ConfigurationSection section) {

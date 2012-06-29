@@ -353,7 +353,7 @@ public class CommandHandler implements CommandExecutor {
 		City city = Conflict.getPlayerCity(sender.getName());
 		if (city != null && sender instanceof Player)
 		{
-			((Player)sender).performCommand("ch " + city.getName());
+			((Player)sender).performCommand("ch " + city.getName() + " " + city.getPassword());
 			return true;
 		}
 		return false;
