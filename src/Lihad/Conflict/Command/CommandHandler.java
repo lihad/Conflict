@@ -149,7 +149,7 @@ public class CommandHandler implements CommandExecutor {
 		if (sender instanceof Player) {
 			Player player = (Player) sender;
 			City city = Conflict.getPlayerCity(player.getName());
-			if (city != null && city.getGenerals().contains(player.getName())) {
+			if (city != null && city.getMayors().contains(player.getName())) {
 				city.setSpawn(player.getLocation());
 				return true;
 			}
@@ -212,7 +212,7 @@ public class CommandHandler implements CommandExecutor {
 	private boolean handlePurchase(CommandSender sender, String[] arg) {
 		if (arg.length > 0) {
 			City city = Conflict.getPlayerCity(sender.getName());
-			if(city != null && city.getGenerals().contains(sender.getName())){
+			if(city != null && city.getMayors().contains(sender.getName())){
 				if(city.getMoney() >= 500){
 					if(!city.getPerks().contains(arg[0].toLowerCase())){
 						if(arg[0].equalsIgnoreCase("weapondrops")){
@@ -392,13 +392,13 @@ public class CommandHandler implements CommandExecutor {
 				}else{
 					sender.sendMessage("Player has not logged in before.  Please wait until they have at least played here.");
 				}
-			}else if(arg.length == 3 && arg[0].equalsIgnoreCase("gassign")){
+			}else if(arg.length == 3 && arg[0].equalsIgnoreCase("massign")){
 				String playerName = plugin.getFormattedPlayerName(arg[2]);
 				if(playerName != null) {
 					City city = Conflict.getCity(arg[1]);
 					City oldCity = Conflict.getPlayerCity(playerName);
-					if (city != null && oldCity != null && city.equals(oldCity)) { //player is a member of the town you are assigning them as general to
-						city.getGenerals().add(playerName);
+					if (city != null && oldCity != null && city.equals(oldCity)) { //player is a member of the town you are assigning them as mayor to
+						city.getMayors().add(playerName);
 						Conflict.ex.getUser(playerName).setPrefix(ChatColor.WHITE + "["
 								+ ChatColor.LIGHT_PURPLE + city.getName().substring(0, 2).toUpperCase()
 								+ "-Mayor" + ChatColor.WHITE + "]", null);
@@ -409,13 +409,13 @@ public class CommandHandler implements CommandExecutor {
 				}else{
 					sender.sendMessage("Player has not logged in before.  Please wait until they have at least played here.");
 				}
-			}else if(arg.length == 3 && arg[0].equalsIgnoreCase("gremove")){
+			}else if(arg.length == 3 && arg[0].equalsIgnoreCase("mremove")){
 				String playerName = plugin.getFormattedPlayerName(arg[2]);
 				if(playerName != null) {
 					City city = Conflict.getCity(arg[1]);
 					City oldCity = Conflict.getPlayerCity(playerName);
-					if (city != null && oldCity != null && city.equals(oldCity)) { //player is a member of the town you are assigning them as general to
-						if (city.getGenerals().contains(playerName)) {
+					if (city != null && oldCity != null && city.equals(oldCity)) { //player is a member of the town you are assigning them as mayor to
+						if (city.getMayors().contains(playerName)) {
 							Conflict.ex.getUser(playerName).setPrefix("", null);
 							sender.sendMessage("Player " + playerName + " is no longer one of " + city.getName() + "'s Mayors");
 						} else {
@@ -450,7 +450,7 @@ public class CommandHandler implements CommandExecutor {
 				}
 			}else if(arg.length == 1 && arg[0].equalsIgnoreCase("mayors")){
 				for (int i=0; i<Conflict.cities.length; i++) {
-					sender.sendMessage(Conflict.cities[i].getName() + " - " + Conflict.cities[i].getGenerals());
+					sender.sendMessage(Conflict.cities[i].getName() + " - " + Conflict.cities[i].getMayors());
 				}
 			}else if(arg.length == 1 && arg[0].equalsIgnoreCase("save")){
 				Conflict.saveInfoFile();
@@ -472,7 +472,7 @@ public class CommandHandler implements CommandExecutor {
 	private boolean handleProtectCity(CommandSender sender, String[] arg) {
 		if (arg.length > 0) {
 			City city = Conflict.getPlayerCity(sender.getName());
-			if (city != null && city.getGenerals().contains(sender.getName())) {
+			if (city != null && city.getMayors().contains(sender.getName())) {
 				if(Integer.parseInt(arg[0]) <= 500 && Integer.parseInt(arg[0]) > -1)
 				{
 					city.setProtectionRadius(Integer.parseInt(arg[0]));

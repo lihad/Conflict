@@ -531,7 +531,7 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 
 
 		City city = Conflict.getPlayerCity(attacker.getName());
-		if (city == Conflict.getPlayerCity(hurt.getName()) && city.getGenerals().contains(attacker) && city.isInRadius(hurt.getLocation())) {
+		if (city == Conflict.getPlayerCity(hurt.getName()) && city.getMayors().contains(attacker) && city.isInRadius(hurt.getLocation())) {
 			// Mayor hitting own city member
 			return;
 		}
