@@ -144,7 +144,7 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 	// -------------------------------------
 	// Helpers --------------------
 
-	Team getPlayerTeam(Player p) {
+    public Team getPlayerTeam(Player p) {
 		for (Team t : teams) {
 			if (t.hasPlayer(p)) { return t; }
 		}

@@ -495,12 +495,18 @@ public class CommandHandler implements CommandExecutor {
 	private boolean handleMyst(CommandSender sender, String[] arg) {
 		if (arg.length == 3 && sender instanceof Player){
 			Player player = (Player) sender;
-			if(player.getWorld().getName().equals("mystworld")) {	
+			if(player.getWorld().getName().equals("mystworld")) {
 				if(Math.abs(Integer.parseInt(arg[0])) < 100000
 						&& Integer.parseInt(arg[1]) < 255 && Integer.parseInt(arg[1]) > 0
 						&& Math.abs(Integer.parseInt(arg[2])) < 100000){
-					player.teleport(new Location(plugin.getServer().getWorld("survival"),
-							Integer.parseInt(arg[0]), Integer.parseInt(arg[1]), Integer.parseInt(arg[2])));
+					Location loc = new Location(plugin.getServer().getWorld("survival"), Integer.parseInt(arg[0]), Integer.parseInt(arg[1]), Integer.parseInt(arg[2]));
+                    for (City city : Conflict.cities) {
+                        if (city.isInRadius(loc)) {
+                            player.sendMessage("The awesomeness of the capitol city prevents you.");
+                            return true;
+                        }
+                    }
+                    player.teleport(loc);
 				}
 			} else player.sendMessage("You are not in the correct world to use this command");
 			return true;

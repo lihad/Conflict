@@ -34,6 +34,8 @@ import org.bukkit.potion.Potion;
 import Lihad.Conflict.Conflict;
 import Lihad.Conflict.BlockPerk;
 import Lihad.Conflict.Util.BeyondUtil;
+import Lihad.Conflict.Node;
+import Lihad.Conflict.City;
 
 public class BeyondPlayerListener implements Listener {
 	public static Conflict plugin;
@@ -109,24 +111,24 @@ public class BeyondPlayerListener implements Listener {
 	}
 	@EventHandler   
 	public static void onPlayerTeleport(PlayerTeleportEvent event){
-		if(event.getTo().getWorld().getName().equals("survival") && (
-            Conflict.Blacksmith.getNode().isInRadius(event.getTo()) || 
-            Conflict.Potions.getNode().isInRadius(event.getTo()) || 
-            Conflict.Enchantments.getNode().isInRadius(event.getTo()) || 
-            Conflict.MystPortal.getNode().isInRadius(event.getTo()) || 
-            Conflict.RichPortal.getNode().isInRadius(event.getTo())
-            ) && !Conflict.handler.has(event.getPlayer(), "conflict.teleport")){
-			event.setTo(event.getFrom());
-		}
-		else if(event.getTo().getWorld().getName().equals("survival") && ((event.getTo().distance(Conflict.Abatton.getLocation()) < 500 && !Conflict.Abatton.hasPlayer(event.getPlayer().getName()))
-				|| (event.getTo().distance(Conflict.Oceian.getLocation()) < 500 && !Conflict.Oceian.hasPlayer(event.getPlayer().getName()))
-				|| (event.getTo().distance(Conflict.Savania.getLocation()) < 500 && !Conflict.Savania.hasPlayer(event.getPlayer().getName()))) && !Conflict.handler.has(event.getPlayer(), "conflict.teleport")){
-				event.setTo(event.getFrom());
-			}
-		else if(event.getTo().getWorld().getName().equals("richworld") && event.getCause().equals(TeleportCause.ENDER_PEARL)){
-			event.setTo(event.getFrom());
-		}
-	}
+
+        Location dest = event.getTo();
+        Location src = event.getFrom();
+        Player player = event.getPlayer();
+        
+        if (Conflict.war != null) {
+            // During wartime, cancel any tp in or out of nodes.
+            if (Conflict.war.getPlayerTeam(player) != null) {
+                for (Node n : Conflict.nodes) {
+                    if (n.isInRadius(dest) || n.isInRadius(src)) {
+                        event.setTo(event.getFrom());
+                        return;
+                    }
+                }
+            }
+        }
+    }
+    
 	@EventHandler
 	public static void onPlayerInteractEntity(PlayerInteractEntityEvent event){
 		//if(event.getRightClicked() instanceof Villager && event.getPlayer().getInventory().contains(Material.DIAMOND_BLOCK)
