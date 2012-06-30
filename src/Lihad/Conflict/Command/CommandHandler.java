@@ -382,8 +382,9 @@ public class CommandHandler implements CommandExecutor {
 					City city = Conflict.getCity(arg[1]);
 					City oldCity = Conflict.getPlayerCity(playerName);
 
-					if (city != null && oldCity != null && !city.equals(oldCity)) {
-						oldCity.removePlayer(playerName);
+					if (city != null && !city.equals(oldCity)) {
+						if (oldCity != null)
+							oldCity.removePlayer(playerName);
 						city.addPlayer(playerName);
 						sender.sendMessage("Player " + playerName + " is now a member of " + city.getName());
 					}else{
@@ -397,14 +398,26 @@ public class CommandHandler implements CommandExecutor {
 				if(playerName != null) {
 					City city = Conflict.getCity(arg[1]);
 					City oldCity = Conflict.getPlayerCity(playerName);
-					if (city != null && oldCity != null && city.equals(oldCity)) { //player is a member of the town you are assigning them as mayor to
+					if (city != null) {
+						if (!city.equals(oldCity))
+						{
+							if (oldCity != null) {
+								if (oldCity.getMayors().contains(playerName)) {
+									oldCity.removeMayor(playerName);
+									sender.sendMessage("Player " + playerName + " is no longer one of " + city.getName() + "'s Mayors");
+								}
+								oldCity.removePlayer(playerName);
+							}
+							city.addPlayer(playerName);
+							sender.sendMessage("Player " + playerName + " is now a member of " + city.getName());
+						}
 						city.getMayors().add(playerName);
 						Conflict.ex.getUser(playerName).setPrefix(ChatColor.WHITE + "["
 								+ ChatColor.LIGHT_PURPLE + city.getName().substring(0, 2).toUpperCase()
 								+ "-Mayor" + ChatColor.WHITE + "]", null);
 						sender.sendMessage("Player " + playerName + " is now one of " + city.getName() + "'s Mayors");
-					}else{
-						sender.sendMessage("Player " + playerName + " is not a member of " + arg[1]);
+					} else {
+						sender.sendMessage("Invalid city.  Try one of: " + Conflict.cities);
 					}
 				}else{
 					sender.sendMessage("Player has not logged in before.  Please wait until they have at least played here.");
@@ -413,16 +426,17 @@ public class CommandHandler implements CommandExecutor {
 				String playerName = plugin.getFormattedPlayerName(arg[2]);
 				if(playerName != null) {
 					City city = Conflict.getCity(arg[1]);
-					City oldCity = Conflict.getPlayerCity(playerName);
-					if (city != null && oldCity != null && city.equals(oldCity)) { //player is a member of the town you are assigning them as mayor to
+					if (city != null) {
 						if (city.getMayors().contains(playerName)) {
 							Conflict.ex.getUser(playerName).setPrefix("", null);
-							sender.sendMessage("Player " + playerName + " is no longer one of " + city.getName() + "'s Mayors");
+							sender.sendMessage("Player " + playerName + " is no longer one of " 
+									+ city.getName() + "'s Mayors");
 						} else {
-							sender.sendMessage("Player " + playerName + " was already not a mayor for " + city.getName());
+							sender.sendMessage("Player " + playerName + " wasn't one of " 
+									+ city.getName() + "'s mayors to begin with");
 						}
 					}else{
-						sender.sendMessage("Player " + playerName + " is not a member of " + arg[1]);
+						sender.sendMessage("Invalid city.  Try one of: " + Conflict.cities);
 					}
 				}else{
 					sender.sendMessage("Player has not logged in before.  Please wait until they have at least played here.");
