@@ -529,7 +529,8 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 			return;
 		}
 
-        if (attacker.getInventory().getHelmet().getType() == org.bukkit.Material.PUMPKIN && hurt.getInventory().getHelmet().getType() == org.bukkit.Material.PUMPKIN) {
+        if (attacker.getInventory().getHelmet() != null && attacker.getInventory().getHelmet().getType() == org.bukkit.Material.PUMPKIN 
+            && hurt.getInventory().getHelmet() != null && hurt.getInventory().getHelmet().getType() == org.bukkit.Material.PUMPKIN) {
             // Pumpkin on the head means willing pvp
             return;
         }
