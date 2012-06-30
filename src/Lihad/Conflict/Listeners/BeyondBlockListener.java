@@ -25,9 +25,9 @@ public class BeyondBlockListener implements Listener {
 	public void onBlockBreak(BlockBreakEvent event){
         Player player = event.getPlayer();
 		if(event.getBlock().getWorld().getName().equals("survival")){
-            if (((!Conflict.Abatton.getGenerals().contains(player.getName()) && Conflict.Abatton.getLocation().distance(event.getBlock().getLocation()) < Conflict.Abatton.getProtectionRadius())
-					|| (!Conflict.Oceian.getGenerals().contains(player.getName()) && Conflict.Oceian.getLocation().distance(event.getBlock().getLocation()) < Conflict.Oceian.getProtectionRadius())
-					|| (!Conflict.Savania.getGenerals().contains(player.getName()) && Conflict.Savania.getLocation().distance(event.getBlock().getLocation()) < Conflict.Savania.getProtectionRadius())
+            if (((!Conflict.Abatton.getMayors().contains(player.getName()) && Conflict.Abatton.getLocation().distance(event.getBlock().getLocation()) < Conflict.Abatton.getProtectionRadius())
+					|| (!Conflict.Oceian.getMayors().contains(player.getName()) && Conflict.Oceian.getLocation().distance(event.getBlock().getLocation()) < Conflict.Oceian.getProtectionRadius())
+					|| (!Conflict.Savania.getMayors().contains(player.getName()) && Conflict.Savania.getLocation().distance(event.getBlock().getLocation()) < Conflict.Savania.getProtectionRadius())
 			)&& !player.isOp() && !Conflict.handler.has(player, "conflict.debug")){
 				event.setCancelled(true);
 			}
@@ -53,9 +53,9 @@ public class BeyondBlockListener implements Listener {
 	public void onBlockPlace(BlockPlaceEvent event){
         Player player = event.getPlayer();
 		if(event.getBlock().getWorld().getName().equals("survival")){
-            if(((!Conflict.Abatton.getGenerals().contains(player.getName()) && Conflict.Abatton.getLocation().distance(event.getBlock().getLocation()) < Conflict.Abatton.getProtectionRadius())
-					|| (!Conflict.Oceian.getGenerals().contains(player.getName()) && Conflict.Oceian.getLocation().distance(event.getBlock().getLocation()) < Conflict.Oceian.getProtectionRadius())
-					|| (!Conflict.Savania.getGenerals().contains(player.getName()) && Conflict.Savania.getLocation().distance(event.getBlock().getLocation()) < Conflict.Savania.getProtectionRadius()))
+            if(((!Conflict.Abatton.getMayors().contains(player.getName()) && Conflict.Abatton.getLocation().distance(event.getBlock().getLocation()) < Conflict.Abatton.getProtectionRadius())
+					|| (!Conflict.Oceian.getMayors().contains(player.getName()) && Conflict.Oceian.getLocation().distance(event.getBlock().getLocation()) < Conflict.Oceian.getProtectionRadius())
+					|| (!Conflict.Savania.getMayors().contains(player.getName()) && Conflict.Savania.getLocation().distance(event.getBlock().getLocation()) < Conflict.Savania.getProtectionRadius()))
 					&& !player.isOp() && !Conflict.handler.has(player, "conflict.debug")){
 				event.setCancelled(true);
 			}

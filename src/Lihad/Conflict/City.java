@@ -19,7 +19,7 @@ public class City extends Node {
 	Set<String> players = new HashSet<String>();
 	Location spawnLocation;
 	Location drifterLocation;
-	Set<String> generals = new HashSet<String>();
+	Set<String> mayors = new HashSet<String>();
 	Set<String> trades = new HashSet<String>();
 	Set<String> perks = new HashSet<String>();
 	
@@ -43,8 +43,8 @@ public class City extends Node {
         if (players.contains(playerName)) {
             players.remove(playerName);
         }
-        if (generals.contains(playerName)) {
-            generals.remove(playerName);
+        if (mayors.contains(playerName)) {
+            mayors.remove(playerName);
         }
     }
     public int getPopulation() { return players.size(); }
@@ -55,14 +55,14 @@ public class City extends Node {
     public Location getSpongeLocation() { return drifterLocation; }
     public void setSpongeLocation(Location l) { drifterLocation = l; }
     
-    public Set<String> getGenerals() { return generals; }
-    public void addGeneral(String playerName) {
-        // TODO: Make sure general is a member of city
-        generals.add(playerName); 
+    public Set<String> getMayors() { return mayors; }
+    public void addMayor(String playerName) {
+        // TODO: Make sure mayor is a member of city
+        mayors.add(playerName); 
     }
-    public void removeGeneral(String playerName) {
-        if (generals.contains(playerName)) {
-            generals.remove(playerName);
+    public void removeMayor(String playerName) {
+        if (mayors.contains(playerName)) {
+            mayors.remove(playerName);
         }
     }
     
@@ -110,8 +110,8 @@ public class City extends Node {
         spawnLocation = BeyondInfo.toLocation(section, "Spawn");
         drifterLocation = BeyondInfo.toLocation(section, "Drifter");
 
-        generals.clear();
-        generals.addAll(section.getStringList("Generals"));
+        mayors.clear();
+        mayors.addAll(section.getStringList("Mayors"));
 
         trades.clear();
         trades.addAll(section.getStringList("Trades"));
@@ -135,8 +135,8 @@ public class City extends Node {
         section.set("Spawn", BeyondInfo.toString(spawnLocation));
         section.set("Drifter", BeyondInfo.toString(drifterLocation));
 
-        setAsList = new java.util.ArrayList<String>(generals);
-        section.set("Generals", setAsList);
+        setAsList = new java.util.ArrayList<String>(mayors);
+        section.set("Mayors", setAsList);
 
         setAsList = new java.util.ArrayList<String>(trades);
         section.set("Trades", setAsList);
@@ -165,6 +165,11 @@ public class City extends Node {
                 it.remove();
             }            
         }
+    }
+    
+    @Override
+    public String toString() {
+    	return this.name;
     }
     
 };
