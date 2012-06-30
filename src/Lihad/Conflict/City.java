@@ -167,4 +167,9 @@ public class City extends Node {
         }
     }
     
+    @Override
+    public String toString() {
+    	return this.name;
+    }
+    
 };
