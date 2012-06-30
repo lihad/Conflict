@@ -529,6 +529,10 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 			return;
 		}
 
+        if (attacker.getInventory().getHelmet().getType() == org.bukkit.Material.PUMPKIN && hurt.getInventory().getHelmet().getType() == org.bukkit.Material.PUMPKIN) {
+            // Pumpkin on the head means willing pvp
+            return;
+        }
 
 		City city = Conflict.getPlayerCity(attacker.getName());
 		if (city == Conflict.getPlayerCity(hurt.getName()) && city.getMayors().contains(attacker) && city.isInRadius(hurt.getLocation())) {
