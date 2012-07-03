@@ -198,13 +198,13 @@ public class Conflict extends JavaPlugin {
     	city.addPlayer(playerName);
 		Conflict.UNASSIGNED_PLAYERS.remove(playerName);
     	if (oldCity != null) {
-        	this.getServer().broadcastMessage(ChatColor.YELLOW + playerName + " has abandoned "
-        			+ ChatColor.GREEN + oldCity.getName() + " and is now a member of "
-            		+ ChatColor.GREEN + city.getName() + ChatColor.BLUE + "!");
+        	this.getServer().broadcastMessage(PLAYERCOLOR + playerName + TEXTCOLOR 
+        			+ " has abandoned " + CITYCOLOR + oldCity.getName() + TEXTCOLOR
+        			+ " and is now a member of " + CITYCOLOR + city.getName() + TEXTCOLOR + "!");
     		
     	} else {
-	    	this.getServer().broadcastMessage(ChatColor.YELLOW + playerName + " is now a member of "
-	    		+ ChatColor.GREEN + city.getName() + ChatColor.BLUE + "!");
+	    	this.getServer().broadcastMessage(PLAYERCOLOR + playerName + TEXTCOLOR + " is now a member of "
+	    		+ CITYCOLOR + city.getName() + TEXTCOLOR + "!");
     	}	
     	return true;
     }
