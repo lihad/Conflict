@@ -1,5 +1,6 @@
 package Lihad.Conflict;
 
+import java.util.Iterator;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -33,7 +34,21 @@ public class City extends Node {
     //Set<PerkNode> ownedNodes = new HashSet<PerkNode>();
 
     //public Set<String> getPlayerList() { return players; }
-    public boolean hasPlayer(String playerName) { return players.contains(playerName); }
+	
+	/**
+	 * Tests to see if a city has the player or not
+	 * @param playerName - Case insensitive.
+	 * @return boolean - true if player is in the city, false if not.
+	 */
+    public boolean hasPlayer(String playerName)
+    {
+    	for (Iterator<String> iter = this.players.iterator(); iter.hasNext();) {
+    		if (iter.next().equalsIgnoreCase(playerName)) {
+    			return true;
+    		}
+    	}
+    	return false;
+    }
 
     public void addPlayer(String playerName) {
         // TODO: Remove from other cities
