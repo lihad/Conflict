@@ -517,7 +517,7 @@ public class Conflict extends JavaPlugin {
 		Player player = getServer().getPlayer(playerName);
 		if (player != null)
 		{
-			getServer().dispatchCommand(getServer().getConsoleSender(), "ch ban " + city.getName() + playerName);
+			getServer().dispatchCommand(getServer().getConsoleSender(), "ch kick " + city.getName() + playerName);
 		}
 		getServer().dispatchCommand(getServer().getConsoleSender(), "pex user " + playerName + " remove herochat.force.join." + city.getName());
 		getServer().dispatchCommand(getServer().getConsoleSender(), "pex user " + playerName + " remove herochat.join." + city.getName());
