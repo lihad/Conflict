@@ -187,11 +187,14 @@ public class Conflict extends JavaPlugin {
     			if (oldCity.equals(city)) {
     				sender.sendMessage(TEXTCOLOR + "Already a member of "
     						+ CITYCOLOR + city.getName() + TEXTCOLOR + "!");
+    				return false;
     			}
     			oldCity.removePlayer(playerName);
+        		leaveChat(playerName, oldCity.getName());
     			sender.sendMessage(TEXTCOLOR + "Removing from " + CITYCOLOR + oldCity.getName());
     		}
     	};
+    	
     	city.addPlayer(playerName);
 		Conflict.UNASSIGNED_PLAYERS.remove(playerName);
     	if (oldCity != null) {
@@ -472,4 +475,52 @@ public class Conflict extends JavaPlugin {
         }
         return 0;
     }
+
+    /**
+     * Forces the player to join their city's channel
+     * @param playerName - The player name.
+     */
+	public boolean joinChat(String playerName) {
+	
+    	playerName = getFormattedPlayerName(playerName);
+    	if (playerName == null) {
+    		return false;
+    	}
+		City city = Conflict.getPlayerCity(playerName);
+		if (city == null)
+			return false;
+		
+		Player player = getServer().getPlayer(playerName);
+		if (player != null)
+		{
+			player.performCommand("ch " + city.getName() + " " + city.getPassword());
+		}
+		getServer().dispatchCommand(getServer().getConsoleSender(), "pex user " + playerName + " add herochat.force.join." + city.getName());
+		getServer().dispatchCommand(getServer().getConsoleSender(), "pex user " + playerName + " add herochat.join." + city.getName());
+		return true;
+	}
+	
+    /**
+     * Forces the player to leave their city's channel
+     * @param playerName - The player name.
+     */
+	public boolean leaveChat(String playerName, String cityName) {
+	
+    	playerName = getFormattedPlayerName(playerName);
+    	if (playerName == null) {
+    		return false;
+    	}
+		City city = Conflict.getCity(cityName);
+		if (city == null)
+			return false;		
+		
+		Player player = getServer().getPlayer(playerName);
+		if (player != null)
+		{
+			getServer().dispatchCommand(getServer().getConsoleSender(), "ch ban " + city.getName() + playerName);
+		}
+		getServer().dispatchCommand(getServer().getConsoleSender(), "pex user " + playerName + " remove herochat.force.join." + city.getName());
+		getServer().dispatchCommand(getServer().getConsoleSender(), "pex user " + playerName + " remove herochat.join." + city.getName());
+		return true;
+	}
 }

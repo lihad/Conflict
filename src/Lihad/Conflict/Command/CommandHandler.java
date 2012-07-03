@@ -334,13 +334,8 @@ public class CommandHandler implements CommandExecutor {
 	 * @return boolean - True if responded to, false if not.
 	 */
 	private boolean handleCC(CommandSender sender, String[] arg) {
-		City city = Conflict.getPlayerCity(sender.getName());
-		if (city != null && sender instanceof Player)
-		{
-			((Player)sender).performCommand("ch " + city.getName() + " " + city.getPassword());
-			return true;
-		}
-		return false;
+		plugin.joinChat(sender.getName());
+		return true;
 	}
 
 	/**
