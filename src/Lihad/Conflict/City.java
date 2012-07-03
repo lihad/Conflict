@@ -55,12 +55,19 @@ public class City extends Node {
         players.add(playerName);
     }
     public void removePlayer(String playerName) {
-        if (players.contains(playerName)) {
-            players.remove(playerName);
-        }
-        if (mayors.contains(playerName)) {
-            mayors.remove(playerName);
-        }
+    	for (Iterator<String> iter = this.players.iterator(); iter.hasNext();) {
+    		String found = iter.next();
+    		if (found.equalsIgnoreCase(playerName)) {
+    			this.players.remove(found);
+    		}
+    	}
+    	for (Iterator<String> iter = this.mayors.iterator(); iter.hasNext();) {
+    		String found = iter.next();
+    		if (found.equalsIgnoreCase(playerName)) {
+    			this.mayors.remove(found);
+    		}
+    	}
+
     }
     public int getPopulation() { return players.size(); }
     
@@ -76,9 +83,12 @@ public class City extends Node {
         mayors.add(playerName); 
     }
     public void removeMayor(String playerName) {
-        if (mayors.contains(playerName)) {
-            mayors.remove(playerName);
-        }
+    	for (Iterator<String> iter = this.mayors.iterator(); iter.hasNext();) {
+    		String found = iter.next();
+    		if (found.equalsIgnoreCase(playerName)) {
+    			this.mayors.remove(found);
+    		}
+    	}
     }
     
     // public void addPerkNode(PerkNode p) { ownedNodes.add(p); }
