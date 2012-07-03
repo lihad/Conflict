@@ -399,6 +399,7 @@ public class CommandHandler implements CommandExecutor {
 					if (city != null) {
 						if (city.getMayors().contains(playerName)) {
 							Conflict.ex.getUser(playerName).setPrefix("", null);
+							city.removeMayor(playerName);
 							plugin.getServer().broadcastMessage(Conflict.TEXTCOLOR + "Player " + Conflict.PLAYERCOLOR
 									+ playerName + " is no longer one of " + Conflict.CITYCOLOR
 									+ city.getName() + Conflict.TEXTCOLOR + "'s mayors :(");
