@@ -564,8 +564,8 @@ public class CommandHandler implements CommandExecutor {
 						message = message.concat(players.get(i).getName() + " ");
 				}
 				sender.sendMessage(message);
-			}else if(plugin.getServer().getPlayer(arg[0]) != null){
-				city = Conflict.getPlayerCity(arg[0]);
+			}else if(plugin.getFormattedPlayerName(arg[0]) != null){
+				city = Conflict.getPlayerCity(plugin.getFormattedPlayerName(arg[0]));
 				if (city != null)
 					sender.sendMessage( arg[0] + " - " + city.getName());
 				else
