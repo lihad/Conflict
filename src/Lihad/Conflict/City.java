@@ -1,6 +1,8 @@
 package Lihad.Conflict;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -55,18 +57,18 @@ public class City extends Node {
         players.add(playerName);
     }
     public void removePlayer(String playerName) {
+    	List<String> removeThese = new ArrayList<String>();
     	for (Iterator<String> iter = this.players.iterator(); iter.hasNext();) {
     		String found = iter.next();
     		if (found.equalsIgnoreCase(playerName)) {
-    			this.players.remove(found);
+    			removeThese.add(found);
     		}
-    	}
-    	for (Iterator<String> iter = this.mayors.iterator(); iter.hasNext();) {
+    	}//Ugh... concurrent modification exception made me have to build a list:
+    	for (Iterator<String> iter = removeThese.iterator(); iter.hasNext();) {
     		String found = iter.next();
-    		if (found.equalsIgnoreCase(playerName)) {
-    			this.mayors.remove(found);
-    		}
+    		this.players.remove(found);
     	}
+    	removeMayor(playerName);
 
     }
     public int getPopulation() { return players.size(); }
@@ -83,12 +85,17 @@ public class City extends Node {
         mayors.add(playerName); 
     }
     public void removeMayor(String playerName) {
+    	List<String> removeThese = new ArrayList<String>();
     	for (Iterator<String> iter = this.mayors.iterator(); iter.hasNext();) {
     		String found = iter.next();
     		if (found.equalsIgnoreCase(playerName)) {
-    			this.mayors.remove(found);
+    			removeThese.add(found);
     		}
-    	}
+    	}//Ugh... concurrent modification exception made me have to build a list:
+    	for (Iterator<String> iter = removeThese.iterator(); iter.hasNext();) {
+    		String found = iter.next();
+    		this.mayors.remove(found);
+    	}    	
     }
     
     // public void addPerkNode(PerkNode p) { ownedNodes.add(p); }
