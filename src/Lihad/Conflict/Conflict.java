@@ -13,6 +13,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -42,7 +43,7 @@ public class Conflict extends JavaPlugin {
 	protected static String header = "[" + PLUGIN_NAME + "] ";
 
 	public static YamlConfiguration information;
-
+	
 	public static PermissionHandler handler;
 	public static PermissionManager ex;
 	private static Logger log = Logger.getLogger("Minecraft");
@@ -79,6 +80,26 @@ public class Conflict extends JavaPlugin {
 	public static CommandExecutor cmd;
     public static Random random = new Random();
     
+    /**
+     * The color used for city names in chat text.
+     */
+    public static ChatColor CITYCOLOR = ChatColor.GREEN;
+
+    /**
+     * The color used for player names in chat text.
+     */
+    public static ChatColor PLAYERCOLOR = ChatColor.YELLOW;
+
+    /**
+     * The color used for generic chat text.
+     */
+    public static ChatColor TEXTCOLOR = ChatColor.BLUE;
+
+    /**
+     * The color used for messed up stuff in chat text.
+     */
+    public static ChatColor ERRORCOLOR = ChatColor.RED;
+
     public static City getPlayerCity(String playerName) {
     	for (int i=0; i<cities.length; i++)
     		if (cities[i].hasPlayer(playerName))
@@ -112,7 +133,7 @@ public class Conflict extends JavaPlugin {
     		returnMe = player.getName();
     	} else {
     		OfflinePlayer offlinePlayer = getServer().getOfflinePlayer(playerName);
-    		if (offlinePlayer != null)
+    		if (offlinePlayer != null && offlinePlayer.getFirstPlayed() > 0)
     			returnMe = offlinePlayer.getName();
     	}
     	return returnMe;
@@ -124,6 +145,76 @@ public class Conflict extends JavaPlugin {
         	return (c.getTrades().contains(trade));
         return false;
     }
+    
+    /**
+     * Switches target player to target city.
+     * @param playerName - The player's name.
+     * @param city - The target city.
+     * @param force - If true, will ignore any limitations that would prevent that player from switching.
+     * @return boolean - True if successful, false if not.
+     */
+    public boolean joinCity(CommandSender sender, String playerName, String cityName, boolean force) {
+    	playerName = getFormattedPlayerName(playerName);
+    	if (playerName == null) {
+    		sender.sendMessage(TEXTCOLOR + "This player has not yet played on our server, and yes, this plugin's too lame to switch it for you anyway :P");
+    		return false;
+    	}
+    	City city = getCity(cityName);
+    	if (city == null) {
+    		sender.sendMessage(TEXTCOLOR + "Could not find target city: " + ERRORCOLOR + cityName + TEXTCOLOR + ".  Please try one of: " + CITYCOLOR + Conflict.cities);
+    		return false;
+    	}
+    	if (!force) {
+			int least = Integer.MAX_VALUE;
+			for (int i=0; i<Conflict.cities.length; i++) {
+				if (Conflict.cities[i].getPopulation() < least)
+					least = Conflict.cities[i].getPopulation();
+			}
+			if (least < (city.getPopulation() - 10)) {
+				sender.sendMessage(CITYCOLOR + city.getName() + TEXTCOLOR + " is over capacity!  Try one of the others, or wait and try again later.");
+				return false;
+			}
+			if (!Conflict.UNASSIGNED_PLAYERS.contains(playerName) && !Conflict.cooldownExpired(playerName))
+			{
+				sender.sendMessage(TEXTCOLOR + "Cannot switch yet; please try again later.");
+				return false;
+			}
+    	}
+    	City oldCity = null;
+    	while (Conflict.getPlayerCity(playerName) != null) {
+    		oldCity = Conflict.getPlayerCity(playerName);
+    		if (oldCity != null) {
+    			if (oldCity.equals(city)) {
+    				sender.sendMessage(TEXTCOLOR + "Already a member of "
+    						+ CITYCOLOR + city.getName() + TEXTCOLOR + "!");
+    			}
+    			oldCity.removePlayer(playerName);
+    			sender.sendMessage(TEXTCOLOR + "Removing from " + CITYCOLOR + oldCity.getName());
+    		}
+    	};
+    	city.addPlayer(playerName);
+		Conflict.UNASSIGNED_PLAYERS.remove(playerName);
+    	if (oldCity != null) {
+        	this.getServer().broadcastMessage(ChatColor.YELLOW + playerName + " has abandoned "
+        			+ ChatColor.GREEN + oldCity.getName() + " and is now a member of "
+            		+ ChatColor.GREEN + city.getName() + ChatColor.BLUE + "!");
+    		
+    	} else {
+	    	this.getServer().broadcastMessage(ChatColor.YELLOW + playerName + " is now a member of "
+	    		+ ChatColor.GREEN + city.getName() + ChatColor.BLUE + "!");
+    	}	
+    	return true;
+    }
+
+    /**
+     * UNIMPLEMENTED
+     * @param correctlyCapitalizedPlayerName - Target player's name, correctly capitalized.
+     * @return boolean - true if cooldown has expired, false otherwise.
+     */
+	private static boolean cooldownExpired(String correctlyCapitalizedPlayerName) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 	private final BeyondPluginListener pluginListener = new BeyondPluginListener(this);
 	private final BeyondBlockListener blockListener = new BeyondBlockListener(this);
@@ -363,7 +454,7 @@ public class Conflict extends JavaPlugin {
             reader = new java.io.BufferedReader(new java.io.FileReader(filename));
             String text = null;
 
-            // repeat until all lines is read
+            // repeat until all lines are read
             while ((text = reader.readLine()) != null) {
                 String[] s = text.split("\\=");
                 if (s.length != 2) continue;

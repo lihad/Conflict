@@ -117,24 +117,8 @@ public class CommandHandler implements CommandExecutor {
 	 */
 	private boolean handleJoinCity(CommandSender sender, String name) {
 		if (sender instanceof Player) {
-			Player player = (Player) sender;
-			if (Conflict.UNASSIGNED_PLAYERS.contains(player.getName())){
-				City city = Conflict.getCity(name);
-				if (city != null) {
-					int least = Integer.MAX_VALUE;
-					for (int i=0; i<Conflict.cities.length; i++) {
-						if (Conflict.cities[i].getPopulation() < least)
-							least = Conflict.cities[i].getPopulation();
-					}
-					if (least < (city.getPopulation() - 10))
-						(player).sendMessage(ChatColor.BLUE + city.getName() + " is over capacity!  Try joining one of the others, or wait and try later.");
-					else{
-						city.addPlayer(player.getName());
-						Conflict.UNASSIGNED_PLAYERS.remove(player.getName());
-					}
-					return true;
-				}
-			}
+			plugin.joinCity(sender, sender.getName(), name, false);
+			return true;
 		}
 		return false;
 	}
@@ -377,22 +361,8 @@ public class CommandHandler implements CommandExecutor {
 					sender.sendMessage(Conflict.cities[i].getName() + " - " + Conflict.cities[i].getTrades());
 				}
 			}else if(arg.length == 3 && arg[0].equalsIgnoreCase("cmove")){
-				String playerName = plugin.getFormattedPlayerName(arg[2]);
-				if(playerName != null) {
-					City city = Conflict.getCity(arg[1]);
-					City oldCity = Conflict.getPlayerCity(playerName);
-
-					if (city != null && !city.equals(oldCity)) {
-						if (oldCity != null)
-							oldCity.removePlayer(playerName);
-						city.addPlayer(playerName);
-						sender.sendMessage("Player " + playerName + " is now a member of " + city.getName());
-					}else{
-						sender.sendMessage("Invalid city.  Try one of: " + Conflict.cities);
-					}
-				}else{
-					sender.sendMessage("Player has not logged in before.  Please wait until they have at least played here.");
-				}
+				plugin.joinCity(sender, arg[2], arg[1], true);
+				return true;
 			}else if(arg.length == 3 && arg[0].equalsIgnoreCase("massign")){
 				String playerName = plugin.getFormattedPlayerName(arg[2]);
 				if(playerName != null) {
@@ -401,26 +371,31 @@ public class CommandHandler implements CommandExecutor {
 					if (city != null) {
 						if (!city.equals(oldCity))
 						{
+							boolean worked = plugin.joinCity(sender, playerName, arg[1], true);
+							if (!worked) {
+								return true;
+							}
 							if (oldCity != null) {
 								if (oldCity.getMayors().contains(playerName)) {
 									oldCity.removeMayor(playerName);
-									sender.sendMessage("Player " + playerName + " is no longer one of " + city.getName() + "'s Mayors");
+									plugin.getServer().broadcastMessage(Conflict.TEXTCOLOR + "Player " + Conflict.PLAYERCOLOR
+											+ playerName + " is no longer one of " + Conflict.CITYCOLOR
+											+ city.getName() + Conflict.TEXTCOLOR + "'s mayors :(");
 								}
-								oldCity.removePlayer(playerName);
 							}
-							city.addPlayer(playerName);
-							sender.sendMessage("Player " + playerName + " is now a member of " + city.getName());
 						}
 						city.getMayors().add(playerName);
 						Conflict.ex.getUser(playerName).setPrefix(ChatColor.WHITE + "["
 								+ ChatColor.LIGHT_PURPLE + city.getName().substring(0, 2).toUpperCase()
 								+ "-Mayor" + ChatColor.WHITE + "]", null);
-						sender.sendMessage("Player " + playerName + " is now one of " + city.getName() + "'s Mayors");
+						plugin.getServer().broadcastMessage(Conflict.TEXTCOLOR + "Player " + Conflict.PLAYERCOLOR + playerName
+								+ Conflict.TEXTCOLOR + " is now one of " + Conflict.CITYCOLOR + city.getName()
+								+ Conflict.TEXTCOLOR + "'s mayors!");
 					} else {
-						sender.sendMessage("Invalid city.  Try one of: " + Conflict.cities);
+						sender.sendMessage(Conflict.ERRORCOLOR + "Invalid city.  Try one of: " + Conflict.CITYCOLOR + Conflict.cities);
 					}
 				}else{
-					sender.sendMessage("Player has not logged in before.  Please wait until they have at least played here.");
+					sender.sendMessage(Conflict.ERRORCOLOR + "Player has not logged in before.  Please wait until they have at least played here.");
 				}
 			}else if(arg.length == 3 && arg[0].equalsIgnoreCase("mremove")){
 				String playerName = plugin.getFormattedPlayerName(arg[2]);
@@ -429,17 +404,20 @@ public class CommandHandler implements CommandExecutor {
 					if (city != null) {
 						if (city.getMayors().contains(playerName)) {
 							Conflict.ex.getUser(playerName).setPrefix("", null);
-							sender.sendMessage("Player " + playerName + " is no longer one of " 
-									+ city.getName() + "'s Mayors");
+							plugin.getServer().broadcastMessage(Conflict.TEXTCOLOR + "Player " + Conflict.PLAYERCOLOR
+									+ playerName + " is no longer one of " + Conflict.CITYCOLOR
+									+ city.getName() + Conflict.TEXTCOLOR + "'s mayors :(");
 						} else {
-							sender.sendMessage("Player " + playerName + " wasn't one of " 
-									+ city.getName() + "'s mayors to begin with");
+							sender.sendMessage(Conflict.ERRORCOLOR + "Player " + Conflict.PLAYERCOLOR
+									+ playerName + Conflict.ERRORCOLOR + " wasn't one of " 
+									+ Conflict.CITYCOLOR + city.getName() + Conflict.ERRORCOLOR
+									+ "'s mayors to begin with.");
 						}
 					}else{
-						sender.sendMessage("Invalid city.  Try one of: " + Conflict.cities);
+						sender.sendMessage(Conflict.ERRORCOLOR + "Invalid city.  Try one of: " + Conflict.CITYCOLOR + Conflict.cities);
 					}
 				}else{
-					sender.sendMessage("Player has not logged in before.  Please wait until they have at least played here.");
+					sender.sendMessage(Conflict.ERRORCOLOR + "Player has not logged in before.  Please wait until they have at least played here.");
 				}
 			}else if(arg.length == 1 && arg[0].equalsIgnoreCase("worth")){
 				sender.sendMessage("Worth:");
