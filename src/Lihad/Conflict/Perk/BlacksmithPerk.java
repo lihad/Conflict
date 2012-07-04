@@ -1,15 +1,16 @@
-package Lihad.Conflict;
+package Lihad.Conflict.Perk;
 
 import org.bukkit.entity.Player;
 
 import Lihad.Conflict.Util.BeyondUtil;
+import Lihad.Conflict.*;
 
 public class BlacksmithPerk extends BlockPerk {
 
     public BlacksmithPerk(String n) { super(n); }
 
     @Override
-    public void activate(Player player) {
+    public boolean activate(Player player) {
 
         if(player.getItemInHand().getDurability() != 0)  {
 
@@ -20,7 +21,7 @@ public class BlacksmithPerk extends BlockPerk {
             
             if( uses >= 5) {
                player.sendMessage("You have accessed blacksmith too many times today");
-                return;
+                return true;
             }
 
             player.getItemInHand().setDurability((short) 0);
@@ -28,10 +29,12 @@ public class BlacksmithPerk extends BlockPerk {
             
             Conflict.TRADE_BLACKSMITH_PLAYER_USES.put(player.getName(), uses);
             player.updateInventory();
+            return true;
         }
-        else {
-            player.sendMessage("This item is either unable to be repaired or is at max durability");
-        }
+
+        // TODO: Replace with a generic "nothing happens" message if the node couldn't fire any perks.
+        player.sendMessage("This item is either unable to be repaired or is at max durability");
+        return false;
     
     }
 };

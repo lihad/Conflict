@@ -1,4 +1,4 @@
-package Lihad.Conflict;
+package Lihad.Conflict.Perk;
 
 //import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -7,6 +7,8 @@ public class BlockPerk extends Perk {
 
     public BlockPerk(String n) { super(n); }
 
-    public void activate(Player p) {}
+    // Activate
+    // Returns true if this perk was activated.
+    public boolean activate(Player p) { return false;}
 
 };

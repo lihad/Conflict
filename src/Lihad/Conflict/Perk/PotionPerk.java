@@ -1,15 +1,16 @@
-package Lihad.Conflict;
+package Lihad.Conflict.Perk;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.Material;
+import Lihad.Conflict.Conflict;
 
 public class PotionPerk extends BlockPerk {
 
     public PotionPerk(String n) { super(n); }
 
     @Override
-    public void activate(Player player) {
+    public boolean activate(Player player) {
 
         if(player.getItemInHand().getType() == Material.GLASS_BOTTLE){
 
@@ -20,7 +21,7 @@ public class PotionPerk extends BlockPerk {
 
             if( uses >= 256) {
                 player.sendMessage("You have accessed potions too many times today");
-                return;
+                return true;
             }
 
             // Transform as many bottles as we can, up to either the stack size or the number of remaining uses
@@ -37,7 +38,9 @@ public class PotionPerk extends BlockPerk {
 
             Conflict.TRADE_POTIONS_PLAYER_USES.put(player.getName(), uses);
             player.updateInventory();
-            
+            return true;
         }
+        // Not glass bottle
+        return false;
     }
 };

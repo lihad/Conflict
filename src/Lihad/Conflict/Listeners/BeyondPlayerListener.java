@@ -25,10 +25,8 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 
-import Lihad.Conflict.BlockPerk;
-import Lihad.Conflict.City;
-import Lihad.Conflict.Conflict;
-import Lihad.Conflict.Node;
+import Lihad.Conflict.*;
+import Lihad.Conflict.Perk.*;
 import Lihad.Conflict.Util.BeyondUtil;
 
 public class BeyondPlayerListener implements Listener {
@@ -172,16 +170,18 @@ public class BeyondPlayerListener implements Listener {
         Block block = event.getClickedBlock();
         Player player = event.getPlayer();
 
-        for (BlockPerk p : Conflict.blockPerks) {
-            if (p.getNode() == null) { 
-                continue; 
+        for (Perk p : Conflict.perks) {
+            if (p instanceof BlockPerk) {
+                if (p.getNode() == null) { 
+                    continue; 
+                }
+                if (!block.getLocation().equals(p.getNode().getLocation())) { continue; }
+                if (!Conflict.PlayerCanUseTrade(event.getPlayer().getName(), p.getName())) { 
+                    event.getPlayer().sendMessage("You can't use this perk!");
+                    continue;
+                }
+                ((BlockPerk)p).activate(event.getPlayer());
             }
-            if (!block.getLocation().equals(p.getNode().getLocation())) { continue; }
-            if (!Conflict.PlayerCanUseTrade(event.getPlayer().getName(), p.getName())) { 
-                event.getPlayer().sendMessage("You can't use this perk!");
-                continue;
-            }
-            p.activate(event.getPlayer());
         }
                
         if(block.getLocation().equals(Conflict.Abatton.getLocation().getBlock().getLocation())){

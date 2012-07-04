@@ -228,54 +228,53 @@ public class CommandHandler implements CommandExecutor {
 	 * @param arg - The arguments.
 	 * @return boolean - True if responded to, false if not.
 	 */
-	private boolean handlePurchase(CommandSender sender, String[] arg) {
-		if (arg.length > 0) {
-			City city = Conflict.getPlayerCity(sender.getName());
-			if(city != null && city.getMayors().contains(sender.getName())){
-				if(city.getMoney() >= 500){
-					if(!city.getPerks().contains(arg[0].toLowerCase())){
-						if(arg[0].equalsIgnoreCase("weapondrops")){
-							city.addPerk("weapondrops");
-							city.subtractMoney(500);
-						}else if(arg[0].equalsIgnoreCase("armordrops")){
-							city.addPerk("armordrops");
-							city.subtractMoney(500);
-						}else if(arg[0].equalsIgnoreCase("potiondrops")){
-							city.addPerk("potiondrops");
-							city.subtractMoney(500);
-						}else if(arg[0].equalsIgnoreCase("tooldrops")){
-							city.addPerk("tooldrops");
-							city.subtractMoney(500);
-						}else if(arg[0].equalsIgnoreCase("bowdrops")){
-							city.addPerk("bowdrops");
-							city.subtractMoney(500);
-						}else if(arg[0].equalsIgnoreCase("shield")){
-							city.addPerk("shield");
-							city.subtractMoney(500);
-						}else if(arg[0].equalsIgnoreCase("strike")){
-							city.addPerk("strike");
-							city.subtractMoney(500);
-						}else if(arg[0].equalsIgnoreCase("endergrenade")){
-							city.addPerk("endergrenade");
-							city.subtractMoney(500);
-						}else if(arg[0].equalsIgnoreCase("enchantup")){
-							city.addPerk("enchantup");
-							city.subtractMoney(500);
-						}else if(arg[0].equalsIgnoreCase("golddrops")){
-							city.addPerk("golddrops");
-							city.subtractMoney(500);
-						}else
-							sender.sendMessage("Invalid perk");
-					}else
-						sender.sendMessage(Conflict.CITYCOLOR + city.getName() + Conflict.ERRORCOLOR + " currently owns perk: " + Conflict.PERKCOLOR + arg[0]);
-				}else
-					sender.sendMessage(Conflict.CITYCOLOR + city.getName() + Conflict.ERRORCOLOR + " does not have enough gold to purchase the ability");
-			}else
-				sender.sendMessage(Conflict.ERRORCOLOR + "Unable to use this command");
-		}else
-			sender.sendMessage(Conflict.TEXTCOLOR + "Possible Perks: " + Conflict.PERKCOLOR + "weapondrops, armordrops, potiondrops, tooldrops, bowdrops, shield, strike, endergrenade, enchantup, golddrops");
-		return true;
-	}
+
+    private boolean handlePurchase(CommandSender sender, String[] arg) {
+        if (arg.length > 0) {
+            City city = Conflict.getPlayerCity(sender.getName());
+            if(city != null && city.getMayors().contains(sender.getName())){
+                if(!city.getPerks().contains(arg[0].toLowerCase())){
+                    if(arg[0].equalsIgnoreCase("weapondrops")){
+                        city.addPerk("weapondrops");
+                        city.subtractMoney(500);
+                    }else if(arg[0].equalsIgnoreCase("armordrops")){
+                        city.addPerk("armordrops");
+                        city.subtractMoney(500);
+                    }else if(arg[0].equalsIgnoreCase("potiondrops")){
+                        city.addPerk("potiondrops");
+                        city.subtractMoney(500);
+                    }else if(arg[0].equalsIgnoreCase("tooldrops")){
+                        city.addPerk("tooldrops");
+                        city.subtractMoney(500);
+                    }else if(arg[0].equalsIgnoreCase("bowdrops")){
+                        city.addPerk("bowdrops");
+                        city.subtractMoney(500);
+                    }else if(arg[0].equalsIgnoreCase("shield")){
+                        city.addPerk("shield");
+                        city.subtractMoney(500);
+                    }else if(arg[0].equalsIgnoreCase("strike")){
+                        city.addPerk("strike");
+                        city.subtractMoney(500);
+                    }else if(arg[0].equalsIgnoreCase("endergrenade")){
+                        city.addPerk("endergrenade");
+                        city.subtractMoney(500);
+                    }else if(arg[0].equalsIgnoreCase("enchantup")){
+                        city.addPerk("enchantup");
+                        city.subtractMoney(500);
+                    }else if(arg[0].equalsIgnoreCase("golddrops")){
+                        city.addPerk("golddrops");
+                        city.subtractMoney(500);
+                    }else
+                        sender.sendMessage(Conflict.ERRORCOLOR + "Invalid perk.  Possible perks: " + Conflict.PERKCOLOR + "weapondrops, armordrops, potiondrops, tooldrops, bowdrops, shield, strike, endergrenade, enchantup, golddrops");
+                }else
+                    sender.sendMessage(Conflict.CITYCOLOR + city.getName() + Conflict.ERRORCOLOR + " currently owns perk: " + Conflict.PERKCOLOR + arg[0]);
+                sender.sendMessage(Conflict.CITYCOLOR + city.getName() + Conflict.ERRORCOLOR + " does not have enough gold to purchase the ability.");
+            }else
+                sender.sendMessage(Conflict.ERRORCOLOR + "Unable to use this command");
+        }else
+            sender.sendMessage(Conflict.TEXTCOLOR + "Possible perks: " + Conflict.PERKCOLOR + "weapondrops, armordrops, potiondrops, tooldrops, bowdrops, shield, strike, endergrenade, enchantup, golddrops");
+        return true;
+    }
 
 	/**
 	 * Calculates the gear rating of the specified player.
@@ -356,7 +355,7 @@ public class CommandHandler implements CommandExecutor {
 						+ BeyondUtil.rarity(player.getItemInHand()));
 				post = player.getItemInHand();
 			}
-			else (player).sendMessage("This item has no Rarity Index so it can't be posted to chat");
+			else (player).sendMessage(Conflict.ERRORCOLOR + "This item has no Rarity Index so it can't be posted to chat");
 			return true;
 		}
 		return false;
