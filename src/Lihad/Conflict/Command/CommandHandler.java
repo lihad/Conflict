@@ -53,7 +53,9 @@ public class CommandHandler implements CommandExecutor {
 		}else if(cmd.getName().equalsIgnoreCase("gear")) {
 			return handleGear(sender, arg);
 		}else if(Conflict.getCity(cmd.getName()) != null) {
-			return handleJoinCity(sender, cmd.getName());
+			return handleCity(sender, cmd.getName());
+		}else if(cmd.getName().equalsIgnoreCase("join")) {
+			return handleJoinCity(sender, arg);
 		}else if(cmd.getName().equalsIgnoreCase("spawn")) {
 			return handleSpawn(sender, arg);
 		}else if(cmd.getName().equalsIgnoreCase("nulls")) {
@@ -110,14 +112,44 @@ public class CommandHandler implements CommandExecutor {
 	}
 
 	/**
-	 * Processes a /[CITYNAME] command.
+	 * Processes a /[CITYNAME]  command.
 	 * @param sender - The sender of the command.
 	 * @param arg - The arguments.
 	 * @return boolean - True if responded to, false if not.
 	 */
-	private boolean handleJoinCity(CommandSender sender, String name) {
+	private boolean handleCity(CommandSender sender, String name) {
+		City city = Conflict.getCity(name);
+		if (city != null) {
+			String message = city.getInfo();
+			sender.sendMessage(city.getInfo());
+		}
+		return true;
+	}
+
+	/**
+	 * Processes a /[CITYNAME] join confirm command.
+	 * @param sender - The sender of the command.
+	 * @param arg - The arguments.
+	 * @return boolean - True if responded to, false if not.
+	 */
+	private boolean handleJoinCity(CommandSender sender, String[] arg) {
 		if (sender instanceof Player) {
-			plugin.joinCity(sender, sender.getName(), name, false);
+			if (arg.length >= 1) {
+				City city = Conflict.getCity(arg[0]);
+				if (city == null) {
+					sender.sendMessage(Conflict.ERRORCOLOR + arg[0] + Conflict.TEXTCOLOR
+							+ "is an invalid city, please try one of: "
+							+ Conflict.CITYCOLOR + Conflict.cities);
+				}
+				else if (arg.length == 2) {
+					if (arg[1].equalsIgnoreCase("confirm")) {
+						plugin.joinCity(sender, sender.getName(), city.getName(), false);						
+					}
+				} else {
+					sender.sendMessage(Conflict.TEXTCOLOR + "Please confirm that you want to join "
+							+ Conflict.CITYCOLOR + city.getName() + " by typing /join " + city.getName() + " confirm");
+				}
+			}
 			return true;
 		}
 		return false;
@@ -182,8 +214,10 @@ public class CommandHandler implements CommandExecutor {
 		if (city == null) {
 			return false;
 		}
-		sender.sendMessage(city.getName() + " mini-perks: " + city.getPerks());
-		sender.sendMessage(city.getName() + " nodes: " + city.getTrades());
+		sender.sendMessage(Conflict.CITYCOLOR + city.getName() + Conflict.TEXTCOLOR
+				+ " mini-perks: " + Conflict.PERKCOLOR + city.getPerks());
+		sender.sendMessage(Conflict.CITYCOLOR + city.getName() + Conflict.TEXTCOLOR
+				+ " nodes: " + Conflict.TRADECOLOR + city.getTrades());
 		return true;
 	}
 
@@ -264,16 +298,16 @@ public class CommandHandler implements CommandExecutor {
 		if (arg.length == 0 && sender instanceof Player) {
 			Player player = (Player) sender;
 			double total = getGearRating(player);
-			sender.sendMessage(BeyondUtil.getColorOfRarity(total) + "Your Gear Rating is : " + total);
+			sender.sendMessage(BeyondUtil.getColorOfRarity(total) + Conflict.TEXTCOLOR + "Your Gear Rating is : " + total);
 			return true;
 		}
 		else if(arg.length > 0) {
 			if(plugin.getServer().getPlayer(arg[1]) != null) {
 				Player target = plugin.getServer().getPlayer(arg[1]);
 				double total = getGearRating(target);
-				sender.sendMessage(target.getName() + " has a Gear Rating of "
+				sender.sendMessage(Conflict.PLAYERCOLOR + target.getName() + Conflict.TEXTCOLOR + " has a Gear Rating of "
 						+ BeyondUtil.getColorOfRarity(total) + total);
-			}else sender.sendMessage("This player either doesn't exist, or isn't online");
+			}else sender.sendMessage(Conflict.TEXTCOLOR + "Player " + Conflict.PLAYERCOLOR + arg[1] + Conflict.TEXTCOLOR + " either doesn't exist, or isn't online");
 			return true;
 		}
 		return false;
@@ -287,7 +321,7 @@ public class CommandHandler implements CommandExecutor {
 	 */
 	private boolean handleLook(CommandSender sender, String[] arg) {
 		if(post != null){
-			sender.sendMessage(ChatColor.YELLOW + " -------------------------------- ");
+			sender.sendMessage(Conflict.HEADERCOLOR + " -------------------------------- ");
 			sender.sendMessage(BeyondUtil.getColorOfRarity(BeyondUtil.rarity(post))
 					+ "[" + post.getType().name() + "] Rarity Index : " + BeyondUtil.rarity(post));
 			for(int i = 0; i<post.getEnchantments().keySet().size(); i++){
@@ -299,7 +333,7 @@ public class CommandHandler implements CommandExecutor {
 			}
 			if(post.getEnchantments().keySet().size() <= 0)
 				sender.sendMessage(ChatColor.WHITE + " -- This Item Has No Enchants");
-			sender.sendMessage(ChatColor.YELLOW + " -------------------------------- ");
+			sender.sendMessage(Conflict.HEADERCOLOR + " -------------------------------- ");
 		}else sender.sendMessage("There is no item to look at");
 		return true;
 	}
@@ -372,7 +406,7 @@ public class CommandHandler implements CommandExecutor {
 								if (oldCity.getMayors().contains(playerName)) {
 									oldCity.removeMayor(playerName);
 									plugin.getServer().broadcastMessage(Conflict.TEXTCOLOR + "Player " + Conflict.PLAYERCOLOR
-											+ playerName + " is no longer one of " + Conflict.CITYCOLOR
+											+ playerName + Conflict.TEXTCOLOR + " is no longer one of " + Conflict.CITYCOLOR
 											+ city.getName() + Conflict.TEXTCOLOR + "'s mayors :(");
 								}
 							}
@@ -432,17 +466,22 @@ public class CommandHandler implements CommandExecutor {
 					city.setMoney(Integer.parseInt(arg[3]));
 					sender.sendMessage(city.getName() + " worth = " + city.getMoney());
 				}else{
-					sender.sendMessage("Invalid city.  Try one of: " + Conflict.cities);
+					sender.sendMessage(Conflict.ERRORCOLOR + arg[2] + Conflict.TEXTCOLOR
+							+ " is an invalid city.  Try one of: " + Conflict.CITYCOLOR + Conflict.cities);
 				}
 			}else if(arg.length == 1 && arg[0].equalsIgnoreCase("mayors")){
 				for (int i=0; i<Conflict.cities.length; i++) {
-					sender.sendMessage(Conflict.cities[i].getName() + " - " + Conflict.cities[i].getMayors());
+					sender.sendMessage(Conflict.CITYCOLOR + Conflict.cities[i].getName() + Conflict.TEXTCOLOR + " - "
+							+ Conflict.MAYORCOLOR + Conflict.cities[i].getMayors());
 				}
 			}else if(arg.length == 1 && arg[0].equalsIgnoreCase("save")){
 				Conflict.saveInfoFile();
 			}else if(arg.length == 1 && arg[0].equalsIgnoreCase("reload")){
 				Conflict.loadInfoFile(Conflict.information, Conflict.infoFile);
 				BeyondInfo.loader();
+			}else if(arg.length == 2 && arg[0].equalsIgnoreCase("reset")){
+				plugin.reset(sender, arg[1]);
+				return true;
 			}
 			return true;
 		}
@@ -462,10 +501,10 @@ public class CommandHandler implements CommandExecutor {
 				if(Integer.parseInt(arg[0]) <= 500 && Integer.parseInt(arg[0]) > -1)
 				{
 					city.setProtectionRadius(Integer.parseInt(arg[0]));
-					sender.sendMessage(city.getName() + "'s protection radius is now " + arg[0]);
+					sender.sendMessage(Conflict.CITYCOLOR + city.getName() + Conflict.TEXTCOLOR + "'s protection radius is now " + arg[0]);
 				}
 				else
-					sender.sendMessage("Invalid number; must be within 0-500");
+					sender.sendMessage(Conflict.ERRORCOLOR + "Invalid number; must be within 0-500");
 				return true;
 			}
 		}
@@ -488,13 +527,13 @@ public class CommandHandler implements CommandExecutor {
 					Location loc = new Location(plugin.getServer().getWorld("survival"), Integer.parseInt(arg[0]), Integer.parseInt(arg[1]), Integer.parseInt(arg[2]));
                     for (City city : Conflict.cities) {
                         if (city.isInRadius(loc)) {
-                            player.sendMessage("The awesomeness of the capitol city prevents you.");
+                            player.sendMessage(Conflict.ERRORCOLOR + "The awesomeness of the capitol city prevents you.");
                             return true;
                         }
                     }
                     player.teleport(loc);
 				}
-			} else player.sendMessage("You are not in the correct world to use this command");
+			} else player.sendMessage(Conflict.ERRORCOLOR + "You are not in the correct world to use this command");
 			return true;
 		}
 		return false;
@@ -509,7 +548,7 @@ public class CommandHandler implements CommandExecutor {
 	private boolean handlePoint(CommandSender sender, String[] arg) {
 		if (sender instanceof Player && sender.isOp() && arg.length == 2 && arg[0].equalsIgnoreCase("set")) {
 			if(!Conflict.PLAYER_SET_SELECT.isEmpty() && Conflict.PLAYER_SET_SELECT.containsKey(sender.getName())){
-				sender.sendMessage(ChatColor.LIGHT_PURPLE+"Selection turned off");
+				sender.sendMessage(Conflict.PROMPTCOLOR + "Selection turned off");
 				Conflict.PLAYER_SET_SELECT.remove(sender.getName());
 			}else if(Conflict.getCity(arg[1]) != null
 					|| arg[1].equalsIgnoreCase("blacksmith") || arg[1].equalsIgnoreCase("potions") || arg[1].equalsIgnoreCase("enchantments")
@@ -517,7 +556,7 @@ public class CommandHandler implements CommandExecutor {
 					|| (arg[1].length() > 7 
 							&& arg[1].substring(0, 7).equalsIgnoreCase("drifter") 
 							&& Conflict.getCity(arg[1].substring(7)) != null)) {
-				sender.sendMessage(ChatColor.LIGHT_PURPLE + "Please select a position");
+				sender.sendMessage(Conflict.PROMPTCOLOR + "Please select a position");
 				Conflict.PLAYER_SET_SELECT.put(sender.getName(), arg[1]);
 			}
 			return true;
@@ -535,12 +574,12 @@ public class CommandHandler implements CommandExecutor {
 		if (sender instanceof Player) {
 			Player player = (Player) sender;
 			if(BeyondUtil.rarity(player.getItemInHand()) >= 60)
-				player.sendMessage("The Rarity Index of your "
-						+ ChatColor.BLUE + player.getItemInHand().getType().name()
+				player.sendMessage(Conflict.TEXTCOLOR + "The Rarity Index of your "
+						+ Conflict.ITEMCOLOR + player.getItemInHand().getType().name()
 						+ " is " + BeyondUtil.getColorOfRarity(BeyondUtil.rarity(player.getItemInHand()))
 						+ BeyondUtil.rarity(player.getItemInHand()));
 			else
-				player.sendMessage("This item has no Rarity Index");
+				player.sendMessage(Conflict.TEXTCOLOR + "This item has no Rarity Index");
 			return true;
 		}
 		return false;
@@ -557,20 +596,23 @@ public class CommandHandler implements CommandExecutor {
 			City city = Conflict.getCity(arg[0]);
 			if (city != null) {
 				List<Player> players = Arrays.asList(plugin.getServer().getOnlinePlayers());
-				String message = "";
+				String message = Conflict.CITYCOLOR + city.getName() + Conflict.PLAYERCOLOR + ": " + city.getFormattedPlayersList();
+				
 				for(int i = 0;i<players.size();i++){
 					if(city.hasPlayer(players.get(i).getName()))
-						message = message.concat(players.get(i).getName() + " ");
+						message = message.concat(Conflict.PLAYERCOLOR + players.get(i).getName() + " ");
 				}
 				sender.sendMessage(message);
 			}else if(plugin.getFormattedPlayerName(arg[0]) != null){
 				city = Conflict.getPlayerCity(arg[0]);
 				if (city != null)
-					sender.sendMessage( arg[0] + " - " + city.getName());
+					sender.sendMessage(Conflict.PLAYERCOLOR + arg[0] + Conflict.TEXTCOLOR + " - "
+							+ Conflict.CITYCOLOR + city.getName());
 				else
 					sender.sendMessage( arg[0] + " - <None>");
-			}else sender.sendMessage("Player is not online");
-		}else sender.sendMessage("try '/cwho <playername>|<capname>");
+			}else sender.sendMessage(Conflict.TEXTCOLOR + "Player " + Conflict.ERRORCOLOR + arg[0]
+					+ Conflict.TEXTCOLOR + " is not online");
+		}else sender.sendMessage(Conflict.TEXTCOLOR + "try '/cwho <playername>|<cityname>");
 		return true;
 	}
 }

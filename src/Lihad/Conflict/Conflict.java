@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import java.util.Random;
+import java.util.Date;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -78,6 +79,7 @@ public class Conflict extends JavaPlugin {
 	public static Map<String, Integer> TRADE_ENCHANTMENTS_PLAYER_USES = new HashMap<String, Integer>();
 
     public static War war = null;
+    static Date nextWartime = null;
 
 	public static int TASK_ID_EVENT;
 
@@ -86,6 +88,26 @@ public class Conflict extends JavaPlugin {
 	public static CommandExecutor cmd;
     public static Random random = new Random();
     
+    /**
+     * The color used for headers in chat text.
+     */
+    public static ChatColor HEADERCOLOR = ChatColor.MAGIC;
+    
+    /**
+     * The color used for headers in chat text.
+     */
+    public static ChatColor MAYORCOLOR = ChatColor.GOLD;
+
+    /**
+     * The color used for perks in chat text.
+     */
+    public static ChatColor PERKCOLOR = ChatColor.DARK_AQUA;
+
+    /**
+     * The color used for trades in chat text.
+     */
+    public static ChatColor TRADECOLOR = ChatColor.DARK_GREEN;
+
     /**
      * The color used for city names in chat text.
      */
@@ -102,9 +124,31 @@ public class Conflict extends JavaPlugin {
     public static ChatColor TEXTCOLOR = ChatColor.BLUE;
 
     /**
+     * The color used for items in chat text.
+     */
+    public static ChatColor ITEMCOLOR = ChatColor.AQUA;
+
+    /**
+     * The color used for notices in chat text.
+     */
+    public static String NOTICECOLOR = "" + ChatColor.BOLD + ChatColor.LIGHT_PURPLE;
+
+    /**
+     * The color used for prompts in chat text.
+     */
+    public static ChatColor PROMPTCOLOR = ChatColor.LIGHT_PURPLE;
+
+    /**
      * The color used for messed up stuff in chat text.
      */
     public static ChatColor ERRORCOLOR = ChatColor.RED;
+    
+    /**
+     * The amount of time in milliseconds players have to wait to switch Cities
+     * @param playerName
+     * @return long - milliseconds
+     */
+    public static long switchCooldown = 1209600000;
 
     public static City getPlayerCity(String playerName) {
     	for (int i=0; i<cities.length; i++)
@@ -182,7 +226,7 @@ public class Conflict extends JavaPlugin {
 			}
 			if (!Conflict.UNASSIGNED_PLAYERS.contains(playerName) && !Conflict.cooldownExpired(playerName))
 			{
-				sender.sendMessage(TEXTCOLOR + "Cannot switch yet; please try again later.");
+				sender.sendMessage(Conflict.getFormattedRemainingCooldown(playerName));
 				return false;
 			}
     	}
@@ -216,15 +260,36 @@ public class Conflict extends JavaPlugin {
     }
 
     /**
-     * UNIMPLEMENTED
+     * Returns whether or not the cooldown has expired to allow the palyer to switch cities.
      * @param correctlyCapitalizedPlayerName - Target player's name, correctly capitalized.
      * @return boolean - true if cooldown has expired, false otherwise.
      */
 	private static boolean cooldownExpired(String correctlyCapitalizedPlayerName) {
-		// TODO Auto-generated method stub
-		return false;
+		City city = getPlayerCity(correctlyCapitalizedPlayerName);
+		if (city == null) {
+			return true;
+		}
+		return (System.currentTimeMillis() > (switchCooldown + city.getJoinedTime(correctlyCapitalizedPlayerName)));
 	}
 
+    /**
+     * Returns the remaining cooldown in friendly format.
+     * @param playerName - Target player's name, correctly capitalized.
+     * @return boolean - true if cooldown has expired, false otherwise.
+     */
+	private static String getFormattedRemainingCooldown(String playerName) {
+		City city = getPlayerCity(playerName);
+		if (city == null) {
+			return Conflict.PLAYERCOLOR + playerName + Conflict.NOTICECOLOR + " is not in a City!";
+		}
+	    long remaining = (System.currentTimeMillis() + city.getJoinedTime(playerName) - switchCooldown)/1000;
+	    if (remaining <= 0) {
+	    	return Conflict.PLAYERCOLOR + playerName + Conflict.NOTICECOLOR + " can switch now!";
+	    }
+	    return Conflict.PLAYERCOLOR + playerName + " has " + BeyondUtil.formatMillis(remaining) + " remaining.";
+	}
+
+	
 	private final BeyondPluginListener pluginListener = new BeyondPluginListener(this);
 	private final BeyondBlockListener blockListener = new BeyondBlockListener(this);
 	private final BeyondPlayerListener playerListener = new BeyondPlayerListener(this);
@@ -283,14 +348,19 @@ public class Conflict extends JavaPlugin {
 				public void run() {
                     // War timer - runs every second
                     if(war == null){
-                        if(War.isItWartime()){
-							Abatton.clearTrades();
-							Oceian.clearTrades();
-							Savania.clearTrades();
-							war = new War();
-							getServer().broadcastMessage(ChatColor.RED+"Mount your Pigs! Strap on your Diamond Armor!  It Has BEGUN!!!");
-						}
-					}
+                        if (nextWartime == null) {
+                            nextWartime = War.getNextWartime();
+                        }
+
+                        Date now = new Date();
+                        if (now.after(nextWartime)) {
+                            Abatton.clearTrades();
+                            Oceian.clearTrades();
+                            Savania.clearTrades();
+                            war = new War();
+                            nextWartime = null;
+                        }
+                    }
                     else{
                         war.executeWarTick();
 
@@ -324,6 +394,7 @@ public class Conflict extends JavaPlugin {
 		getCommand("cwho").setExecutor(cmd);
 		getCommand("perks").setExecutor(cmd);
 		getCommand("war").setExecutor(new War());
+		getCommand("join").setExecutor(cmd);
 
 
 		//PermsManager
@@ -514,6 +585,7 @@ public class Conflict extends JavaPlugin {
     /**
      * Forces the player to leave their city's channel
      * @param playerName - The player name.
+     * @param cityName - The city name.
      */
 	public boolean leaveChat(String playerName, String cityName) {
 	
@@ -533,5 +605,36 @@ public class Conflict extends JavaPlugin {
 		getServer().dispatchCommand(getServer().getConsoleSender(), "pex user " + playerName + " remove herochat.force.join." + city.getName());
 		getServer().dispatchCommand(getServer().getConsoleSender(), "pex user " + playerName + " remove herochat.join." + city.getName());
 		return true;
+	}
+
+	/**
+	 * Resets target player, removing them from all cities and making them choose a city to join.
+	 * @param sender - The command sender.
+	 * @param playerName - The name of the target player.
+	 */
+	public boolean reset(CommandSender sender, String playerName) {
+    	playerName = getFormattedPlayerName(playerName);
+    	if (playerName == null) {
+    		sender.sendMessage(TEXTCOLOR + "This player has not yet played on our server, and yes, this plugin's too lame to switch it for you anyway :P");
+    		return false;
+    	}
+    	City oldCity = null;
+    	while (Conflict.getPlayerCity(playerName) != null) {
+    		oldCity = Conflict.getPlayerCity(playerName);
+    		if (oldCity != null) {
+    			oldCity.removePlayer(playerName);
+        		leaveChat(playerName, oldCity.getName());
+    			sender.sendMessage(TEXTCOLOR + "Removing from " + CITYCOLOR + oldCity.getName());
+    		}
+    	};
+    	
+    	for (int i=0; i < cities.length; i++) {
+    		leaveChat(playerName, cities[i].getName());
+    	}
+    	
+		Conflict.UNASSIGNED_PLAYERS.add(playerName);
+        this.getServer().broadcastMessage(PLAYERCOLOR + playerName + ERRORCOLOR 
+       			+ ChatColor.BOLD + " screwed up " + TEXTCOLOR + " and had to get an admin to reset them!");
+    	return true;
 	}
 }

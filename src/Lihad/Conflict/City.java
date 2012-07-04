@@ -1,12 +1,16 @@
 package Lihad.Conflict;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.configuration.ConfigurationSection;
 
 import Lihad.Conflict.Information.BeyondInfo;
 
@@ -20,6 +24,7 @@ public class City extends Node {
     }
 
 	Set<String> players = new HashSet<String>();
+	Map<String, Long> joins = new HashMap<String, Long>();
 	Location spawnLocation;
 	Location drifterLocation;
 	Set<String> mayors = new HashSet<String>();
@@ -55,21 +60,17 @@ public class City extends Node {
     public void addPlayer(String playerName) {
         // TODO: Remove from other cities
         players.add(playerName);
+        joins.put(playerName, System.currentTimeMillis());
     }
     public void removePlayer(String playerName) {
-    	List<String> removeThese = new ArrayList<String>();
     	for (Iterator<String> iter = this.players.iterator(); iter.hasNext();) {
     		String found = iter.next();
     		if (found.equalsIgnoreCase(playerName)) {
-    			removeThese.add(found);
+    			iter.remove();
     		}
-    	}//Ugh... concurrent modification exception made me have to build a list:
-    	for (Iterator<String> iter = removeThese.iterator(); iter.hasNext();) {
-    		String found = iter.next();
-    		this.players.remove(found);
     	}
     	removeMayor(playerName);
-
+    	joins.remove(playerName);
     }
     public int getPopulation() { return players.size(); }
     
@@ -82,20 +83,15 @@ public class City extends Node {
     public Set<String> getMayors() { return mayors; }
     public void addMayor(String playerName) {
         // TODO: Make sure mayor is a member of city
-        mayors.add(playerName); 
+        mayors.add(playerName);
     }
     public void removeMayor(String playerName) {
-    	List<String> removeThese = new ArrayList<String>();
     	for (Iterator<String> iter = this.mayors.iterator(); iter.hasNext();) {
     		String found = iter.next();
     		if (found.equalsIgnoreCase(playerName)) {
-    			removeThese.add(found);
+    			iter.remove();
     		}
-    	}//Ugh... concurrent modification exception made me have to build a list:
-    	for (Iterator<String> iter = removeThese.iterator(); iter.hasNext();) {
-    		String found = iter.next();
-    		this.mayors.remove(found);
-    	}    	
+    	}	
     }
     
     // public void addPerkNode(PerkNode p) { ownedNodes.add(p); }
@@ -136,14 +132,26 @@ public class City extends Node {
     public void loadConfig(org.bukkit.configuration.ConfigurationSection section) {
         
         players.clear();
-        players.addAll(section.getStringList("Players"));
-
+        mayors.clear();
+        
+        ConfigurationSection members = section.getConfigurationSection("Members");
+        Set<String> list = members.getKeys(false);
+        if (list != null && !list.isEmpty()) {
+	        for (Iterator <String> iter = list.iterator(); iter.hasNext();) {
+	        	String playerName = iter.next();
+	        	players.add(playerName);
+	        	ConfigurationSection member = members.getConfigurationSection(playerName);
+	        	boolean isMayor = member.getBoolean("isMayor", false);
+	        	joins.put(playerName, member.getLong("joined"));
+	        	if (isMayor) {
+	        		mayors.add(playerName);
+	        	}
+	        }
+        }
+        
         center = BeyondInfo.toLocation(section, "Location");
         spawnLocation = BeyondInfo.toLocation(section, "Spawn");
         drifterLocation = BeyondInfo.toLocation(section, "Drifter");
-
-        mayors.clear();
-        mayors.addAll(section.getStringList("Mayors"));
 
         trades.clear();
         trades.addAll(section.getStringList("Trades"));
@@ -162,13 +170,19 @@ public class City extends Node {
         java.util.List<String> setAsList = null;
         setAsList = new java.util.ArrayList<String>(players);
 
-        section.set("Players", setAsList);
+        section.createSection("Members");
+        
+        ConfigurationSection members = section.getConfigurationSection("Members");
+        for (Iterator <String> iter = setAsList.iterator(); iter.hasNext();) {
+        	String playerName = iter.next();
+        	Map <String, Object> map = new HashMap<String, Object>();
+        	map.put("isMayor", mayors.contains(playerName));
+        	map.put("joined", getJoinedTime(playerName));
+        	members.createSection(playerName, map);
+        }
         section.set("Location", BeyondInfo.toString(center));
         section.set("Spawn", BeyondInfo.toString(spawnLocation));
         section.set("Drifter", BeyondInfo.toString(drifterLocation));
-
-        setAsList = new java.util.ArrayList<String>(mayors);
-        section.set("Mayors", setAsList);
 
         setAsList = new java.util.ArrayList<String>(trades);
         section.set("Trades", setAsList);
@@ -178,12 +192,15 @@ public class City extends Node {
 
         section.set("Worth", bankBalance);
         section.set("Protection", spawnProtectRadius);
+        
+        section.set("Password", getPassword());
     }
     
     public void purgeInactivePlayers() {
 
         long now = java.lang.System.currentTimeMillis();
-    
+        
+    	List<String> removeThese = new ArrayList<String>();
         for (java.util.Iterator<String> it = players.iterator(); it.hasNext();) {
             long lastseen = 0;
             String name = it.next();
@@ -194,9 +211,14 @@ public class City extends Node {
             // Purge anyone who hasn't logged in the last four weeks
             if (days > 28) {
                 Conflict.info("Removing " + name + " from Abatton (last seen " + days + " days ago)");
-                it.remove();
+    			removeThese.add(name);
             }            
         }
+        
+    	for (Iterator<String> iter = removeThese.iterator(); iter.hasNext();) {
+    		String found = iter.next();
+    		this.removePlayer(found);
+    	}
     }
     
     @Override
@@ -204,4 +226,49 @@ public class City extends Node {
     	return this.name;
     }
     
+    
+	/**
+	 * Gets the system time at which the player joined the City.
+	 * @param playerName - The name of the player.
+	 * @return long - system time at last join.
+	 */
+	public Long getJoinedTime(String playerName) {
+		return this.joins.get(playerName);
+	}
+
+	public String getInfo() {
+		String info = Conflict.HEADERCOLOR + "------" + Conflict.CITYCOLOR + this.name + Conflict.HEADERCOLOR + "------\n"
+				+ Conflict.PLAYERCOLOR + players.size() + Conflict.TEXTCOLOR + " players: " + Conflict.PLAYERCOLOR + players.size();
+		info += "" + Conflict.MAYORCOLOR + mayors.size() + Conflict.TEXTCOLOR + " mayors: "
+				+ Conflict.MAYORCOLOR;
+		boolean firstOne = true;
+		for (Iterator<String> iter = mayors.iterator(); iter.hasNext();)
+		{
+			if (firstOne){
+				info += iter.next();
+				firstOne = false;
+			}
+			else
+				info += ", " + iter.next();
+		}
+		info += Conflict.TEXTCOLOR + "Mini-perks: " + Conflict.PERKCOLOR + getPerks();
+		info += Conflict.TEXTCOLOR + "Nodes: " + Conflict.TRADECOLOR + getTrades();
+		return info;
+	}
+
+	public String getFormattedPlayersList() {
+		boolean firstOne = true;
+		String info = "";
+		for (Iterator<String> iter = players.iterator(); iter.hasNext();)
+		{
+			if (firstOne)
+			{
+				info += iter.next();
+				firstOne = false;
+			}
+			else
+				info += ", " + iter.next();
+		}
+		return info;
+	}
 };

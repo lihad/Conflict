@@ -426,5 +426,30 @@ public class BeyondUtil {
         }
     }
 
+
+    /**
+     * Return a formatted version of the time in milliseconds
+     * @param time
+     * @return
+     */
+	public static String formatMillis(long time) {
+	    long days = time / (24*60*60);
+	    time %= (24*60*60);
+	    long hours = time / (60*60);
+	    time %= (60*60);
+	    long minutes = time / (60);
+	    time %= (60);
+	    long seconds = time;
+	    String formatted = "";
+	    if (days > 0)
+	    	formatted += days + " days, ";
+	    if (hours > 0)
+	    	formatted += hours + " hours, ";
+	    if (minutes > 0)
+	    	formatted += minutes + " minutes, ";
+	    if (seconds > 0)
+	    	formatted += seconds + " seconds";
+	    return formatted;
+	}
     
 }

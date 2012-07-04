@@ -1,23 +1,19 @@
 package Lihad.Conflict.Listeners;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerChatEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -27,15 +23,11 @@ import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.Potion;
 
-import Lihad.Conflict.Conflict;
+import Lihad.Conflict.*;
 import Lihad.Conflict.Perk.*;
 import Lihad.Conflict.Util.BeyondUtil;
-import Lihad.Conflict.Node;
-import Lihad.Conflict.City;
 
 public class BeyondPlayerListener implements Listener {
 	public static Conflict plugin;
@@ -50,40 +42,28 @@ public class BeyondPlayerListener implements Listener {
 				&& event.getTo().getWorld().getName().equals("survival")) {
 			if(Conflict.UNASSIGNED_PLAYERS.contains(event.getPlayer().getName())){
 				event.setTo(event.getFrom());
-				event.getPlayer().sendMessage(ChatColor.RED+"You need to join a Capital before continuing...");
-				event.getPlayer().sendMessage(ChatColor.RED+"Type "+ChatColor.GRAY+"/abatton"+ChatColor.RED+" or "+ChatColor.GRAY+"/oceian"+ChatColor.RED+" or "+ChatColor.GRAY+"/savania");
+				event.getPlayer().sendMessage(Conflict.NOTICECOLOR+"You need to join a Capital before continuing...");
+				event.getPlayer().sendMessage(Conflict.TEXTCOLOR+"Type "+ChatColor.GRAY+"/join <cityname> confirm");
+				event.getPlayer().sendMessage(Conflict.TEXTCOLOR+"You can choose one of: " + Conflict.CITYCOLOR + Conflict.cities);
 			}
-			if(Conflict.Abatton.getLocation().distance(event.getTo()) < 500.0
-					&& Conflict.Abatton.getLocation().distance(event.getFrom()) >= 500.0){
-				event.getPlayer().sendMessage(ChatColor.GRAY.toString()+"You have entered the Capital of Abatton");
-			}
-			else if(Conflict.Abatton.getLocation().distance(event.getTo()) > 500.0
-					&& Conflict.Abatton.getLocation().distance(event.getFrom()) <= 500.0){
-				event.getPlayer().sendMessage(ChatColor.GRAY.toString()+"You have left the Capital of Abatton");
-			}
-			if(Conflict.Oceian.getLocation().distance(event.getTo()) < 500.0
-					&& Conflict.Oceian.getLocation().distance(event.getFrom()) >= 500.0){
-				event.getPlayer().sendMessage(ChatColor.GRAY.toString()+"You have entered the Capital of Oceian");
-			}
-			else if(Conflict.Oceian.getLocation().distance(event.getTo()) > 500.0
-					&& Conflict.Oceian.getLocation().distance(event.getFrom()) <= 500.0){
-				event.getPlayer().sendMessage(ChatColor.GRAY.toString()+"You have left the Capital of Oceian");
-			}
-			if(Conflict.Savania.getLocation().distance(event.getTo()) < 500.0
-					&& Conflict.Savania.getLocation().distance(event.getFrom()) >= 500.0){
-				event.getPlayer().sendMessage(ChatColor.GRAY.toString()+"You have entered the Capital of Savania");
-			}
-			else if(Conflict.Savania.getLocation().distance(event.getTo()) > 500.0
-					&& Conflict.Savania.getLocation().distance(event.getFrom()) <= 500.0){
-				event.getPlayer().sendMessage(ChatColor.GRAY.toString()+"You have left the Capital of Savania");
+			for (City city: Conflict.cities)
+			{
+				if (city.getLocation().distance(event.getTo()) < 500.0
+						&& city.getLocation().distance(event.getFrom()) >= 500.0){
+					event.getPlayer().sendMessage(Conflict.NOTICECOLOR + "You have entered the City of " + Conflict.CITYCOLOR + city.getName());
+				}
+				else if(city.getLocation().distance(event.getTo()) > 500.0
+						&& city.getLocation().distance(event.getFrom()) <= 500.0){
+						event.getPlayer().sendMessage(Conflict.NOTICECOLOR + "You have left the City of " + Conflict.CITYCOLOR + city.getName());
+				}
 			}
 			if(event.getPlayer().getWorld().getSpawnLocation().distance(event.getTo()) > 5000.0
 					&& event.getPlayer().getWorld().getSpawnLocation().distance(event.getFrom()) <= 5000.0){
-				event.getPlayer().sendMessage(ChatColor.GRAY.toString()+"You have entered the Wilderness");
+				event.getPlayer().sendMessage(Conflict.NOTICECOLOR + "You have entered the Wilderness");
 			}
 			else if(event.getPlayer().getWorld().getSpawnLocation().distance(event.getTo()) < 5000.0
 					&& event.getPlayer().getWorld().getSpawnLocation().distance(event.getFrom()) >= 5000.0){
-				event.getPlayer().sendMessage(ChatColor.GRAY.toString()+"You have entered the City Scape");
+				event.getPlayer().sendMessage(Conflict.NOTICECOLOR + "You have entered the City Scape");
 			}
 		}
 	}
@@ -121,7 +101,7 @@ public class BeyondPlayerListener implements Listener {
             if (Conflict.war.getPlayerTeam(player) != null) {
                 for (Node n : Conflict.nodes) {
                     if (n.isInRadius(dest) || n.isInRadius(src)) {
-                        event.setTo(event.getFrom());
+                        event.setCancelled(true);
                         return;
                     }
                 }
