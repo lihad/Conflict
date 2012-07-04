@@ -50,8 +50,9 @@ public class BeyondPlayerListener implements Listener {
 				&& event.getTo().getWorld().getName().equals("survival")) {
 			if(Conflict.UNASSIGNED_PLAYERS.contains(event.getPlayer().getName())){
 				event.setTo(event.getFrom());
-				event.getPlayer().sendMessage(ChatColor.RED+"You need to join a Capital before continuing...");
-				event.getPlayer().sendMessage(ChatColor.RED+"Type "+ChatColor.GRAY+"/abatton"+ChatColor.RED+" or "+ChatColor.GRAY+"/oceian"+ChatColor.RED+" or "+ChatColor.GRAY+"/savania");
+				event.getPlayer().sendMessage(Conflict.ERRORCOLOR+"You need to join a Capital before continuing...");
+				event.getPlayer().sendMessage(Conflict.TEXTCOLOR+"Type "+ChatColor.GRAY+"/join <cityname> confirm");
+				event.getPlayer().sendMessage(Conflict.TEXTCOLOR+"You can choose one of: " + Conflict.CITYCOLOR + Conflict.cities);
 			}
 			if(Conflict.Abatton.getLocation().distance(event.getTo()) < 500.0
 					&& Conflict.Abatton.getLocation().distance(event.getFrom()) >= 500.0){
