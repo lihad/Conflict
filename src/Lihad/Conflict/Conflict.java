@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import java.util.Random;
+import java.util.Date;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -72,6 +73,7 @@ public class Conflict extends JavaPlugin {
 	public static Map<String, Integer> TRADE_ENCHANTMENTS_PLAYER_USES = new HashMap<String, Integer>();
 
     public static War war = null;
+    static Date nextWartime = null;
 
 	public static int TASK_ID_EVENT;
 
@@ -340,14 +342,19 @@ public class Conflict extends JavaPlugin {
 				public void run() {
                     // War timer - runs every second
                     if(war == null){
-                        if(War.isItWartime()){
-							Abatton.clearTrades();
-							Oceian.clearTrades();
-							Savania.clearTrades();
-							war = new War();
-							getServer().broadcastMessage(ChatColor.RED+"Mount your Pigs! Strap on your Diamond Armor!  It Has BEGUN!!!");
-						}
-					}
+                        if (nextWartime == null) {
+                            nextWartime = War.getNextWartime();
+                        }
+
+                        Date now = new Date();
+                        if (now.after(nextWartime)) {
+                            Abatton.clearTrades();
+                            Oceian.clearTrades();
+                            Savania.clearTrades();
+                            war = new War();
+                            nextWartime = null;
+                        }
+                    }
                     else{
                         war.executeWarTick();
 

@@ -22,34 +22,33 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 
 	// -------------------------------------
 	// static funcs
-	public static boolean isItWartime() {
+	public static Date getNextWartime() {
 
 		Calendar now = Calendar.getInstance();
 
-		if (now.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY) {
-			Calendar startTime = Calendar.getInstance();
-			startTime.set(Calendar.HOUR_OF_DAY, 18);
-			startTime.set(Calendar.MINUTE, 50);
+        Calendar nextWednesdayWar = Calendar.getInstance();
+        nextWednesdayWar.set(Calendar.DAY_OF_WEEK, Calendar.WEDNESDAY);
+        nextWednesdayWar.set(Calendar.HOUR_OF_DAY, 18);
+        nextWednesdayWar.set(Calendar.MINUTE, 50);
+        if (now.getTime().after(nextWednesdayWar.getTime())) {
+            nextWednesdayWar.add(Calendar.DATE, 7);
+        }
 
-			Calendar endTime = Calendar.getInstance();
-			endTime.set(Calendar.HOUR_OF_DAY, 20);
-			endTime.set(Calendar.MINUTE, 0);
+        Calendar nextSaturdayWar = Calendar.getInstance();
+        nextSaturdayWar.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+        nextSaturdayWar.set(Calendar.HOUR_OF_DAY, 12);
+        nextSaturdayWar.set(Calendar.MINUTE, 50);
+        if (now.getTime().after(nextSaturdayWar.getTime())) {
+            nextSaturdayWar.add(Calendar.DATE, 7);
+        }
 
-			return ((now.compareTo(startTime) > 0) && (now.compareTo(endTime) < 0));
-		}
-		if (now.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
-			Calendar startTime = Calendar.getInstance();
-			startTime.set(Calendar.HOUR_OF_DAY, 12);
-			startTime.set(Calendar.MINUTE, 50);
-
-			Calendar endTime = Calendar.getInstance();
-			endTime.set(Calendar.HOUR_OF_DAY, 14);
-			endTime.set(Calendar.MINUTE, 0);
-
-			return ((now.compareTo(startTime) > 0) && (now.compareTo(endTime) < 0));
-		}
-		return false;
-	}
+        if (nextWednesdayWar.getTime().before(nextSaturdayWar.getTime()))  {
+            return nextWednesdayWar.getTime();
+        }
+        else {
+            return nextSaturdayWar.getTime();
+        }
+    }
 
 	public boolean warShouldEnd() {
 
@@ -57,7 +56,7 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 			return true;
 		}
 
-		return !isItWartime();
+		return (new Date()).after(endTime);
 	}
 
 	// -------------------------------------
@@ -124,11 +123,14 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 	ArrayList<WarNode> nodes = new ArrayList<WarNode>();
 	List<Team> teams = new ArrayList<Team>();
 	boolean allNodesConquered = false;
-	Date beginTime = null;
+    Date beginTime = null;
+    Date endTime = null;
     Map<String, Team> loggedPlayers = new HashMap<String, Team>();
 
 	static final Team Contested = new Team("Contested");
 
+    static final int PREP_TIME_IN_MINS = 15;
+    
 	// -------------------------------------
 	// Constructor --------------------
 	public War() {
@@ -137,7 +139,14 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 			WarNode wn = new WarNode(n.name, n.getLocation());
 			this.nodes.add(wn);
 		}
-		beginTime = new Date();
+
+        // War starts in 10 mins, and ends 60 mins after that
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.MINUTE, 10);
+        beginTime = c.getTime();
+        c.add(Calendar.MINUTE, 60);
+        endTime = c.getTime();
+
 		postWarPendingNotice();
 	}
 
@@ -276,10 +285,12 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 		if (now.after(beginTime)) {
 			begin();
 		}
-		long mins = (beginTime.getTime() - now.getTime()) / (1000 * 60);
-		int noticeIndex = Conflict.random.nextInt(warNotices.length);
-		Bukkit.getServer().broadcastMessage(ChatColor.BLUE.toString() + warNotices[noticeIndex] + ChatColor.GOLD + "WAR is starting in " + mins + " minutes!");
-		Bukkit.getServer().broadcastMessage(ChatColor.GRAY.toString() + "Type /war join to get in on the action.");
+        else {
+            long mins = (beginTime.getTime() - now.getTime()) / (1000 * 60);
+            int noticeIndex = Conflict.random.nextInt(warNotices.length);
+            Bukkit.getServer().broadcastMessage(ChatColor.BLUE.toString() + warNotices[noticeIndex] + ChatColor.GOLD + "WAR is starting in " + mins + " minutes!");
+            Bukkit.getServer().broadcastMessage(ChatColor.GRAY.toString() + "Type /war join to get in on the action.");
+        }
 	}
 	
 	public void postWarTeams(org.bukkit.command.CommandSender sender){
