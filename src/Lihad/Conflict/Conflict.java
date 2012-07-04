@@ -138,6 +138,11 @@ public class Conflict extends JavaPlugin {
     public static ChatColor ERRORCOLOR = ChatColor.RED;
     
     /**
+     * The color used for messed up stuff in chat text.
+     */
+    public static ChatColor MONEYCOLOR = ChatColor.YELLOW;
+
+    /**
      * The amount of time in milliseconds players have to wait to switch Cities
      * @param playerName
      * @return long - milliseconds

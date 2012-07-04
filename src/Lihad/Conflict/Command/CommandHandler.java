@@ -53,7 +53,7 @@ public class CommandHandler implements CommandExecutor {
 		}else if(cmd.getName().equalsIgnoreCase("gear")) {
 			return handleGear(sender, arg);
 		}else if(Conflict.getCity(cmd.getName()) != null) {
-			return handleCity(sender, cmd.getName());
+			return handleCity(sender, cmd.getName(), arg);
 		}else if(cmd.getName().equalsIgnoreCase("join")) {
 			return handleJoinCity(sender, arg);
 		}else if(cmd.getName().equalsIgnoreCase("spawn")) {
@@ -117,11 +117,12 @@ public class CommandHandler implements CommandExecutor {
 	 * @param arg - The arguments.
 	 * @return boolean - True if responded to, false if not.
 	 */
-	private boolean handleCity(CommandSender sender, String name) {
+	private boolean handleCity(CommandSender sender, String name, String[] arg) {
 		City city = Conflict.getCity(name);
-		if (city != null) {
-			String message = city.getInfo();
-			sender.sendMessage(city.getInfo());
+		if (arg.length > 0 && arg[0].equalsIgnoreCase("list")) {
+			sender.sendMessage(city.getInfo(true));
+		} else {
+			sender.sendMessage(city.getInfo(false));
 		}
 		return true;
 	}
@@ -266,13 +267,13 @@ public class CommandHandler implements CommandExecutor {
 						}else
 							sender.sendMessage("Invalid perk");
 					}else
-						sender.sendMessage(city.getName() + " currently owns perk: " + arg[0]);
+						sender.sendMessage(Conflict.CITYCOLOR + city.getName() + Conflict.ERRORCOLOR + " currently owns perk: " + Conflict.PERKCOLOR + arg[0]);
 				}else
-					sender.sendMessage(city.getName() + " does not have enough gold to purchase the ability");
+					sender.sendMessage(Conflict.CITYCOLOR + city.getName() + Conflict.ERRORCOLOR + " does not have enough gold to purchase the ability");
 			}else
-				sender.sendMessage(ChatColor.LIGHT_PURPLE + "Unable to use this command");
+				sender.sendMessage(Conflict.ERRORCOLOR + "Unable to use this command");
 		}else
-			sender.sendMessage("Possible Perks: weapondrops, armordrops, potiondrops, tooldrops, bowdrops, shield, strike, endergrenade, enchantup, golddrops");
+			sender.sendMessage(Conflict.TEXTCOLOR + "Possible Perks: " + Conflict.PERKCOLOR + "weapondrops, armordrops, potiondrops, tooldrops, bowdrops, shield, strike, endergrenade, enchantup, golddrops");
 		return true;
 	}
 
@@ -598,9 +599,13 @@ public class CommandHandler implements CommandExecutor {
 			City city = Conflict.getCity(arg[0]);
 			if (city != null) {
 				List<Player> players = Arrays.asList(plugin.getServer().getOnlinePlayers());
-				String message = Conflict.CITYCOLOR + city.getName() + Conflict.PLAYERCOLOR + ": " + city.getFormattedPlayersList();
-				
+				String message = Conflict.CITYCOLOR + city.getName() + Conflict.PLAYERCOLOR + ": ";
+				boolean firstOne = true;				
 				for(int i = 0;i<players.size();i++){
+					if (firstOne)
+						firstOne = false;
+					else
+						message += ", ";
 					if(city.hasPlayer(players.get(i).getName()))
 						message = message.concat(Conflict.PLAYERCOLOR + players.get(i).getName() + " ");
 				}

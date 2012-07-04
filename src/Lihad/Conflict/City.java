@@ -236,11 +236,11 @@ public class City extends Node {
 		return this.joins.get(playerName);
 	}
 
-	public String getInfo() {
-		String info = Conflict.HEADERCOLOR + "------" + Conflict.CITYCOLOR + this.name + Conflict.HEADERCOLOR + "------\n"
-				+ Conflict.PLAYERCOLOR + players.size() + Conflict.TEXTCOLOR + " players: " + Conflict.PLAYERCOLOR + players.size();
-		info += "" + Conflict.MAYORCOLOR + mayors.size() + Conflict.TEXTCOLOR + " mayors: "
-				+ Conflict.MAYORCOLOR;
+	public String getInfo(boolean listPlayers) {
+		String info = Conflict.HEADERCOLOR + "------" + Conflict.CITYCOLOR + this.name + Conflict.TEXTCOLOR + "("
+			+ Conflict.PLAYERCOLOR + players.size() + Conflict.TEXTCOLOR + ")" + Conflict.HEADERCOLOR + "------\n"
+			+ Conflict.MAYORCOLOR + mayors.size() + Conflict.TEXTCOLOR + " mayors: "
+			+ Conflict.MAYORCOLOR;
 		boolean firstOne = true;
 		for (Iterator<String> iter = mayors.iterator(); iter.hasNext();)
 		{
@@ -253,6 +253,11 @@ public class City extends Node {
 		}
 		info += Conflict.TEXTCOLOR + "Mini-perks: " + Conflict.PERKCOLOR + getPerks();
 		info += Conflict.TEXTCOLOR + "Nodes: " + Conflict.TRADECOLOR + getTrades();
+		info += Conflict.TEXTCOLOR + "Treasury: " + Conflict.MONEYCOLOR + this.getMoney();
+		if (listPlayers)
+			info += Conflict.TEXTCOLOR + "Players (" + Conflict.PLAYERCOLOR + players.size() + Conflict.TEXTCOLOR + "): " + Conflict.PLAYERCOLOR + this.getFormattedPlayersList();
+		else
+			info += Conflict.TEXTCOLOR + "Players: " + Conflict.PLAYERCOLOR + players.size() + Conflict.TEXTCOLOR;
 		return info;
 	}
 
