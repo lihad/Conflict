@@ -132,7 +132,7 @@ public class City extends Node {
     public void loadConfig(org.bukkit.configuration.ConfigurationSection section) {
         
         players.clear();
-//        players.addAll(section.getStringList("Players")); hopefully not needed
+        mayors.clear();
         
         ConfigurationSection members = section.getConfigurationSection("Members");
         Set<String> list = members.getKeys(false);
@@ -144,7 +144,7 @@ public class City extends Node {
 	        	boolean isMayor = member.getBoolean("isMayor", false);
 	        	joins.put(playerName, member.getLong("joined"));
 	        	if (isMayor) {
-	        		System.out.println("If we were reading isMayor, then " + playerName + " would be a mayor.");
+	        		mayors.add(playerName);
 	        	}
 	        }
         }
@@ -152,9 +152,6 @@ public class City extends Node {
         center = BeyondInfo.toLocation(section, "Location");
         spawnLocation = BeyondInfo.toLocation(section, "Spawn");
         drifterLocation = BeyondInfo.toLocation(section, "Drifter");
-
-        mayors.clear();
-        mayors.addAll(section.getStringList("Mayors"));
 
         trades.clear();
         trades.addAll(section.getStringList("Trades"));
@@ -186,9 +183,6 @@ public class City extends Node {
         section.set("Location", BeyondInfo.toString(center));
         section.set("Spawn", BeyondInfo.toString(spawnLocation));
         section.set("Drifter", BeyondInfo.toString(drifterLocation));
-
-        setAsList = new java.util.ArrayList<String>(mayors);
-        section.set("Mayors", setAsList);
 
         setAsList = new java.util.ArrayList<String>(trades);
         section.set("Trades", setAsList);
