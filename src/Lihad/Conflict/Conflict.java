@@ -134,6 +134,13 @@ public class Conflict extends JavaPlugin {
      * The color used for messed up stuff in chat text.
      */
     public static ChatColor ERRORCOLOR = ChatColor.RED;
+    
+    /**
+     * The amount of time in milliseconds players have to wait to switch Cities
+     * @param playerName
+     * @return long - milliseconds
+     */
+    public static long switchCooldown = 1209600000;
 
     public static City getPlayerCity(String playerName) {
     	for (int i=0; i<cities.length; i++)
@@ -211,7 +218,7 @@ public class Conflict extends JavaPlugin {
 			}
 			if (!Conflict.UNASSIGNED_PLAYERS.contains(playerName) && !Conflict.cooldownExpired(playerName))
 			{
-				sender.sendMessage(TEXTCOLOR + "Cannot switch yet; please try again later.");
+				sender.sendMessage(this.getFormattedRemainingCooldown(playerName));
 				return false;
 			}
     	}
@@ -245,15 +252,36 @@ public class Conflict extends JavaPlugin {
     }
 
     /**
-     * UNIMPLEMENTED
+     * Returns whether or not the cooldown has expired to allow the palyer to switch cities.
      * @param correctlyCapitalizedPlayerName - Target player's name, correctly capitalized.
      * @return boolean - true if cooldown has expired, false otherwise.
      */
 	private static boolean cooldownExpired(String correctlyCapitalizedPlayerName) {
-		// TODO Auto-generated method stub
-		return false;
+		City city = getPlayerCity(correctlyCapitalizedPlayerName);
+		if (city == null) {
+			return true;
+		}
+		return (System.currentTimeMillis() > (switchCooldown + city.getJoinedTime(correctlyCapitalizedPlayerName)));
 	}
 
+    /**
+     * Returns the remaining cooldown in friendly format.
+     * @param playerName - Target player's name, correctly capitalized.
+     * @return boolean - true if cooldown has expired, false otherwise.
+     */
+	private static String getFormattedRemainingCooldown(String playerName) {
+		City city = getPlayerCity(playerName);
+		if (city == null) {
+			return Conflict.PLAYERCOLOR + playerName + Conflict.NOTICECOLOR + " is not in a City!";
+		}
+	    long remaining = (System.currentTimeMillis() - (city.getJoinedTime(playerName) + switchCooldown))/1000;
+	    if (remaining <= 0) {
+	    	return Conflict.PLAYERCOLOR + playerName + Conflict.NOTICECOLOR + "can switch now!";
+	    }
+	    return Conflict.PLAYERCOLOR + playerName + " has " + BeyondUtil.formatMillis(remaining) + " remaining.";
+	}
+
+	
 	private final BeyondPluginListener pluginListener = new BeyondPluginListener(this);
 	private final BeyondBlockListener blockListener = new BeyondBlockListener(this);
 	private final BeyondPlayerListener playerListener = new BeyondPlayerListener(this);
