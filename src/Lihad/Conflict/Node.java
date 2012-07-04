@@ -4,12 +4,15 @@ import java.util.Set;
 import java.util.HashSet;
 
 import org.bukkit.Location;
+import Lihad.Conflict.Perk.*;
 
 public class Node {
 
     public Node(String n) { name = n; }
     public Node(String n, Location l) { name = n; center = l;}
 
+    public Set<Perk> perks = new HashSet<Perk>();
+    
     String name;
 
     int radius;
@@ -26,4 +29,6 @@ public class Node {
     
     public Location getLocation() { return center; }
     public void setLocation(Location l) { center = l; }
+    
+    public void addPerk(Perk p) { perks.add(p); }
 };

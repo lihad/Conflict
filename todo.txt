@@ -1,0 +1,27 @@
+TODO:
+
+Conflict --
+- Config
+- tpa as a miniperk
+- in-game elections?
+- better LWC/PS integration (permissions)
+- Remove city pop caps
+
+- Mini-perks to towns
+- per-perk prices
+- per-town perk cap
+- Allow switch capitols, with cooldown
+
+
+
+
+War
+- Configurable war start/end
+- Make time/duration configurable
+- Hide players in war from dynmap
+- PvP perks for war winners (random, as now)
+- Find a way to evaluate whether somebody has been on "enough"
+- If a team has only one or two people, let them cap with one
+- Fix war starting over bug
+- Show everyone in range the capping message
+

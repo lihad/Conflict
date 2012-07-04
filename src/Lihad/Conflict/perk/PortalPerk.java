@@ -1,4 +1,6 @@
-package Lihad.Conflict;
+package Lihad.Conflict.Perk;
+
+import Lihad.Conflict.Conflict;
 
 public class PortalPerk extends Perk {
 

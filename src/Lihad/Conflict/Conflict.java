@@ -29,12 +29,9 @@ import com.nijikokun.bukkit.Permissions.Permissions;
 
 import Lihad.Conflict.Command.CommandHandler;
 import Lihad.Conflict.Information.BeyondInfo;
-import Lihad.Conflict.Listeners.BeyondBlockListener;
-import Lihad.Conflict.Listeners.BeyondEntityListener;
-import Lihad.Conflict.Listeners.BeyondPlayerListener;
-import Lihad.Conflict.Listeners.BeyondPluginListener;
-import Lihad.Conflict.Listeners.BeyondSafeModeListener;
+import Lihad.Conflict.Listeners.*;
 import Lihad.Conflict.Util.BeyondUtil;
+import Lihad.Conflict.Perk.*;
 
 public class Conflict extends JavaPlugin {
 	/** Name of the plugin, used in output messages */
@@ -58,9 +55,18 @@ public class Conflict extends JavaPlugin {
     public static Perk Enchantments = new EnchantmentPerk("enchantments");
     public static Perk RichPortal = new PortalPerk("richportal");
     public static Perk MystPortal = new PortalPerk("mystportal");
+    public static Perk WeaponDrop = new WeaponDropPerk();
+    public static Perk ArmorDrop = new ArmorDropPerk();
+    public static Perk PotionDrop = new PotionDropPerk();
+    public static Perk ToolDrop = new ToolDropPerk();
+    public static Perk BowDrop = new BowDropPerk();
+    public static Perk Shield = new ShieldPerk();
+    public static Perk Strike = new StrikePerk();
+    public static Perk EnchantUp = new EnchantUpPerk();
+    public static Perk GoldDrop = new GoldDropPerk();
+    public static Perk Tpa = new TpaPerk();
     
-    public static BlockPerk[] blockPerks = {(BlockPerk)Blacksmith, (BlockPerk)Potions, (BlockPerk)Enchantments};
-    public static PortalPerk[] portalPerks = {(PortalPerk)RichPortal, (PortalPerk)MystPortal};
+    public static Perk[] perks = {Blacksmith, Potions, Enchantments, RichPortal, MystPortal, WeaponDrop, ArmorDrop, PotionDrop, ToolDrop, BowDrop, Shield, Strike, EnchantUp, GoldDrop, Tpa};
     
     public static List<Node> nodes = new LinkedList<Node>();
 
@@ -347,6 +353,11 @@ public class Conflict extends JavaPlugin {
 			pm.registerEvents(safeListener, this);
             pm.registerEvents(new War(), this);
 		}
+        
+        // Init perks
+        for (Perk p : perks) {
+            p.Initialize(this);
+        }
 	}
 	public void setupPermissions() {
 		Plugin permissionsPlugin = this.getServer().getPluginManager().getPlugin("Permissions");
