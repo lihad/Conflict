@@ -268,7 +268,6 @@ public class CommandHandler implements CommandExecutor {
                         sender.sendMessage(Conflict.ERRORCOLOR + "Invalid perk.  Possible perks: " + Conflict.PERKCOLOR + "weapondrops, armordrops, potiondrops, tooldrops, bowdrops, shield, strike, endergrenade, enchantup, golddrops");
                 }else
                     sender.sendMessage(Conflict.CITYCOLOR + city.getName() + Conflict.ERRORCOLOR + " currently owns perk: " + Conflict.PERKCOLOR + arg[0]);
-                sender.sendMessage(Conflict.CITYCOLOR + city.getName() + Conflict.ERRORCOLOR + " does not have enough gold to purchase the ability.");
             }else
                 sender.sendMessage(Conflict.ERRORCOLOR + "Unable to use this command");
         }else
