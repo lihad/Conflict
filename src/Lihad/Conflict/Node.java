@@ -4,7 +4,8 @@ import java.util.Set;
 import java.util.HashSet;
 
 import org.bukkit.Location;
-import Lihad.Conflict.Perk.*;
+
+import Lihad.Conflict.Perks.*;
 
 public class Node {
 

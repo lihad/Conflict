@@ -1,4 +1,4 @@
-package Lihad.Conflict.Perk;
+package Lihad.Conflict.Perks;
 
 public class TpaPerk extends PassivePerk {
 

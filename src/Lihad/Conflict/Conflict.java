@@ -32,7 +32,7 @@ import Lihad.Conflict.Command.CommandHandler;
 import Lihad.Conflict.Information.BeyondInfo;
 import Lihad.Conflict.Listeners.*;
 import Lihad.Conflict.Util.BeyondUtil;
-import Lihad.Conflict.Perk.*;
+import Lihad.Conflict.Perks.*;
 
 public class Conflict extends JavaPlugin {
 	/** Name of the plugin, used in output messages */

@@ -1,4 +1,4 @@
-package Lihad.Conflict.Perk;
+package Lihad.Conflict.Perks;
 import Lihad.Conflict.*;
 
 public class Perk {
