@@ -181,6 +181,7 @@ public class City extends Node {
 
         section.set("Players", setAsList);
         section.createSection("Members");
+        
         ConfigurationSection members = section.getConfigurationSection("Members");
         for (Iterator <String> iter = setAsList.iterator(); iter.hasNext();) {
         	String playerName = iter.next();
