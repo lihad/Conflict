@@ -81,6 +81,26 @@ public class Conflict extends JavaPlugin {
     public static Random random = new Random();
     
     /**
+     * The color used for headers in chat text.
+     */
+    public static ChatColor HEADERCOLOR = ChatColor.MAGIC;
+    
+    /**
+     * The color used for headers in chat text.
+     */
+    public static ChatColor MAYORCOLOR = ChatColor.GOLD;
+
+    /**
+     * The color used for perks in chat text.
+     */
+    public static ChatColor PERKCOLOR = ChatColor.MAGIC;
+
+    /**
+     * The color used for trades in chat text.
+     */
+    public static ChatColor TRADECOLOR = ChatColor.MAGIC;
+
+    /**
      * The color used for city names in chat text.
      */
     public static ChatColor CITYCOLOR = ChatColor.GREEN;

@@ -23,6 +23,7 @@ public class City extends Node {
     }
 
 	Set<String> players = new HashSet<String>();
+	Map<String, Long> joins = new HashMap<String, Long>();
 	Location spawnLocation;
 	Location drifterLocation;
 	Set<String> mayors = new HashSet<String>();
@@ -58,6 +59,7 @@ public class City extends Node {
     public void addPlayer(String playerName) {
         // TODO: Remove from other cities
         players.add(playerName);
+        joins.put(playerName, System.currentTimeMillis());
     }
     public void removePlayer(String playerName) {
     	List<String> removeThese = new ArrayList<String>();
@@ -72,7 +74,7 @@ public class City extends Node {
     		this.players.remove(found);
     	}
     	removeMayor(playerName);
-
+    	joins.remove(playerName);
     }
     public int getPopulation() { return players.size(); }
     
@@ -85,7 +87,7 @@ public class City extends Node {
     public Set<String> getMayors() { return mayors; }
     public void addMayor(String playerName) {
         // TODO: Make sure mayor is a member of city
-        mayors.add(playerName); 
+        mayors.add(playerName);
     }
     public void removeMayor(String playerName) {
     	List<String> removeThese = new ArrayList<String>();
@@ -139,20 +141,21 @@ public class City extends Node {
     public void loadConfig(org.bukkit.configuration.ConfigurationSection section) {
         
         players.clear();
-        players.addAll(section.getStringList("Players"));
+//        players.addAll(section.getStringList("Players")); hopefully not needed
         
         ConfigurationSection members = section.getConfigurationSection("Members");
-        int spewed = 0;
-        for (Iterator <String> iter = members.getKeys(false).iterator(); iter.hasNext();) {
-        	String playerName = iter.next();
-        	ConfigurationSection member = members.getConfigurationSection(playerName);
-        	boolean isMayor = member.getBoolean("isMayor", true);//TODO: DO NOT DO THIS (just testing)
-        	long lastSwitch = member.getLong("lastSwitch", -1);
-        	if (spewed < 10) {
-        		System.out.println("Member name: " + playerName);
-        		System.out.println("isMayor: " + isMayor);
-        		System.out.println("lastSwitch" + lastSwitch);
-        	}
+        Set<String> list = members.getKeys(false);
+        if (list != null && !list.isEmpty()) {
+	        for (Iterator <String> iter = list.iterator(); iter.hasNext();) {
+	        	String playerName = iter.next();
+	        	players.add(playerName);
+	        	ConfigurationSection member = members.getConfigurationSection(playerName);
+	        	boolean isMayor = member.getBoolean("isMayor", false);
+	        	joins.put(playerName, member.getLong("joined"));
+	        	if (isMayor) {
+	        		System.out.println("If we were reading isMayor, then " + playerName + " would be a mayor.");
+	        	}
+	        }
         }
         
         center = BeyondInfo.toLocation(section, "Location");
@@ -179,15 +182,14 @@ public class City extends Node {
         java.util.List<String> setAsList = null;
         setAsList = new java.util.ArrayList<String>(players);
 
-        section.set("Players", setAsList);
         section.createSection("Members");
         
         ConfigurationSection members = section.getConfigurationSection("Members");
         for (Iterator <String> iter = setAsList.iterator(); iter.hasNext();) {
         	String playerName = iter.next();
-        	Map <String, Object> map = new HashMap();
-        	map.put("isMayor", false);
-        	map.put("lastSwitch", (long) 0);
+        	Map <String, Object> map = new HashMap<String, Object>();
+        	map.put("isMayor", mayors.contains(playerName));
+        	map.put("joined", getJoinedTime(playerName));
         	members.createSection(playerName, map);
         }
         section.set("Location", BeyondInfo.toString(center));
@@ -233,4 +235,38 @@ public class City extends Node {
     	return this.name;
     }
     
+    
+	/**
+	 * Gets the system time at which the player joined the City.
+	 * @param playerName - The name of the player.
+	 * @return long - system time at last join.
+	 */
+	public Long getJoinedTime(String playerName) {
+		return this.joins.get(playerName);
+	}
+
+	public String getInfo() {
+		String info = Conflict.HEADERCOLOR + "------" + Conflict.CITYCOLOR + this.name + Conflict.HEADERCOLOR + "------\n"
+				+ Conflict.PLAYERCOLOR + players.size() + Conflict.TEXTCOLOR + " players: ";
+		boolean firstOne = true;
+		for (Iterator<String> iter = players.iterator(); iter.hasNext();)
+		{
+			if (firstOne)
+				info += iter.next();
+			else
+				info += ", " + iter.next();
+		}
+		info += "" + Conflict.MAYORCOLOR + mayors.size() + Conflict.TEXTCOLOR + " mayors: "
+				+ Conflict.MAYORCOLOR;
+		for (Iterator<String> iter = mayors.iterator(); iter.hasNext();)
+		{
+			if (firstOne)
+				info += iter.next();
+			else
+				info += ", " + iter.next();
+		}
+		info += Conflict.TEXTCOLOR + "Mini-perks: " + Conflict.PERKCOLOR + getPerks();
+		info += Conflict.TEXTCOLOR + "Nodes: " + Conflict.TRADECOLOR + getTrades();
+		return info;
+	}
 };

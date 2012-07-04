@@ -53,7 +53,9 @@ public class CommandHandler implements CommandExecutor {
 		}else if(cmd.getName().equalsIgnoreCase("gear")) {
 			return handleGear(sender, arg);
 		}else if(Conflict.getCity(cmd.getName()) != null) {
-			return handleJoinCity(sender, cmd.getName());
+			return handleCity(sender, cmd.getName());
+		}else if(cmd.getName().equalsIgnoreCase("join")) {
+			return handleJoinCity(sender, cmd.getName(), arg);
 		}else if(cmd.getName().equalsIgnoreCase("spawn")) {
 			return handleSpawn(sender, arg);
 		}else if(cmd.getName().equalsIgnoreCase("nulls")) {
@@ -110,14 +112,47 @@ public class CommandHandler implements CommandExecutor {
 	}
 
 	/**
-	 * Processes a /[CITYNAME] command.
+	 * Processes a /[CITYNAME]  command.
 	 * @param sender - The sender of the command.
 	 * @param arg - The arguments.
 	 * @return boolean - True if responded to, false if not.
 	 */
-	private boolean handleJoinCity(CommandSender sender, String name) {
+	private boolean handleCity(CommandSender sender, String name) {
+		City city = Conflict.getCity(name);
+		if (city != null) {
+			String message = city.getInfo();
+			for (String line: message.split("\n")) {
+				sender.sendMessage(line);
+			}
+			sender.sendMessage(city.getInfo());
+		}
+		return true;
+	}
+
+	/**
+	 * Processes a /[CITYNAME] join confirm command.
+	 * @param sender - The sender of the command.
+	 * @param arg - The arguments.
+	 * @return boolean - True if responded to, false if not.
+	 */
+	private boolean handleJoinCity(CommandSender sender, String name, String[] arg) {
 		if (sender instanceof Player) {
-			plugin.joinCity(sender, sender.getName(), name, false);
+			if (arg.length > 1) {
+				City city = Conflict.getCity(arg[0]);
+				if (city == null) {
+					sender.sendMessage(Conflict.ERRORCOLOR + arg[0] + Conflict.TEXTCOLOR
+							+ "is an invalid city, please try one of: "
+							+ Conflict.CITYCOLOR + Conflict.cities);
+				}
+				else if (arg.length == 2) {
+					if (arg[1].equalsIgnoreCase("confirm")) {
+						plugin.joinCity(sender, sender.getName(), city.getName(), false);						
+					}
+				} else {
+					sender.sendMessage(Conflict.TEXTCOLOR + "Please confirm that you want to join "
+							+ Conflict.CITYCOLOR + city.getName() + " by typing /join " + city.getName() + " confirm");
+				}
+			}
 			return true;
 		}
 		return false;
