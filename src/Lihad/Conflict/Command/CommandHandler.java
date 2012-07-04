@@ -217,8 +217,10 @@ public class CommandHandler implements CommandExecutor {
 		if (city == null) {
 			return false;
 		}
-		sender.sendMessage(city.getName() + " mini-perks: " + city.getPerks());
-		sender.sendMessage(city.getName() + " nodes: " + city.getTrades());
+		sender.sendMessage(Conflict.CITYCOLOR + city.getName() + Conflict.TEXTCOLOR
+				+ " mini-perks: " + Conflict.PERKCOLOR + city.getPerks());
+		sender.sendMessage(Conflict.CITYCOLOR + city.getName() + Conflict.TEXTCOLOR
+				+ " nodes: " + Conflict.TRADECOLOR + city.getTrades());
 		return true;
 	}
 
@@ -301,16 +303,16 @@ public class CommandHandler implements CommandExecutor {
 		if (arg.length == 0 && sender instanceof Player) {
 			Player player = (Player) sender;
 			double total = getGearRating(player);
-			sender.sendMessage(BeyondUtil.getColorOfRarity(total) + "Your Gear Rating is : " + total);
+			sender.sendMessage(BeyondUtil.getColorOfRarity(total) + Conflict.TEXTCOLOR + "Your Gear Rating is : " + total);
 			return true;
 		}
 		else if(arg.length > 0) {
 			if(plugin.getServer().getPlayer(arg[1]) != null) {
 				Player target = plugin.getServer().getPlayer(arg[1]);
 				double total = getGearRating(target);
-				sender.sendMessage(target.getName() + " has a Gear Rating of "
+				sender.sendMessage(Conflict.PLAYERCOLOR + target.getName() + Conflict.TEXTCOLOR + " has a Gear Rating of "
 						+ BeyondUtil.getColorOfRarity(total) + total);
-			}else sender.sendMessage("This player either doesn't exist, or isn't online");
+			}else sender.sendMessage(Conflict.TEXTCOLOR + "Player " + Conflict.PLAYERCOLOR + arg[1] + Conflict.TEXTCOLOR + " either doesn't exist, or isn't online");
 			return true;
 		}
 		return false;
@@ -324,7 +326,7 @@ public class CommandHandler implements CommandExecutor {
 	 */
 	private boolean handleLook(CommandSender sender, String[] arg) {
 		if(post != null){
-			sender.sendMessage(ChatColor.YELLOW + " -------------------------------- ");
+			sender.sendMessage(Conflict.HEADERCOLOR + " -------------------------------- ");
 			sender.sendMessage(BeyondUtil.getColorOfRarity(BeyondUtil.rarity(post))
 					+ "[" + post.getType().name() + "] Rarity Index : " + BeyondUtil.rarity(post));
 			for(int i = 0; i<post.getEnchantments().keySet().size(); i++){
@@ -336,7 +338,7 @@ public class CommandHandler implements CommandExecutor {
 			}
 			if(post.getEnchantments().keySet().size() <= 0)
 				sender.sendMessage(ChatColor.WHITE + " -- This Item Has No Enchants");
-			sender.sendMessage(ChatColor.YELLOW + " -------------------------------- ");
+			sender.sendMessage(Conflict.HEADERCOLOR + " -------------------------------- ");
 		}else sender.sendMessage("There is no item to look at");
 		return true;
 	}
