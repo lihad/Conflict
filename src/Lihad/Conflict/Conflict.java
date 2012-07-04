@@ -574,6 +574,7 @@ public class Conflict extends JavaPlugin {
     /**
      * Forces the player to leave their city's channel
      * @param playerName - The player name.
+     * @param cityName - The city name.
      */
 	public boolean leaveChat(String playerName, String cityName) {
 	
@@ -593,5 +594,32 @@ public class Conflict extends JavaPlugin {
 		getServer().dispatchCommand(getServer().getConsoleSender(), "pex user " + playerName + " remove herochat.force.join." + city.getName());
 		getServer().dispatchCommand(getServer().getConsoleSender(), "pex user " + playerName + " remove herochat.join." + city.getName());
 		return true;
+	}
+
+	/**
+	 * Resets target player, removing them from all cities and making them choose a city to join.
+	 * @param sender - The command sender.
+	 * @param playerName - The name of the target player.
+	 */
+	public boolean reset(CommandSender sender, String playerName) {
+    	playerName = getFormattedPlayerName(playerName);
+    	if (playerName == null) {
+    		sender.sendMessage(TEXTCOLOR + "This player has not yet played on our server, and yes, this plugin's too lame to switch it for you anyway :P");
+    		return false;
+    	}
+    	City oldCity = null;
+    	while (Conflict.getPlayerCity(playerName) != null) {
+    		oldCity = Conflict.getPlayerCity(playerName);
+    		if (oldCity != null) {
+    			oldCity.removePlayer(playerName);
+        		leaveChat(playerName, oldCity.getName());
+    			sender.sendMessage(TEXTCOLOR + "Removing from " + CITYCOLOR + oldCity.getName());
+    		}
+    	};
+    	
+		Conflict.UNASSIGNED_PLAYERS.add(playerName);
+        this.getServer().broadcastMessage(PLAYERCOLOR + playerName + ERRORCOLOR 
+       			+ ChatColor.BOLD + " screwed up " + TEXTCOLOR + " and had to get an admin to reset them!");
+    	return true;
 	}
 }

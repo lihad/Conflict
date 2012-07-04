@@ -481,6 +481,9 @@ public class CommandHandler implements CommandExecutor {
 			}else if(arg.length == 1 && arg[0].equalsIgnoreCase("reload")){
 				Conflict.loadInfoFile(Conflict.information, Conflict.infoFile);
 				BeyondInfo.loader();
+			}else if(arg.length == 2 && arg[0].equalsIgnoreCase("reset")){
+				plugin.reset(sender, arg[1]);
+				return true;
 			}
 			return true;
 		}
