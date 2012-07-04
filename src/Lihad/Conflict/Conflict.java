@@ -617,6 +617,10 @@ public class Conflict extends JavaPlugin {
     		}
     	};
     	
+    	for (int i=0; i < cities.length; i++) {
+    		leaveChat(playerName, cities[i].getName());
+    	}
+    	
 		Conflict.UNASSIGNED_PLAYERS.add(playerName);
         this.getServer().broadcastMessage(PLAYERCOLOR + playerName + ERRORCOLOR 
        			+ ChatColor.BOLD + " screwed up " + TEXTCOLOR + " and had to get an admin to reset them!");

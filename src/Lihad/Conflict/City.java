@@ -63,16 +63,11 @@ public class City extends Node {
         joins.put(playerName, System.currentTimeMillis());
     }
     public void removePlayer(String playerName) {
-    	List<String> removeThese = new ArrayList<String>();
     	for (Iterator<String> iter = this.players.iterator(); iter.hasNext();) {
     		String found = iter.next();
     		if (found.equalsIgnoreCase(playerName)) {
-    			removeThese.add(found);
+    			iter.remove();
     		}
-    	}//Ugh... concurrent modification exception made me have to build a list:
-    	for (Iterator<String> iter = removeThese.iterator(); iter.hasNext();) {
-    		String found = iter.next();
-    		this.players.remove(found);
     	}
     	removeMayor(playerName);
     	joins.remove(playerName);
@@ -91,17 +86,12 @@ public class City extends Node {
         mayors.add(playerName);
     }
     public void removeMayor(String playerName) {
-    	List<String> removeThese = new ArrayList<String>();
     	for (Iterator<String> iter = this.mayors.iterator(); iter.hasNext();) {
     		String found = iter.next();
     		if (found.equalsIgnoreCase(playerName)) {
-    			removeThese.add(found);
+    			iter.remove();
     		}
-    	}//Ugh... concurrent modification exception made me have to build a list:
-    	for (Iterator<String> iter = removeThese.iterator(); iter.hasNext();) {
-    		String found = iter.next();
-    		this.mayors.remove(found);
-    	}    	
+    	}	
     }
     
     // public void addPerkNode(PerkNode p) { ownedNodes.add(p); }
@@ -215,7 +205,8 @@ public class City extends Node {
     public void purgeInactivePlayers() {
 
         long now = java.lang.System.currentTimeMillis();
-    
+        
+    	List<String> removeThese = new ArrayList<String>();
         for (java.util.Iterator<String> it = players.iterator(); it.hasNext();) {
             long lastseen = 0;
             String name = it.next();
@@ -226,9 +217,14 @@ public class City extends Node {
             // Purge anyone who hasn't logged in the last four weeks
             if (days > 28) {
                 Conflict.info("Removing " + name + " from Abatton (last seen " + days + " days ago)");
-                it.remove();
+    			removeThese.add(name);
             }            
         }
+        
+    	for (Iterator<String> iter = removeThese.iterator(); iter.hasNext();) {
+    		String found = iter.next();
+    		this.removePlayer(found);
+    	}
     }
     
     @Override
