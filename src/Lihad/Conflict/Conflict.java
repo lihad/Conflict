@@ -220,7 +220,7 @@ public class Conflict extends JavaPlugin {
 			}
 			if (!Conflict.UNASSIGNED_PLAYERS.contains(playerName) && !Conflict.cooldownExpired(playerName))
 			{
-				sender.sendMessage(this.getFormattedRemainingCooldown(playerName));
+				sender.sendMessage(Conflict.getFormattedRemainingCooldown(playerName));
 				return false;
 			}
     	}
@@ -276,9 +276,9 @@ public class Conflict extends JavaPlugin {
 		if (city == null) {
 			return Conflict.PLAYERCOLOR + playerName + Conflict.NOTICECOLOR + " is not in a City!";
 		}
-	    long remaining = (System.currentTimeMillis() - (city.getJoinedTime(playerName) + switchCooldown))/1000;
+	    long remaining = (System.currentTimeMillis() + city.getJoinedTime(playerName) - switchCooldown)/1000;
 	    if (remaining <= 0) {
-	    	return Conflict.PLAYERCOLOR + playerName + Conflict.NOTICECOLOR + "can switch now!";
+	    	return Conflict.PLAYERCOLOR + playerName + Conflict.NOTICECOLOR + " can switch now!";
 	    }
 	    return Conflict.PLAYERCOLOR + playerName + " has " + BeyondUtil.formatMillis(remaining) + " remaining.";
 	}

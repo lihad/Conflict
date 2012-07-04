@@ -121,9 +121,6 @@ public class CommandHandler implements CommandExecutor {
 		City city = Conflict.getCity(name);
 		if (city != null) {
 			String message = city.getInfo();
-			for (String line: message.split("\n")) {
-				sender.sendMessage(line);
-			}
 			sender.sendMessage(city.getInfo());
 		}
 		return true;
