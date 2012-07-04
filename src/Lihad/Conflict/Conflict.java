@@ -95,12 +95,12 @@ public class Conflict extends JavaPlugin {
     /**
      * The color used for perks in chat text.
      */
-    public static ChatColor PERKCOLOR = ChatColor.MAGIC;
+    public static ChatColor PERKCOLOR = ChatColor.DARK_AQUA;
 
     /**
      * The color used for trades in chat text.
      */
-    public static ChatColor TRADECOLOR = ChatColor.MAGIC;
+    public static ChatColor TRADECOLOR = ChatColor.DARK_GREEN;
 
     /**
      * The color used for city names in chat text.

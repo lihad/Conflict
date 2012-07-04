@@ -55,7 +55,7 @@ public class CommandHandler implements CommandExecutor {
 		}else if(Conflict.getCity(cmd.getName()) != null) {
 			return handleCity(sender, cmd.getName());
 		}else if(cmd.getName().equalsIgnoreCase("join")) {
-			return handleJoinCity(sender, cmd.getName(), arg);
+			return handleJoinCity(sender, arg);
 		}else if(cmd.getName().equalsIgnoreCase("spawn")) {
 			return handleSpawn(sender, arg);
 		}else if(cmd.getName().equalsIgnoreCase("nulls")) {
@@ -135,9 +135,9 @@ public class CommandHandler implements CommandExecutor {
 	 * @param arg - The arguments.
 	 * @return boolean - True if responded to, false if not.
 	 */
-	private boolean handleJoinCity(CommandSender sender, String name, String[] arg) {
+	private boolean handleJoinCity(CommandSender sender, String[] arg) {
 		if (sender instanceof Player) {
-			if (arg.length > 1) {
+			if (arg.length >= 1) {
 				City city = Conflict.getCity(arg[0]);
 				if (city == null) {
 					sender.sendMessage(Conflict.ERRORCOLOR + arg[0] + Conflict.TEXTCOLOR
