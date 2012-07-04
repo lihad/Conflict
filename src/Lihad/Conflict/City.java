@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -247,26 +248,37 @@ public class City extends Node {
 
 	public String getInfo() {
 		String info = Conflict.HEADERCOLOR + "------" + Conflict.CITYCOLOR + this.name + Conflict.HEADERCOLOR + "------\n"
-				+ Conflict.PLAYERCOLOR + players.size() + Conflict.TEXTCOLOR + " players: ";
-		boolean firstOne = true;
-		for (Iterator<String> iter = players.iterator(); iter.hasNext();)
-		{
-			if (firstOne)
-				info += iter.next();
-			else
-				info += ", " + iter.next();
-		}
+				+ Conflict.PLAYERCOLOR + players.size() + Conflict.TEXTCOLOR + " players: " + Conflict.PLAYERCOLOR + players.size();
 		info += "" + Conflict.MAYORCOLOR + mayors.size() + Conflict.TEXTCOLOR + " mayors: "
 				+ Conflict.MAYORCOLOR;
+		boolean firstOne = true;
 		for (Iterator<String> iter = mayors.iterator(); iter.hasNext();)
 		{
-			if (firstOne)
+			if (firstOne){
 				info += iter.next();
+				firstOne = false;
+			}
 			else
 				info += ", " + iter.next();
 		}
 		info += Conflict.TEXTCOLOR + "Mini-perks: " + Conflict.PERKCOLOR + getPerks();
 		info += Conflict.TEXTCOLOR + "Nodes: " + Conflict.TRADECOLOR + getTrades();
+		return info;
+	}
+
+	public String getFormattedPlayersList() {
+		boolean firstOne = true;
+		String info = "";
+		for (Iterator<String> iter = players.iterator(); iter.hasNext();)
+		{
+			if (firstOne)
+			{
+				info += iter.next();
+				firstOne = false;
+			}
+			else
+				info += ", " + iter.next();
+		}
 		return info;
 	}
 };

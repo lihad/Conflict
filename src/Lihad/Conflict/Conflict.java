@@ -388,6 +388,7 @@ public class Conflict extends JavaPlugin {
 		getCommand("cwho").setExecutor(cmd);
 		getCommand("perks").setExecutor(cmd);
 		getCommand("war").setExecutor(new War());
+		getCommand("join").setExecutor(cmd);
 
 
 		//PermsManager

@@ -598,7 +598,8 @@ public class CommandHandler implements CommandExecutor {
 			City city = Conflict.getCity(arg[0]);
 			if (city != null) {
 				List<Player> players = Arrays.asList(plugin.getServer().getOnlinePlayers());
-				String message = Conflict.CITYCOLOR + city.getName() + Conflict.PLAYERCOLOR + ": ";
+				String message = Conflict.CITYCOLOR + city.getName() + Conflict.PLAYERCOLOR + ": " + city.getFormattedPlayersList();
+				
 				for(int i = 0;i<players.size();i++){
 					if(city.hasPlayer(players.get(i).getName()))
 						message = message.concat(Conflict.PLAYERCOLOR + players.get(i).getName() + " ");
