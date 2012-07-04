@@ -1,4 +1,4 @@
-package Lihad.Conflict.Perks;
+package Lihad.Conflict.Perk;
 
 import org.bukkit.entity.Player;
 

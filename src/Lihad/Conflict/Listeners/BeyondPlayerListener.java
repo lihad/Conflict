@@ -26,7 +26,7 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 
 import Lihad.Conflict.*;
-import Lihad.Conflict.Perks.*;
+import Lihad.Conflict.Perk.*;
 import Lihad.Conflict.Util.BeyondUtil;
 
 public class BeyondPlayerListener implements Listener {
