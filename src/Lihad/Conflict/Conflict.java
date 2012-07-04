@@ -118,6 +118,21 @@ public class Conflict extends JavaPlugin {
     public static ChatColor TEXTCOLOR = ChatColor.BLUE;
 
     /**
+     * The color used for items in chat text.
+     */
+    public static ChatColor ITEMCOLOR = ChatColor.AQUA;
+
+    /**
+     * The color used for notices in chat text.
+     */
+    public static String NOTICECOLOR = "" + ChatColor.BOLD + ChatColor.LIGHT_PURPLE;
+
+    /**
+     * The color used for prompts in chat text.
+     */
+    public static ChatColor PROMPTCOLOR = ChatColor.LIGHT_PURPLE;
+
+    /**
      * The color used for messed up stuff in chat text.
      */
     public static ChatColor ERRORCOLOR = ChatColor.RED;
