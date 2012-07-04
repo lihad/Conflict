@@ -1,12 +1,15 @@
 package Lihad.Conflict;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 
 import org.bukkit.Location;
+import org.bukkit.configuration.ConfigurationSection;
 
 import Lihad.Conflict.Information.BeyondInfo;
 
@@ -137,7 +140,21 @@ public class City extends Node {
         
         players.clear();
         players.addAll(section.getStringList("Players"));
-
+        
+        ConfigurationSection members = section.getConfigurationSection("Members");
+        int spewed = 0;
+        for (Iterator <String> iter = members.getKeys(false).iterator(); iter.hasNext();) {
+        	String playerName = iter.next();
+        	ConfigurationSection member = members.getConfigurationSection(playerName);
+        	boolean isMayor = member.getBoolean("isMayor", true);//TODO: DO NOT DO THIS (just testing)
+        	long lastSwitch = member.getLong("lastSwitch", -1);
+        	if (spewed < 10) {
+        		System.out.println("Member name: " + playerName);
+        		System.out.println("isMayor: " + isMayor);
+        		System.out.println("lastSwitch" + lastSwitch);
+        	}
+        }
+        
         center = BeyondInfo.toLocation(section, "Location");
         spawnLocation = BeyondInfo.toLocation(section, "Spawn");
         drifterLocation = BeyondInfo.toLocation(section, "Drifter");
@@ -163,6 +180,15 @@ public class City extends Node {
         setAsList = new java.util.ArrayList<String>(players);
 
         section.set("Players", setAsList);
+        section.createSection("Members");
+        ConfigurationSection members = section.getConfigurationSection("Members");
+        for (Iterator <String> iter = setAsList.iterator(); iter.hasNext();) {
+        	String playerName = iter.next();
+        	Map <String, Object> map = new HashMap();
+        	map.put("isMayor", false);
+        	map.put("lastSwitch", (long) 0);
+        	members.createSection(playerName, map);
+        }
         section.set("Location", BeyondInfo.toString(center));
         section.set("Spawn", BeyondInfo.toString(spawnLocation));
         section.set("Drifter", BeyondInfo.toString(drifterLocation));
@@ -178,6 +204,8 @@ public class City extends Node {
 
         section.set("Worth", bankBalance);
         section.set("Protection", spawnProtectRadius);
+        
+        section.set("Password", getPassword());
     }
     
     public void purgeInactivePlayers() {
