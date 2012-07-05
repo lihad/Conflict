@@ -251,7 +251,10 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
                 team.addPlayer(p);
             }
 			if (broadcastAdditions) {
-				Bukkit.getServer().broadcastMessage(ChatColor.AQUA.toString() + p.getName() + ChatColor.GRAY + " has joined the war on team " + ChatColor.GOLD + team.getName());
+                String message = "" + ChatColor.AQUA + p.getName();
+                message = message + ChatColor.GRAY + " has joined the war on team ";
+                message = message + ChatColor.GOLD + team.getName();
+				Bukkit.getServer().broadcastMessage(message);
 			}
 		}
 	}
@@ -376,6 +379,8 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 					if (player.getLocation().distanceSquared(node.location) < 3*3){  
 						if(node.captureTeamTemp == null){
 							node.captureTeamTemp = getPlayerTeam(player);
+							node.captureCounter++;
+							player.sendMessage(ChatColor.GOLD+"Taking point. "+node.captureCounter+"/30");
 						}
 						else if(node.captureTeamTemp == Contested){
 							continue;
