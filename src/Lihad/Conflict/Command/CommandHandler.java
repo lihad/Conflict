@@ -609,6 +609,12 @@ public class CommandHandler implements CommandExecutor {
 				}
 				sender.sendMessage(message);
 			}else if(plugin.getFormattedPlayerName(arg[0]) != null){
+				String message = Conflict.TEXTCOLOR + "Player " + Conflict.PLAYERCOLOR + arg[0]
+						+ Conflict.TEXTCOLOR + " is ";
+				if (plugin.getServer().getPlayer(arg[0]) != null) 
+					message += Conflict.YESCOLOR + "ONLINE";
+				else
+					message += Conflict.NOCOLOR + "OFFLINE";
 				city = Conflict.getPlayerCity(arg[0]);
 				if (city != null)
 					sender.sendMessage(Conflict.PLAYERCOLOR + arg[0] + Conflict.TEXTCOLOR + " - "
@@ -616,7 +622,7 @@ public class CommandHandler implements CommandExecutor {
 				else
 					sender.sendMessage( arg[0] + " - <None>");
 			}else sender.sendMessage(Conflict.TEXTCOLOR + "Player " + Conflict.ERRORCOLOR + arg[0]
-					+ Conflict.TEXTCOLOR + " is not online");
+					+ Conflict.TEXTCOLOR + " has not played here before (or this plugin's just dumb, whichever)");
 		}else sender.sendMessage(Conflict.TEXTCOLOR + "try '/cwho <playername>|<cityname>");
 		return true;
 	}

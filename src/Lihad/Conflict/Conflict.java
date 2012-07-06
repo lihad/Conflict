@@ -2,6 +2,7 @@ package Lihad.Conflict;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -147,6 +148,16 @@ public class Conflict extends JavaPlugin {
      * The color used for messed up stuff in chat text.
      */
     public static ChatColor MONEYCOLOR = ChatColor.YELLOW;
+    
+    /**
+     * The color used for "yes" (e.g. is online)
+     */
+    public static ChatColor YESCOLOR = ChatColor.GREEN;
+    
+    /**
+     * The color used for "no" (e.g. is offline)
+     */
+    public static ChatColor NOCOLOR = ChatColor.RED;
 
     /**
      * The amount of time in milliseconds players have to wait to switch Cities
@@ -251,7 +262,15 @@ public class Conflict extends JavaPlugin {
     	};
     	
     	city.addPlayer(playerName);
-		Conflict.UNASSIGNED_PLAYERS.remove(playerName);
+    	
+    	//Want to be sure to remove any dupes or different capitalizations
+        for (java.util.Iterator<String> it = Conflict.UNASSIGNED_PLAYERS.iterator(); it.hasNext();) {
+        	String str = it.next();
+        	if (str.equalsIgnoreCase(playerName)) {
+        		it.remove();
+        	}
+        }
+
     	if (oldCity != null) {
         	this.getServer().broadcastMessage(PLAYERCOLOR + playerName + TEXTCOLOR 
         			+ " has abandoned " + CITYCOLOR + oldCity.getName() + TEXTCOLOR
