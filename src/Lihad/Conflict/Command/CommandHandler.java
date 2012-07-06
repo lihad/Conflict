@@ -615,12 +615,12 @@ public class CommandHandler implements CommandExecutor {
 					message += Conflict.YESCOLOR + "ONLINE";
 				else
 					message += Conflict.NOCOLOR + "OFFLINE";
+				String cityName = Conflict.NOCOLOR + "<None>";
 				city = Conflict.getPlayerCity(arg[0]);
 				if (city != null)
-					sender.sendMessage(Conflict.PLAYERCOLOR + arg[0] + Conflict.TEXTCOLOR + " - "
-							+ Conflict.CITYCOLOR + city.getName());
-				else
-					sender.sendMessage( arg[0] + " - <None>");
+					cityName = Conflict.CITYCOLOR + city.getName();
+				message += Conflict.TEXTCOLOR + " - " + cityName;
+				sender.sendMessage(message);
 			}else sender.sendMessage(Conflict.TEXTCOLOR + "Player " + Conflict.ERRORCOLOR + arg[0]
 					+ Conflict.TEXTCOLOR + " has not played here before (or this plugin's just dumb, whichever)");
 		}else sender.sendMessage(Conflict.TEXTCOLOR + "try '/cwho <playername>|<cityname>");
