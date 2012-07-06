@@ -40,7 +40,7 @@ public class BeyondPlayerListener implements Listener {
 				|| event.getFrom().getBlockY() != event.getTo().getBlockY()
 				|| event.getFrom().getBlockZ() != event.getTo().getBlockZ())
 				&& event.getTo().getWorld().getName().equals("survival")) {
-			if(Conflict.UNASSIGNED_PLAYERS.contains(event.getPlayer().getName())){
+			if(Conflict.isUnassigned(event.getPlayer().getName())){
 				event.setTo(event.getFrom());
 				event.getPlayer().sendMessage(Conflict.NOTICECOLOR+"You need to join a Capital before continuing...");
 				event.getPlayer().sendMessage(Conflict.TEXTCOLOR+"Type "+ChatColor.GRAY+"/join <cityname> confirm");
@@ -63,16 +63,15 @@ public class BeyondPlayerListener implements Listener {
 			}
 			else if(event.getPlayer().getWorld().getSpawnLocation().distance(event.getTo()) < 5000.0
 					&& event.getPlayer().getWorld().getSpawnLocation().distance(event.getFrom()) >= 5000.0){
-				event.getPlayer().sendMessage(Conflict.NOTICECOLOR + "You have entered the City Scape");
+				event.getPlayer().sendMessage(Conflict.NOTICECOLOR + "You have entered the Cityscape");
 			}
 		}
 	}
 	@EventHandler
 	public static void onPlayerJoin(PlayerJoinEvent event){
-		if(!Conflict.Abatton.hasPlayer(event.getPlayer().getName()) && !Conflict.Oceian.hasPlayer(event.getPlayer().getName())
-				&& !Conflict.Savania.hasPlayer(event.getPlayer().getName())
-				&& !Conflict.handler.inGroup(event.getPlayer().getWorld().getName(), event.getPlayer().getName(), "Drifter")){
-			if(!Conflict.UNASSIGNED_PLAYERS.contains(event.getPlayer().getName()))Conflict.UNASSIGNED_PLAYERS.add(event.getPlayer().getName());
+		if(Conflict.getPlayerCity(event.getPlayer().getName()) == null && !Conflict.handler.inGroup(event.getPlayer().getWorld().getName(), event.getPlayer().getName(), "Drifter")){
+			if(!Conflict.isUnassigned(event.getPlayer().getName()))
+				Conflict.addUnassigned(event.getPlayer().getName());
 		}
 	}
 
@@ -112,16 +111,15 @@ public class BeyondPlayerListener implements Listener {
 	@EventHandler
 	public static void onPlayerInteractEntity(PlayerInteractEntityEvent event){
 		//if(event.getRightClicked() instanceof Villager && event.getPlayer().getInventory().contains(Material.DIAMOND_BLOCK)
+		City city = Conflict.getPlayerCity(event.getPlayer().getName());
 		if(event.getRightClicked() instanceof Villager && event.getPlayer().getLevel() >= 25
-				&& ((Conflict.Abatton.hasPlayer(event.getPlayer().getName()) && Conflict.Abatton.getPerks().contains("enchantup"))
-				|| (Conflict.Oceian.hasPlayer(event.getPlayer().getName()) && Conflict.Oceian.getPerks().contains("enchantup"))
-				|| (Conflict.Savania.hasPlayer(event.getPlayer().getName()) && Conflict.Savania.getPerks().contains("enchantup")))){
+				&& (city != null && city.getPerks().contains("enchantup"))){
 			if(event.getPlayer().getItemInHand() != null){
 				if(!event.getPlayer().getItemInHand().getEnchantments().isEmpty()){
 					Enchantment enchantment = (Enchantment) event.getPlayer().getItemInHand().getEnchantments().keySet().toArray()[(Conflict.random.nextInt(event.getPlayer().getItemInHand().getEnchantments().size()))];
 					if(event.getPlayer().getItemInHand().getEnchantmentLevel(enchantment) < BeyondUtil.maxEnchantLevel(enchantment)){
 						event.getPlayer().getItemInHand().addUnsafeEnchantment(enchantment, event.getPlayer().getItemInHand().getEnchantmentLevel(enchantment)+1);
-						event.getPlayer().sendMessage(ChatColor.AQUA+"WOOT!! "+enchantment.toString()+" is now level "+event.getPlayer().getItemInHand().getEnchantmentLevel(enchantment));
+						event.getPlayer().sendMessage(Conflict.PERKCOLOR + "WOOT!! "+enchantment.toString()+" is now level "+event.getPlayer().getItemInHand().getEnchantmentLevel(enchantment));
 						//ItemStack stack = event.getPlayer().getInventory().getItem(event.getPlayer().getInventory().first(Material.DIAMOND_BLOCK));
 						//if(stack.getAmount() <= 1){
 						//	stack.setTypeId(0);
@@ -134,11 +132,11 @@ public class BeyondPlayerListener implements Listener {
 					}
 					else{
 						event.getPlayer().getItemInHand().addUnsafeEnchantment(enchantment, 1);
-						event.getPlayer().sendMessage(ChatColor.AQUA+"Oh no!  That enchant was way too high for me to handle...");
+						event.getPlayer().sendMessage(Conflict.PERKCOLOR + "Oh no!  That enchant was way too high for me to handle...");
 						event.getPlayer().setLevel(event.getPlayer().getLevel() - 10);
 					}
 				}else{
-					event.getPlayer().sendMessage(ChatColor.AQUA+"MMMhmm.  It would seem as if this item has no enchants on it for me to upgrade.");
+					event.getPlayer().sendMessage(Conflict.PERKCOLOR + "MMMhmm.  It would seem as if this item has no enchants on it for me to upgrade.");
 				}
 			}
 		}

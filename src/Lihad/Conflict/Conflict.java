@@ -2,17 +2,15 @@ package Lihad.Conflict;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 import java.util.Random;
-import java.util.Date;
+import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -25,15 +23,32 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import ru.tehkode.permissions.PermissionManager;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
+import Lihad.Conflict.Command.CommandHandler;
+import Lihad.Conflict.Information.BeyondInfo;
+import Lihad.Conflict.Listeners.BeyondBlockListener;
+import Lihad.Conflict.Listeners.BeyondEntityListener;
+import Lihad.Conflict.Listeners.BeyondPlayerListener;
+import Lihad.Conflict.Listeners.BeyondPluginListener;
+import Lihad.Conflict.Listeners.BeyondSafeModeListener;
+import Lihad.Conflict.Perk.ArmorDropPerk;
+import Lihad.Conflict.Perk.BlacksmithPerk;
+import Lihad.Conflict.Perk.BowDropPerk;
+import Lihad.Conflict.Perk.EnchantUpPerk;
+import Lihad.Conflict.Perk.EnchantmentPerk;
+import Lihad.Conflict.Perk.GoldDropPerk;
+import Lihad.Conflict.Perk.Perk;
+import Lihad.Conflict.Perk.PortalPerk;
+import Lihad.Conflict.Perk.PotionDropPerk;
+import Lihad.Conflict.Perk.PotionPerk;
+import Lihad.Conflict.Perk.ShieldPerk;
+import Lihad.Conflict.Perk.StrikePerk;
+import Lihad.Conflict.Perk.ToolDropPerk;
+import Lihad.Conflict.Perk.TpaPerk;
+import Lihad.Conflict.Perk.WeaponDropPerk;
+import Lihad.Conflict.Util.BeyondUtil;
 
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
-
-import Lihad.Conflict.Command.CommandHandler;
-import Lihad.Conflict.Information.BeyondInfo;
-import Lihad.Conflict.Listeners.*;
-import Lihad.Conflict.Util.BeyondUtil;
-import Lihad.Conflict.Perk.*;
 
 public class Conflict extends JavaPlugin {
 	/** Name of the plugin, used in output messages */
@@ -72,7 +87,7 @@ public class Conflict extends JavaPlugin {
     
     public static List<Node> nodes = new LinkedList<Node>();
 
-	public static List<String> UNASSIGNED_PLAYERS = new LinkedList<String>(); 
+	private static List<String> UNASSIGNED_PLAYERS = new LinkedList<String>(); 
 	public static Map<String, String> PLAYER_SET_SELECT = new HashMap<String, String>();
 
 	public static Map<String, Integer> TRADE_BLACKSMITH_PLAYER_USES = new HashMap<String, Integer>();
@@ -240,7 +255,7 @@ public class Conflict extends JavaPlugin {
 				sender.sendMessage(CITYCOLOR + city.getName() + TEXTCOLOR + " is over capacity!  Try one of the others, or wait and try again later.");
 				return false;
 			}
-			if (!Conflict.UNASSIGNED_PLAYERS.contains(playerName) && !Conflict.cooldownExpired(playerName))
+			if (!isUnassigned(playerName) && !Conflict.cooldownExpired(playerName))
 			{
 				sender.sendMessage(Conflict.getFormattedRemainingCooldown(playerName));
 				return false;
@@ -264,12 +279,7 @@ public class Conflict extends JavaPlugin {
     	city.addPlayer(playerName);
     	
     	//Want to be sure to remove any dupes or different capitalizations
-        for (java.util.Iterator<String> it = Conflict.UNASSIGNED_PLAYERS.iterator(); it.hasNext();) {
-        	String str = it.next();
-        	if (str.equalsIgnoreCase(playerName)) {
-        		it.remove();
-        	}
-        }
+        removeUnassigned(playerName);
 
     	if (oldCity != null) {
         	this.getServer().broadcastMessage(PLAYERCOLOR + playerName + TEXTCOLOR 
@@ -656,9 +666,49 @@ public class Conflict extends JavaPlugin {
     		leaveChat(playerName, cities[i].getName());
     	}
     	
-		Conflict.UNASSIGNED_PLAYERS.add(playerName);
+    	//Remove all entries first, then add correctly capitalized entry (just in case)
+	    removeUnassigned(playerName);
+    	addUnassigned(playerName);
+    	
         this.getServer().broadcastMessage(PLAYERCOLOR + playerName + ERRORCOLOR 
        			+ ChatColor.BOLD + " screwed up " + TEXTCOLOR + " and had to get an admin to reset them!");
     	return true;
+	}
+
+	/**
+	 * Tests to see if target player is unassigned (case insensitive).
+	 * @param name - target player's name.
+	 * @return boolean - true if so, false if not.
+	 */
+	public static boolean isUnassigned(String name) {
+    	//Want to be sure to remove any dupes or different capitalizations
+        for (String str : Conflict.UNASSIGNED_PLAYERS) {
+        	if (str.equalsIgnoreCase(name)) {
+        		return true;
+        	}
+        }
+        return false;
+	}
+	
+	/**
+	 * Unassigns target player if not already unassigned.
+	 * @param name - preferably correctly capitalized, not strictly necessary.
+	 */
+	public static void addUnassigned(String name) {
+    	if (!isUnassigned(name))
+    		Conflict.UNASSIGNED_PLAYERS.add(name);
+	}
+	
+	/**
+	 * Unassigns target player if not already unassigned.
+	 * @param name - preferably correctly capitalized, not strictly necessary.
+	 */
+	public static void removeUnassigned(String name) {
+        for (java.util.Iterator<String> it = Conflict.UNASSIGNED_PLAYERS.iterator(); it.hasNext();) {
+        	String str = it.next();
+        	if (str.equalsIgnoreCase(name)) {
+        		it.remove();
+        	}
+        }
 	}
 }
