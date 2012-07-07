@@ -377,16 +377,17 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 						continue;
 					}
 					if (player.getLocation().distanceSquared(node.location) < 3*3){  
+						if(node.captureTeamTemp == Contested){
+							continue;
+						}
+						else if( getPlayerTeam(player) == node.owner ) {
+							node.captureTeamTemp = getPlayerTeam(player);
+							continue;
+						}
 						if(node.captureTeamTemp == null){
 							node.captureTeamTemp = getPlayerTeam(player);
 							node.captureCounter++;
 							player.sendMessage(ChatColor.GOLD+"Taking point. "+node.captureCounter+"/30");
-						}
-						else if(node.captureTeamTemp == Contested){
-							continue;
-						}
-						else if( getPlayerTeam(player) == node.owner ) {
-							continue;
 						}
 						else if( getPlayerTeam(player) == node.captureTeamTemp ) {
 							node.captureCounter++;
@@ -409,7 +410,7 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 				if((node.captureTeamTemp != null) && (node.captureTeamTemp != Contested) && node.captureCounter >= 30) {
 					node.owner = node.captureTeamTemp;
 					node.captureCounter = 0;
-					Bukkit.getServer().broadcastMessage("" + ChatColor.RED + node.owner.getName() + " has taken control of " + node.name + "!");
+					Bukkit.getServer().broadcastMessage("The " + ChatColor.RED + node.owner.getName() + " have taken control of " + node.name + "!");
 
 					if (!node.teamCounters.containsKey(node.owner)) {
 						node.teamCounters.put(node.owner, 0);
