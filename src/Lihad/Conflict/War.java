@@ -178,12 +178,12 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 		Team t = getPlayerTeam(p);
 		if (t != null) {
 			t.removePlayer(p);
+	        // Remember the team they were on, so they get put there if they re-join
+	        loggedPlayers.put(p.getName(), getPlayerTeam(p));
 		}
 		else if (unassignedPlayers.contains(p)) {
 			unassignedPlayers.remove(p);
 		}
-        // Remember the team they were on, so they get put there if they re-join
-        loggedPlayers.put(p.getName(), getPlayerTeam(p));
 	}
 
 	void begin() {
