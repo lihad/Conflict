@@ -1,6 +1,8 @@
 package Lihad.Conflict.Perk;
 import Lihad.Conflict.*;
 
+import org.bukkit.entity.Player;
+
 public class Perk {
 
     public Perk(String n) { name = n; }
@@ -28,5 +30,9 @@ public class Perk {
             }
         }
         return null;
+    }
+    
+    public boolean ownedBy(Player p) {
+        return true;
     }
 };

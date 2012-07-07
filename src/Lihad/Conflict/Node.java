@@ -24,7 +24,12 @@ public class Node {
     public int getRadius() { return this.radius; }
     public void setRadius(int r) { radius = r; radiusSquared = r*r; }
     
-    public boolean isInRadius(Location l) { return (center.distanceSquared(l) <= radiusSquared); }
+    public boolean isInRadius(Location l) { 
+        if (!center.getWorld().equals(l.getWorld())) {
+            return false;
+        }
+        return (center.distanceSquared(l) <= radiusSquared); 
+    }
 
     public String getName() { return name; }
     
