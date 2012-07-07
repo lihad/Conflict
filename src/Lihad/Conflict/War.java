@@ -36,8 +36,8 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 
         Calendar nextSaturdayWar = Calendar.getInstance();
         nextSaturdayWar.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
-        nextSaturdayWar.set(Calendar.HOUR_OF_DAY, 12);
-        nextSaturdayWar.set(Calendar.MINUTE, 50);
+        nextSaturdayWar.set(Calendar.HOUR_OF_DAY, 13);
+        nextSaturdayWar.set(Calendar.MINUTE, 35);
         if (now.getTime().after(nextSaturdayWar.getTime())) {
             nextSaturdayWar.add(Calendar.DATE, 7);
         }
