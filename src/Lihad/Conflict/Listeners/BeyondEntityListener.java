@@ -13,6 +13,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Sheep;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Zombie;
+import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -21,7 +22,7 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.Potion;
 
-import Lihad.Conflict.Conflict;
+import Lihad.Conflict.*;
 import Lihad.Conflict.Util.BeyondUtil;
 
 public class BeyondEntityListener implements Listener {
@@ -33,6 +34,22 @@ public class BeyondEntityListener implements Listener {
 	}
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event){
+        Entity hurt = event.getEntity();
+    
+        if (hurt instanceof Villager) {
+            Player attacker = (event.getDamager() instanceof Player) ? ((Player)event.getDamager()) : null;
+            for (City city : Conflict.cities) {
+                if (city.isInRadius(hurt.getLocation())) {
+                    if (attacker != null) {
+                        String message = "" + Conflict.PLAYERCOLOR + attacker.getName() + Conflict.TEXTCOLOR + " tried to murder an innocent villager in " + Conflict.CITYCOLOR + city.getName();
+                        org.bukkit.Bukkit.getServer().broadcastMessage(message);
+                        attacker.damage(event.getDamage(), hurt);
+                    }
+                    event.setCancelled(true);
+                }
+            }
+            return;
+        }
 		if(event.getDamager() instanceof Player){
 			Player player = (Player) event.getDamager();
 			if((Conflict.Abatton.getPerks().contains("strike") && Conflict.Abatton.hasPlayer(player.getName()))
@@ -41,8 +58,8 @@ public class BeyondEntityListener implements Listener {
 				event.setDamage(event.getDamage()+1);
 			}
 		}
-		if(event.getEntity() instanceof Player){
-			Player player = (Player) event.getEntity();
+		if(hurt instanceof Player){
+			Player player = (Player) hurt;
 			if((Conflict.Abatton.getPerks().contains("shield") && Conflict.Abatton.hasPlayer(player.getName()))
 					|| (Conflict.Oceian.getPerks().contains("shield") && Conflict.Oceian.hasPlayer(player.getName()))
 					|| (Conflict.Savania.getPerks().contains("shield") && Conflict.Savania.hasPlayer(player.getName()))){
