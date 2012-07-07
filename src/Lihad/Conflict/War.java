@@ -370,7 +370,11 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 		Player[] players = Bukkit.getServer().getOnlinePlayers();
 
 		for(Player player : players){
-			if(player.getLocation().getWorld().getName().equalsIgnoreCase("survival")){
+            if (getPlayerTeam(player) == null) {
+                // Ignore anyone not in the war
+                continue;
+            }
+            if(player.getLocation().getWorld().getName().equalsIgnoreCase("survival")){
 
 				for (WarNode node : nodes) {
 					if (node.conquered) {
