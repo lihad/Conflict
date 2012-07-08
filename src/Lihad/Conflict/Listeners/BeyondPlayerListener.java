@@ -2,6 +2,7 @@ package Lihad.Conflict.Listeners;
 
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -30,10 +31,8 @@ import Lihad.Conflict.Perk.*;
 import Lihad.Conflict.Util.BeyondUtil;
 
 public class BeyondPlayerListener implements Listener {
-	public static Conflict plugin;
-	public BeyondPlayerListener(Conflict instance) {
-		plugin = instance;
-	}
+	public BeyondPlayerListener() {	}
+    
 	@EventHandler
 	public static void onPlayerMove(PlayerMoveEvent event){
 		if((event.getFrom().getBlockX() != event.getTo().getBlockX()
@@ -44,7 +43,7 @@ public class BeyondPlayerListener implements Listener {
 				event.setTo(event.getFrom());
 				event.getPlayer().sendMessage(Conflict.NOTICECOLOR+"You need to join a Capital before continuing...");
 				event.getPlayer().sendMessage(Conflict.TEXTCOLOR+"Type "+ChatColor.GRAY+"/join <cityname> confirm");
-				event.getPlayer().sendMessage(Conflict.TEXTCOLOR+"You can choose one of: " + Conflict.CITYCOLOR + Conflict.cities);
+				event.getPlayer().sendMessage(Conflict.TEXTCOLOR+"You can choose one of: " + Conflict.CITYCOLOR + java.util.Arrays.asList(Conflict.cities).toString());
 			}
 			for (City city: Conflict.cities)
 			{
@@ -73,15 +72,17 @@ public class BeyondPlayerListener implements Listener {
 			if(!Conflict.isUnassigned(event.getPlayer().getName()))
 				Conflict.addUnassigned(event.getPlayer().getName());
 		}
+        
+        Conflict.checkPlayerCityPermissions(event.getPlayer());
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public static void onPlayerPortal(PlayerPortalEvent event){
 		if(event.getCause().equals(TeleportCause.NETHER_PORTAL) && event.getFrom().getWorld().getName().equals("survival") && Conflict.MystPortal.getNode().getLocation().distance(event.getFrom()) < 10){
-			if( Conflict.PlayerCanUseTrade(event.getPlayer().getName(), "mystportal") ) {
+			if( Conflict.playerCanUsePerk(event.getPlayer().getName(), Conflict.MystPortal) ) {
 				event.getPlayer().sendMessage("Shaaaaazaaam!");
-				event.getPlayer().teleport(new Location(plugin.getServer().getWorld("mystworld"), 0.0, 0.0, 0.0));
-				event.setTo(new Location(plugin.getServer().getWorld("mystworld"), 0.0, 0.0, 0.0));
+				event.getPlayer().teleport(new Location(Bukkit.getServer().getWorld("mystworld"), 0.0, 0.0, 0.0));
+				event.setTo(new Location(Bukkit.getServer().getWorld("mystworld"), 0.0, 0.0, 0.0));
 				event.setCancelled(true);
 			}else{
 				event.getPlayer().sendMessage("Epic Fail");
@@ -180,7 +181,7 @@ public class BeyondPlayerListener implements Listener {
 					continue; 
 				}
 				if (!block.getLocation().equals(p.getNode().getLocation())) { continue; }
-				if (!Conflict.PlayerCanUseTrade(event.getPlayer().getName(), p.getName())) { 
+				if (!Conflict.playerCanUsePerk(event.getPlayer().getName(), p)) { 
 					event.getPlayer().sendMessage(Conflict.NOTICECOLOR + "You can't use this perk!");
 					continue;
 				}
@@ -211,12 +212,12 @@ public class BeyondPlayerListener implements Listener {
 				try{
 					if(Conflict.handler.inGroup(player.getWorld().getName(), player.getName(), "Drifter")
 							&& !Conflict.handler.inGroup(player.getWorld().getName(), player.getName(), "Peasant")){
-						boolean successful = plugin.joinCity(player, player.getName(), city.getName(), false);
+						boolean successful = Conflict.joinCity(player, player.getName(), city.getName(), false);
 						if (!successful)
 							player.sendMessage(Conflict.NOTICECOLOR + "Sorry you couldn't join a city, ask for help with the above error messages?");
 						System.out.println("-------------------UPGRADE-DEBUG-----------");
 						System.out.println("Sponge hit by player: "+player);
-						plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "pex promote "+player.getName());
+						Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "pex promote "+player.getName());
 						if(city.getSpawn() != null) player.teleport(city.getSpawn());
 						player.sendMessage(Conflict.NOTICECOLOR + "Congrats!  You've been accepted!!! You can leave this area now!");
 						player.getInventory().addItem(new ItemStack(Material.COOKED_BEEF,10));

@@ -18,6 +18,7 @@ import Lihad.Conflict.Conflict;
 import Lihad.Conflict.City;
 import Lihad.Conflict.Util.BeyondUtil;
 import Lihad.Conflict.Information.BeyondInfo;
+import Lihad.Conflict.Perk.Perk;
 
 public class CommandHandler implements CommandExecutor {
 	public static Conflict plugin;
@@ -216,9 +217,7 @@ public class CommandHandler implements CommandExecutor {
 			return false;
 		}
 		sender.sendMessage(Conflict.CITYCOLOR + city.getName() + Conflict.TEXTCOLOR
-				+ " mini-perks: " + Conflict.PERKCOLOR + city.getPerks());
-		sender.sendMessage(Conflict.CITYCOLOR + city.getName() + Conflict.TEXTCOLOR
-				+ " nodes: " + Conflict.TRADECOLOR + city.getTrades());
+				+ " perks: " + Conflict.PERKCOLOR + city.getPerks());
 		return true;
 	}
 
@@ -233,41 +232,25 @@ public class CommandHandler implements CommandExecutor {
         if (arg.length > 0) {
             City city = Conflict.getPlayerCity(sender.getName());
             if(city != null && city.getMayors().contains(sender.getName())){
-                if(!city.getPerks().contains(arg[0].toLowerCase())){
-                    if(arg[0].equalsIgnoreCase("weapondrops")){
-                        city.addPerk("weapondrops");
-                        city.subtractMoney(500);
-                    }else if(arg[0].equalsIgnoreCase("armordrops")){
-                        city.addPerk("armordrops");
-                        city.subtractMoney(500);
-                    }else if(arg[0].equalsIgnoreCase("potiondrops")){
-                        city.addPerk("potiondrops");
-                        city.subtractMoney(500);
-                    }else if(arg[0].equalsIgnoreCase("tooldrops")){
-                        city.addPerk("tooldrops");
-                        city.subtractMoney(500);
-                    }else if(arg[0].equalsIgnoreCase("bowdrops")){
-                        city.addPerk("bowdrops");
-                        city.subtractMoney(500);
-                    }else if(arg[0].equalsIgnoreCase("shield")){
-                        city.addPerk("shield");
-                        city.subtractMoney(500);
-                    }else if(arg[0].equalsIgnoreCase("strike")){
-                        city.addPerk("strike");
-                        city.subtractMoney(500);
-                    }else if(arg[0].equalsIgnoreCase("endergrenade")){
-                        city.addPerk("endergrenade");
-                        city.subtractMoney(500);
-                    }else if(arg[0].equalsIgnoreCase("enchantup")){
-                        city.addPerk("enchantup");
-                        city.subtractMoney(500);
-                    }else if(arg[0].equalsIgnoreCase("golddrops")){
-                        city.addPerk("golddrops");
-                        city.subtractMoney(500);
-                    }else
-                        sender.sendMessage(Conflict.ERRORCOLOR + "Invalid perk.  Possible perks: " + Conflict.PERKCOLOR + "weapondrops, armordrops, potiondrops, tooldrops, bowdrops, shield, strike, endergrenade, enchantup, golddrops");
-                }else
-                    sender.sendMessage(Conflict.CITYCOLOR + city.getName() + Conflict.ERRORCOLOR + " currently owns perk: " + Conflict.PERKCOLOR + arg[0]);
+                Perk perk = Perk.getPerkByName(arg[0]);
+                if (perk == null) {
+                    sender.sendMessage(Conflict.ERRORCOLOR + "Invalid perk.  Possible perks: " + Conflict.PERKCOLOR + "weapondrops, armordrops, potiondrops, tooldrops, bowdrops, shield, strike, endergrenade, enchantup, golddrops");
+                    return true;
+                }
+                if (city.getPerks().contains(perk)) {
+                    sender.sendMessage(Conflict.CITYCOLOR + city.getName() + Conflict.ERRORCOLOR + " currently owns perk: " + Conflict.PERKCOLOR + perk.getName());
+                    return true;
+                }
+                if (city.getMoney() < perk.getPurchaseCost()) {
+                    String message = Conflict.ERRORCOLOR + " Insufficient funds. ";
+                    message += Conflict.PERKCOLOR + perk.getName() + Conflict.ERRORCOLOR + " cost " + Conflict.MONEYCOLOR + perk.getPurchaseCost() + Conflict.ERRORCOLOR + ". ";
+                    message += Conflict.CITYCOLOR + city.getName() + Conflict.ERRORCOLOR + " has only " + Conflict.MONEYCOLOR + city.getMoney() + Conflict.ERRORCOLOR + ".";
+                    sender.sendMessage(message);
+                    return true;
+                }
+                city.addPerk(perk);
+                city.subtractMoney(perk.getPurchaseCost());
+
             }else
                 sender.sendMessage(Conflict.ERRORCOLOR + "Unable to use this command");
         }else
@@ -384,10 +367,6 @@ public class CommandHandler implements CommandExecutor {
 				for (int i=0; i<Conflict.cities.length; i++) {
 					sender.sendMessage(Conflict.cities[i].getName() + " - " + Conflict.cities[i].getPopulation());
 				}
-			}else if(arg.length == 1 && arg[0].equalsIgnoreCase("trade")){
-				for (int i=0; i<Conflict.cities.length; i++) {
-					sender.sendMessage(Conflict.cities[i].getName() + " - " + Conflict.cities[i].getTrades());
-				}
 			}else if(arg.length == 3 && arg[0].equalsIgnoreCase("cmove")){
 				plugin.joinCity(sender, arg[2], arg[1], true);
 				return true;
@@ -479,7 +458,7 @@ public class CommandHandler implements CommandExecutor {
 				Conflict.saveInfoFile();
 			}else if(arg.length == 1 && arg[0].equalsIgnoreCase("reload")){
 				Conflict.loadInfoFile(Conflict.information, Conflict.infoFile);
-				BeyondInfo.loader();
+				BeyondInfo.loadConfig();
 			}else if(arg.length == 2 && arg[0].equalsIgnoreCase("reset")){
 				plugin.reset(sender, arg[1]);
 				return true;

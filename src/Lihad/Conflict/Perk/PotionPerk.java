@@ -1,5 +1,8 @@
 package Lihad.Conflict.Perk;
 
+import java.util.Map;
+import java.util.HashMap;
+
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.Material;
@@ -9,14 +12,16 @@ public class PotionPerk extends BlockPerk {
 
     public PotionPerk(String n) { super(n); }
 
+    Map<String, Integer> playerUses = new HashMap<String, Integer>();
+
     @Override
     public boolean activate(Player player) {
 
         if(player.getItemInHand().getType() == Material.GLASS_BOTTLE){
 
             int uses = 0;
-            if( Conflict.TRADE_POTIONS_PLAYER_USES.containsKey(player.getName()) ) {
-                uses = Conflict.TRADE_POTIONS_PLAYER_USES.get(player.getName());
+            if( playerUses.containsKey(player.getName()) ) {
+                uses = playerUses.get(player.getName());
             }
 
             if( uses >= 256) {
@@ -36,7 +41,7 @@ public class PotionPerk extends BlockPerk {
             player.setItemInHand(stack);
             uses += numPotions;
 
-            Conflict.TRADE_POTIONS_PLAYER_USES.put(player.getName(), uses);
+            playerUses.put(player.getName(), uses);
             player.updateInventory();
             return true;
         }

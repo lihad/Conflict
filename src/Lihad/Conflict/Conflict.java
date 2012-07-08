@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandExecutor;
@@ -38,6 +39,9 @@ public class Conflict extends JavaPlugin {
 	/** Header used for console and player output messages */
 	protected static String header = "[" + PLUGIN_NAME + "] ";
 
+    // Plugin instance
+    public static Conflict plugin;
+    
 	public static YamlConfiguration information;
 	
 	public static PermissionHandler handler;
@@ -72,10 +76,6 @@ public class Conflict extends JavaPlugin {
 	private static List<String> UNASSIGNED_PLAYERS = new LinkedList<String>(); 
 	public static Map<String, String> PLAYER_SET_SELECT = new HashMap<String, String>();
 
-	public static Map<String, Integer> TRADE_BLACKSMITH_PLAYER_USES = new HashMap<String, Integer>();
-	public static Map<String, Integer> TRADE_POTIONS_PLAYER_USES = new HashMap<String, Integer>();
-	public static Map<String, Integer> TRADE_ENCHANTMENTS_PLAYER_USES = new HashMap<String, Integer>();
-
     public static War war = null;
     static Date nextWartime = null;
 
@@ -100,11 +100,6 @@ public class Conflict extends JavaPlugin {
      * The color used for perks in chat text.
      */
     public static ChatColor PERKCOLOR = ChatColor.DARK_AQUA;
-
-    /**
-     * The color used for trades in chat text.
-     */
-    public static ChatColor TRADECOLOR = ChatColor.DARK_GREEN;
 
     /**
      * The color used for city names in chat text.
@@ -189,23 +184,23 @@ public class Conflict extends JavaPlugin {
      * @param playerName - the name you want to search for
      * @return String - the name of the online or offline player, null if none.
      */
-    public String getFormattedPlayerName(String playerName) {
+    public static String getFormattedPlayerName(String playerName) {
     	String returnMe = null;
-    	Player player = getServer().getPlayer(playerName);
+    	Player player = Bukkit.getServer().getPlayer(playerName);
     	if (player != null) {
     		returnMe = player.getName();
     	} else {
-    		OfflinePlayer offlinePlayer = getServer().getOfflinePlayer(playerName);
+    		OfflinePlayer offlinePlayer = Bukkit.getServer().getOfflinePlayer(playerName);
     		if (offlinePlayer != null && offlinePlayer.getFirstPlayed() > 0)
     			returnMe = offlinePlayer.getName();
     	}
     	return returnMe;
     }
     
-    public static boolean PlayerCanUseTrade(String playerName, String trade) {
+    public static boolean playerCanUsePerk(String playerName, Perk perk) {
         City c = getPlayerCity(playerName);
         if (c != null)
-        	return (c.getTrades().contains(trade));
+        	return (c.getPerks().contains(perk));
         return false;
     }
     
@@ -216,7 +211,7 @@ public class Conflict extends JavaPlugin {
      * @param force - If true, will ignore any limitations that would prevent that player from switching.
      * @return boolean - True if successful, false if not.
      */
-    public boolean joinCity(CommandSender sender, String playerName, String cityName, boolean force) {
+    public static boolean joinCity(CommandSender sender, String playerName, String cityName, boolean force) {
     	playerName = getFormattedPlayerName(playerName);
     	if (playerName == null) {
     		sender.sendMessage(TEXTCOLOR + "This player has not yet played on our server, and yes, this plugin's too lame to switch it for you anyway :P");
@@ -264,12 +259,12 @@ public class Conflict extends JavaPlugin {
         removeUnassigned(playerName);
 
     	if (oldCity != null) {
-        	this.getServer().broadcastMessage(PLAYERCOLOR + playerName + TEXTCOLOR 
+        	Bukkit.getServer().broadcastMessage(PLAYERCOLOR + playerName + TEXTCOLOR 
         			+ " has abandoned " + CITYCOLOR + oldCity.getName() + TEXTCOLOR
         			+ " and is now a member of " + CITYCOLOR + city.getName() + TEXTCOLOR + "!");
     		
     	} else {
-	    	this.getServer().broadcastMessage(PLAYERCOLOR + playerName + TEXTCOLOR + " is now a member of "
+	    	Bukkit.getServer().broadcastMessage(PLAYERCOLOR + playerName + TEXTCOLOR + " is now a member of "
 	    		+ CITYCOLOR + city.getName() + TEXTCOLOR + "!");
     	}	
     	return true;
@@ -306,11 +301,11 @@ public class Conflict extends JavaPlugin {
 	}
 
 	
-	private final BeyondPluginListener pluginListener = new BeyondPluginListener(this);
-	private final BeyondBlockListener blockListener = new BeyondBlockListener(this);
-	private final BeyondPlayerListener playerListener = new BeyondPlayerListener(this);
-	private final BeyondEntityListener entityListener = new BeyondEntityListener(this);
-	private final BeyondSafeModeListener safeListener = new BeyondSafeModeListener(this);
+	private final BeyondPluginListener pluginListener = new BeyondPluginListener();
+	private final BeyondBlockListener blockListener = new BeyondBlockListener();
+	private final BeyondPlayerListener playerListener = new BeyondPlayerListener();
+	private final BeyondEntityListener entityListener = new BeyondEntityListener();
+	private final BeyondSafeModeListener safeListener = new BeyondSafeModeListener();
 
 	public static File infoFile = new File("plugins/Conflict/information.yml");
 
@@ -321,10 +316,14 @@ public class Conflict extends JavaPlugin {
 	}
 	@Override
 	public void onEnable() {
+
+        // Global plugin instance
+        plugin = this;
+
 		//InfoManager
 		information = new YamlConfiguration();
         loadInfoFile(information, infoFile);
-        BeyondInfo.loader();
+        BeyondInfo.loadConfig();
 		//TimerManager
         boolean safeMode = false;
         for (int i=0; i<cities.length; i++) {
@@ -337,19 +336,7 @@ public class Conflict extends JavaPlugin {
         		severe("Unable to find drifter location for " + cities[i].name);
         	}
         }
-        // if(TRADE_BLACKSMITH == null || TRADE_POTIONS == null || TRADE_ENCHANTMENTS == null
-                // || TRADE_RICHPORTAL == null || TRADE_MYSTPORTAL == null) {
-            // severe("Unable to find all trade locations.");
-            // safeMode = true;
-        // }
 		if (!safeMode) {
-			this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
-				public void run() {
-					TRADE_BLACKSMITH_PLAYER_USES.clear();
-					TRADE_POTIONS_PLAYER_USES.clear();
-					TRADE_ENCHANTMENTS_PLAYER_USES.clear();
-				}
-			},0L, 432000L);
 			this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
 				public void run() {
                     // Maintenance timer - runs every 5 mins
@@ -370,9 +357,6 @@ public class Conflict extends JavaPlugin {
 
                         Date now = new Date();
                         if (now.after(nextWartime)) {
-                            Abatton.clearTrades();
-                            Oceian.clearTrades();
-                            Savania.clearTrades();
                             war = new War();
                             nextWartime = null;
                         }
@@ -426,7 +410,7 @@ public class Conflict extends JavaPlugin {
 				|| RichPortal.getNode() == null || MystPortal.getNode() == null){
 			PluginManager pm = getServer().getPluginManager();
 			pm.registerEvents(safeListener, this);
-			severe("Unable to find all Trade Locations.  Booted in SAFE MODE for Listeners");
+			severe("Unable to find all warzone Locations.  Booted in SAFE MODE for Listeners");
 		}else if(Abatton.getSpongeLocation() == null || Oceian.getSpongeLocation() == null || Savania.getSpongeLocation() == null){
 			PluginManager pm = getServer().getPluginManager();
 			pm.registerEvents(safeListener, this);
@@ -446,8 +430,8 @@ public class Conflict extends JavaPlugin {
             p.Initialize(this);
         }
 	}
-	public void setupPermissions() {
-		Plugin permissionsPlugin = this.getServer().getPluginManager().getPlugin("Permissions");
+	public static void setupPermissions() {
+		Plugin permissionsPlugin = Bukkit.getServer().getPluginManager().getPlugin("Permissions");
 
 		if (permissionsPlugin != null) {
 			info("Succesfully connected to Permissions!");
@@ -458,8 +442,8 @@ public class Conflict extends JavaPlugin {
 			warning("Disconnected from Permissions...what could possibly go wrong?");
 		}
 	}
-	public void setupPermissionsEx() {
-		Plugin permissionsPlugin = this.getServer().getPluginManager().getPlugin("PermissionsEx");
+	public static void setupPermissionsEx() {
+		Plugin permissionsPlugin = Bukkit.getServer().getPluginManager().getPlugin("PermissionsEx");
 
 		if (permissionsPlugin != null) {
 			info("Succesfully connected to PermissionsEx!");
@@ -513,7 +497,7 @@ public class Conflict extends JavaPlugin {
 	}
 	public static void saveInfoFile() {
 		try {
-            BeyondInfo.writer();
+            BeyondInfo.saveConfig();
             information.save(infoFile);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -603,7 +587,7 @@ public class Conflict extends JavaPlugin {
      * @param playerName - The player name.
      * @param cityName - The city name.
      */
-	public boolean leaveChat(String playerName, String cityName) {
+	public static boolean leaveChat(String playerName, String cityName) {
 	
     	playerName = getFormattedPlayerName(playerName);
     	if (playerName == null) {
@@ -613,13 +597,13 @@ public class Conflict extends JavaPlugin {
 		if (city == null)
 			return false;		
 		
-		Player player = getServer().getPlayer(playerName);
+		Player player = Bukkit.getServer().getPlayer(playerName);
 		if (player != null)
 		{
-			getServer().dispatchCommand(getServer().getConsoleSender(), "ch kick " + city.getName() + " " + playerName);
+			Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "ch kick " + city.getName() + " " + playerName);
 		}
-		getServer().dispatchCommand(getServer().getConsoleSender(), "pex user " + playerName + " remove herochat.force.join." + city.getName());
-		getServer().dispatchCommand(getServer().getConsoleSender(), "pex user " + playerName + " remove herochat.join." + city.getName());
+		Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "pex user " + playerName + " remove herochat.force.join." + city.getName());
+		Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "pex user " + playerName + " remove herochat.join." + city.getName());
 		return true;
 	}
 
@@ -628,7 +612,7 @@ public class Conflict extends JavaPlugin {
 	 * @param sender - The command sender.
 	 * @param playerName - The name of the target player.
 	 */
-	public boolean reset(CommandSender sender, String playerName) {
+	public static boolean reset(CommandSender sender, String playerName) {
     	playerName = getFormattedPlayerName(playerName);
     	if (playerName == null) {
     		sender.sendMessage(TEXTCOLOR + "This player has not yet played on our server, and yes, this plugin's too lame to switch it for you anyway :P");
@@ -652,7 +636,7 @@ public class Conflict extends JavaPlugin {
 	    removeUnassigned(playerName);
     	addUnassigned(playerName);
     	
-        this.getServer().broadcastMessage(PLAYERCOLOR + playerName + ERRORCOLOR 
+        Bukkit.getServer().broadcastMessage(PLAYERCOLOR + playerName + ERRORCOLOR 
        			+ ChatColor.BOLD + " screwed up " + TEXTCOLOR + " and had to get an admin to reset them!");
     	return true;
 	}
@@ -693,4 +677,11 @@ public class Conflict extends JavaPlugin {
         	}
         }
 	}
+    
+    // Make sure permission groups are correct for this player.  Run on player join, and city change
+    public static void checkPlayerCityPermissions(Player p) {
+        // TODO
+        // Check perms for city membership
+        // If necessary, add perm node for current city.  Remove perms for other cities.
+    }
 }

@@ -13,6 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 
 import Lihad.Conflict.Information.BeyondInfo;
+import Lihad.Conflict.Perk.*;
 
 public class City extends Node {
 
@@ -28,8 +29,7 @@ public class City extends Node {
 	Location spawnLocation;
 	Location drifterLocation;
 	Set<String> mayors = new HashSet<String>();
-	Set<String> trades = new HashSet<String>();
-	Set<String> perks = new HashSet<String>();
+	Set<Perk> perks = new HashSet<Perk>();
 	
 	/**
 	 * The password to enter the city's chat channel.
@@ -38,8 +38,6 @@ public class City extends Node {
 	int bankBalance;
 	int spawnProtectRadius;
     
-    //Set<PerkNode> ownedNodes = new HashSet<PerkNode>();
-
     //public Set<String> getPlayerList() { return players; }
 	
 	/**
@@ -94,17 +92,6 @@ public class City extends Node {
     	}	
     }
     
-    // public void addPerkNode(PerkNode p) { ownedNodes.add(p); }
-    // public void clearPerkNodes() { ownedNodes.clear(); }
-    
-    public Set<String> getTrades() { return trades; }
-    public void addTrade(String p) { trades.add(p); }
-    public void clearTrades() { trades.clear(); }
-
-    public Set<String> getPerks() { return perks; }
-    public void addPerk(String p) { perks.add(p); }
-    public void clearPerks() { perks.clear(); }
-
     /**
      * Gets the password to join the city's chat.
      * @return password
@@ -129,7 +116,8 @@ public class City extends Node {
     public int getProtectionRadius() { return spawnProtectRadius; }
     public void setProtectionRadius(int r) { spawnProtectRadius = r;}
     
-    public void loadConfig(org.bukkit.configuration.ConfigurationSection section) {
+    @Override
+    public boolean load(ConfigurationSection section) {
         
         players.clear();
         mayors.clear();
@@ -153,19 +141,16 @@ public class City extends Node {
         spawnLocation = BeyondInfo.toLocation(section, "Spawn");
         drifterLocation = BeyondInfo.toLocation(section, "Drifter");
 
-        trades.clear();
-        trades.addAll(section.getStringList("Trades"));
-
-        perks.clear();
-        perks.addAll(section.getStringList("Perks"));
-
         bankBalance = section.getInt("Worth");
         spawnProtectRadius = section.getInt("Protection");
         
         setPassword(section.getString("Password"));
+
+        return super.load(section);
     }
     
-    public void saveConfig(org.bukkit.configuration.ConfigurationSection section) {
+    @Override
+    public void save(ConfigurationSection section) {
 
         java.util.List<String> setAsList = null;
         setAsList = new java.util.ArrayList<String>(players);
@@ -183,17 +168,12 @@ public class City extends Node {
         section.set("Location", BeyondInfo.toString(center));
         section.set("Spawn", BeyondInfo.toString(spawnLocation));
         section.set("Drifter", BeyondInfo.toString(drifterLocation));
-
-        setAsList = new java.util.ArrayList<String>(trades);
-        section.set("Trades", setAsList);
-
-        setAsList = new java.util.ArrayList<String>(perks);
-        section.set("Perks", setAsList);
-
         section.set("Worth", bankBalance);
         section.set("Protection", spawnProtectRadius);
-        
         section.set("Password", getPassword());
+        section.set("type", "City");
+        
+        super.save(section);
     }
     
     public void purgeInactivePlayers() {
@@ -252,7 +232,6 @@ public class City extends Node {
 				info += ", " + iter.next();
 		}
 		info += Conflict.TEXTCOLOR + "Mini-perks: " + Conflict.PERKCOLOR + getPerks();
-		info += Conflict.TEXTCOLOR + "Nodes: " + Conflict.TRADECOLOR + getTrades();
 		info += Conflict.TEXTCOLOR + "Treasury: " + Conflict.MONEYCOLOR + this.getMoney();
 		if (listPlayers)
 			info += Conflict.TEXTCOLOR + "Players (" + Conflict.PLAYERCOLOR + players.size() + Conflict.TEXTCOLOR + "): " + Conflict.PLAYERCOLOR + this.getFormattedPlayersList();

@@ -136,9 +136,11 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 	public War() {
 
 		for (Node n : Conflict.nodes) {
-			WarNode wn = new WarNode(n.name, n.getLocation());
-			this.nodes.add(wn);
-		}
+            if (n instanceof Warzone) {
+                WarNode wn = new WarNode(n.name, n.getLocation());
+                this.nodes.add(wn);
+            }
+        }
 
         // War starts in 10 mins, and ends 60 mins after that
         Calendar c = Calendar.getInstance();

@@ -18,11 +18,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import Lihad.Conflict.Conflict;
 
 public class BeyondSafeModeListener implements Listener {
-	public static Conflict plugin;
 
-	public BeyondSafeModeListener(Conflict instance) {
-		plugin = instance;
-	}
+    public BeyondSafeModeListener() { }
+
 	@EventHandler
 	public static void onPlayerInteract(PlayerInteractEvent event){
 		if(Conflict.PLAYER_SET_SELECT.containsKey(event.getPlayer().getName()) && event.getClickedBlock() != null){

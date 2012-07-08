@@ -1,5 +1,8 @@
 package Lihad.Conflict.Perk;
 
+import java.util.Map;
+import java.util.HashMap;
+
 import org.bukkit.entity.Player;
 
 import Lihad.Conflict.Util.BeyondUtil;
@@ -9,14 +12,16 @@ public class BlacksmithPerk extends BlockPerk {
 
     public BlacksmithPerk(String n) { super(n); }
 
+    Map<String, Integer> playerUses = new HashMap<String, Integer>();
+
     @Override
     public boolean activate(Player player) {
 
         if(player.getItemInHand().getDurability() != 0)  {
 
             int uses = 0;
-            if( Conflict.TRADE_BLACKSMITH_PLAYER_USES.containsKey(player.getName()) ) {
-                uses = Conflict.TRADE_BLACKSMITH_PLAYER_USES.get(player.getName());
+            if( playerUses.containsKey(player.getName()) ) {
+                uses = playerUses.get(player.getName());
             }
             
             if( uses >= 5) {
@@ -27,7 +32,7 @@ public class BlacksmithPerk extends BlockPerk {
             player.getItemInHand().setDurability((short) 0);
             uses++;
             
-            Conflict.TRADE_BLACKSMITH_PLAYER_USES.put(player.getName(), uses);
+            playerUses.put(player.getName(), uses);
             player.updateInventory();
             return true;
         }

@@ -1,5 +1,8 @@
 package Lihad.Conflict.Perk;
 
+import java.util.Map;
+import java.util.HashMap;
+
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -9,6 +12,8 @@ import Lihad.Conflict.Conflict;
 public class EnchantmentPerk extends BlockPerk {
 
     public EnchantmentPerk(String n) { super(n); }
+
+    Map<String, Integer> playerUses = new HashMap<String, Integer>();
 
     @Override
     public boolean activate(Player player) {
@@ -21,8 +26,8 @@ public class EnchantmentPerk extends BlockPerk {
         }
 
         int uses = 0;
-        if( Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.containsKey(player.getName()) ) {
-            uses = Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.get(player.getName());
+        if( playerUses.containsKey(player.getName()) ) {
+            uses = playerUses.get(player.getName());
         }
 
         if( uses >= 5) {
@@ -37,7 +42,7 @@ public class EnchantmentPerk extends BlockPerk {
         }
         player.setItemInHand(newItem);
         uses++;
-        Conflict.TRADE_ENCHANTMENTS_PLAYER_USES.put(player.getName(), uses);
+        playerUses.put(player.getName(), uses);
         player.updateInventory();
         return true;
     }

@@ -18,10 +18,13 @@ public class Perk {
 
     int purchaseCost = 500;
     int useCost = 0;
-    void setPurchaseCost(int c) { purchaseCost = c; }
-    void setUseCost(int c) { useCost = c; }
-    int getPurchaseCost() { return purchaseCost; }
-    int getUseCost() { return useCost; }
+    int useCostUnowned = 100;
+    public void setPurchaseCost(int c) { purchaseCost = c; }
+    public void setUseCost(int c) { useCost = c; }
+    public void setUseCostUnowned(int c) { useCostUnowned = c; }
+    public int getPurchaseCost() { return purchaseCost; }
+    public int getUseCost() { return useCost; }
+    public int getUseCostUnowned() { return useCostUnowned; }
 
     public static Perk getPerkByName(String name) {
         for (Perk p : Conflict.perks) {
@@ -31,8 +34,18 @@ public class Perk {
         }
         return null;
     }
-    
-    public boolean ownedBy(Player p) {
+
+    public boolean load(org.bukkit.configuration.ConfigurationSection section) {
+        purchaseCost = section.getInt("purchasecost", 500);
+        useCost = section.getInt("usecost", 0);
+        useCostUnowned = section.getInt("usecostunowned", 100);
         return true;
     }
+    
+    public void save(org.bukkit.configuration.ConfigurationSection section) {
+        section.set("purchasecost", purchaseCost);
+        section.set("usecost", useCost);
+        section.set("usecostunowned", useCostUnowned);
+    }
+
 };

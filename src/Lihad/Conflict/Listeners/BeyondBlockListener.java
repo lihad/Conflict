@@ -17,10 +17,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import Lihad.Conflict.Conflict;
 
 public class BeyondBlockListener implements Listener {
-	public static Conflict plugin;
-	public BeyondBlockListener(Conflict instance) {
-		plugin = instance;
-	}
+	public BeyondBlockListener() {	}
+    
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event){
         Player player = event.getPlayer();
@@ -40,13 +38,6 @@ public class BeyondBlockListener implements Listener {
 			){
 				event.setCancelled(true);
 			}
-		}
-		else if(event.getBlock().getWorld().getName().equals("richworld")){
-			if( !Conflict.PlayerCanUseTrade(player.getName(), "richportal") && !player.isOp()) {
-				event.setCancelled(true);
-				player.kickPlayer("Invalid Block Break by Unauthorized Player in Rich World");
-			}
-				
 		}
 	}
 	@EventHandler

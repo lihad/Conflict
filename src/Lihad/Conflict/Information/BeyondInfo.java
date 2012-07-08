@@ -3,21 +3,24 @@ package Lihad.Conflict.Information;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.io.File;
 
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
-import Lihad.Conflict.Conflict;
-import Lihad.Conflict.Node;
+import Lihad.Conflict.*;
+import Lihad.Conflict.Perk.*;
 
 public class BeyondInfo {
 	public static List<String> something = new LinkedList<String>();
 
-	public static void loader(){
+	public static void loadConfig(){
     
-        Conflict.Abatton.loadConfig(Conflict.information.getConfigurationSection("Capitals.Abatton"));
-        Conflict.Oceian.loadConfig (Conflict.information.getConfigurationSection("Capitals.Oceian"));
-        Conflict.Savania.loadConfig(Conflict.information.getConfigurationSection("Capitals.Savania"));
+        Conflict.Abatton.load(Conflict.information.getConfigurationSection("Capitals.Abatton"));
+        Conflict.Oceian .load(Conflict.information.getConfigurationSection("Capitals.Oceian"));
+        Conflict.Savania.load(Conflict.information.getConfigurationSection("Capitals.Savania"));
 
         // TODO: New config format will store names with nodes. For now, they're all nameless.
         org.bukkit.World survival = org.bukkit.Bukkit.getServer().getWorld("survival");
@@ -42,11 +45,15 @@ public class BeyondInfo {
         Conflict.nodes.add(new Node(Conflict.information.getString("Nodes.4.Name", "Castle"),  toLocation(Conflict.information, "Nodes.4.Location", Conflict.Enchantments.getNode().getLocation())));
 	}
 
-	public static void writer(){
+	public static void saveConfig() {
+    
+        //---------------
+        // Old-style save
+        // TODO:  Delete this after new save code is in
 
-        Conflict.Abatton.saveConfig(Conflict.information.getConfigurationSection("Capitals.Abatton"));
-        Conflict.Oceian.saveConfig (Conflict.information.getConfigurationSection("Capitals.Oceian"));
-        Conflict.Savania.saveConfig(Conflict.information.getConfigurationSection("Capitals.Savania"));
+        Conflict.Abatton.save(Conflict.information.getConfigurationSection("Capitals.Abatton"));
+        Conflict.Oceian .save(Conflict.information.getConfigurationSection("Capitals.Oceian"));
+        Conflict.Savania.save(Conflict.information.getConfigurationSection("Capitals.Savania"));
     
         Conflict.information.set("Trades.blacksmith", toString(Conflict.Blacksmith.getNode().getLocation()));
         Conflict.information.set("Trades.potions", toString(Conflict.Potions.getNode().getLocation()));
@@ -60,6 +67,52 @@ public class BeyondInfo {
             Conflict.information.set("Nodes." + i + ".Location", toString(n.getLocation()));
             i++;
         }
+        
+        //---------------
+        // New-style save
+
+        try {
+            // cityname.yml
+            List<String> cityNames = new LinkedList<String>();
+            for (City city : Conflict.cities) {
+            
+                cityNames.add(city.getName());
+            
+                FileConfiguration cityConfig = new YamlConfiguration();
+                
+                city.save(cityConfig);
+                
+                File cityConfigFile = new File(Conflict.plugin.getDataFolder(), city.getName() + ".yml");
+                cityConfig.save(cityConfigFile);
+            }
+            
+            // nodes.yml
+            FileConfiguration nodesConfig = new YamlConfiguration();
+            for (Node node : Conflict.nodes) {
+                ConfigurationSection section = nodesConfig.createSection(node.getName());
+                node.save(section);
+            }
+            File nodesConfigFile = new File(Conflict.plugin.getDataFolder(), "nodes.yml");
+            nodesConfig.save(nodesConfigFile);
+
+            // perks.yml
+            FileConfiguration perksConfig = new YamlConfiguration();
+            for (Perk perk : Conflict.perks) {
+                ConfigurationSection section = perksConfig.createSection(perk.getName());
+                perk.save(section);
+            }
+            File perksConfigFile = new File(Conflict.plugin.getDataFolder(), "perks.yml");
+            perksConfig.save(nodesConfigFile);
+
+            // config.yml
+            FileConfiguration defaultConfig = Conflict.plugin.getConfig();
+            defaultConfig.set("cities", cityNames);
+            Conflict.plugin.saveConfig();
+
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+        }
+
 	}
 	public static Location toLocation(ConfigurationSection section, String path){
 		String[] array;

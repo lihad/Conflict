@@ -27,11 +27,8 @@ import Lihad.Conflict.Util.BeyondUtil;
 
 public class BeyondEntityListener implements Listener {
 	
-	public static Conflict plugin;
-	
-	public BeyondEntityListener(Conflict instance) {
-		plugin = instance;
-	}
+	public BeyondEntityListener() { }
+
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event){
         Entity hurt = event.getEntity();
@@ -40,10 +37,10 @@ public class BeyondEntityListener implements Listener {
             Player attacker = (event.getDamager() instanceof Player) ? ((Player)event.getDamager()) : null;
             for (City city : Conflict.cities) {
                 if (city.isInRadius(hurt.getLocation())) {
-                    if (attacker != null) {
+                    if (attacker != null && !attacker.isOp()) {
                         String message = "" + Conflict.PLAYERCOLOR + attacker.getName() + Conflict.TEXTCOLOR + " tried to murder an innocent villager in " + Conflict.CITYCOLOR + city.getName();
                         org.bukkit.Bukkit.getServer().broadcastMessage(message);
-                        attacker.damage(event.getDamage(), hurt);
+                        attacker.damage(event.getDamage() * 2, hurt);
                     }
                     event.setCancelled(true);
                 }

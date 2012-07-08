@@ -8,20 +8,17 @@ import org.bukkit.event.server.PluginEnableEvent;
 import Lihad.Conflict.Conflict;
 
 public class BeyondPluginListener implements Listener {
-	public static Conflict plugin;
-    public BeyondPluginListener(Conflict instance) {
-        plugin = instance;
-    }
+    public BeyondPluginListener() { }
     @EventHandler
     public void onPluginEnable(PluginEnableEvent event){
-    	if(event.getPlugin().getDescription().getName().equals("Permissions"))plugin.setupPermissions();
-    	else if(event.getPlugin().getDescription().getName().equals("PermissionsEx"))plugin.setupPermissionsEx();
+    	if(event.getPlugin().getDescription().getName().equals("Permissions"))Conflict.setupPermissions();
+    	else if(event.getPlugin().getDescription().getName().equals("PermissionsEx"))Conflict.setupPermissionsEx();
     }
     @EventHandler
     public void onPluginDisable(PluginDisableEvent event){
     	if(event.getPlugin().getDescription().getName().equals("Permissions"))
-    		plugin.setupPermissions();
+    		Conflict.setupPermissions();
     	else if(event.getPlugin().getDescription().getName().equals("PermissionsEx"))
-    		plugin.setupPermissionsEx();
+    		Conflict.setupPermissionsEx();
     }
 }
