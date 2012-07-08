@@ -40,12 +40,17 @@ public class BeyondEntityListener implements Listener {
             Player attacker = (event.getDamager() instanceof Player) ? ((Player)event.getDamager()) : null;
             for (City city : Conflict.cities) {
                 if (city.isInRadius(hurt.getLocation())) {
-                    if (attacker != null && !attacker.isOp()) {
+                    if (attacker == null) {
+                        // attacked by non-player
+                        event.setCancelled(true);
+                    }
+                    else if (!attacker.isOp()) {
+                        // It's a player.  Only block non-ops
                         String message = "" + Conflict.PLAYERCOLOR + attacker.getName() + Conflict.TEXTCOLOR + " tried to murder an innocent villager in " + Conflict.CITYCOLOR + city.getName();
                         org.bukkit.Bukkit.getServer().broadcastMessage(message);
                         attacker.damage(event.getDamage(), hurt);
+                        event.setCancelled(true);
                     }
-                    event.setCancelled(true);
                 }
             }
             return;
