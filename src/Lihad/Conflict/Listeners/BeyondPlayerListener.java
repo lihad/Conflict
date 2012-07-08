@@ -102,7 +102,8 @@ public class BeyondPlayerListener implements Listener {
 				for (Node n : Conflict.nodes) {
 					//Try to fix exception spew.
 					if (n.getLocation().getWorld().equals(dest.getWorld()) && dest.getWorld().equals(src.getWorld())
-							&& n.isInRadius(dest) || n.isInRadius(src)) {
+							&& (n.isInRadius(dest) || n.isInRadius(src))) {
+						System.out.println("Attempting to cancel tp from " + src + " to " + dest + " for node at " + n.getLocation());
 						event.setCancelled(true);
 						return;
 					}

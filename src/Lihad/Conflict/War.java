@@ -29,15 +29,15 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
         Calendar nextWednesdayWar = Calendar.getInstance();
         nextWednesdayWar.set(Calendar.DAY_OF_WEEK, Calendar.WEDNESDAY);
         nextWednesdayWar.set(Calendar.HOUR_OF_DAY, 19);
-        nextWednesdayWar.set(Calendar.MINUTE, 10);
+        nextWednesdayWar.set(Calendar.MINUTE, 15);
         if (now.getTime().after(nextWednesdayWar.getTime())) {
             nextWednesdayWar.add(Calendar.DATE, 7);
         }
 
         Calendar nextSaturdayWar = Calendar.getInstance();
         nextSaturdayWar.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
-        nextSaturdayWar.set(Calendar.HOUR_OF_DAY, 12);
-        nextSaturdayWar.set(Calendar.MINUTE, 50);
+        nextSaturdayWar.set(Calendar.HOUR_OF_DAY, 13);
+        nextSaturdayWar.set(Calendar.MINUTE, 00);
         if (now.getTime().after(nextSaturdayWar.getTime())) {
             nextSaturdayWar.add(Calendar.DATE, 7);
         }
@@ -180,12 +180,12 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 		Team t = getPlayerTeam(p);
 		if (t != null) {
 			t.removePlayer(p);
+	        // Remember the team they were on, so they get put there if they re-join
+	        loggedPlayers.put(p.getName(), getPlayerTeam(p));
 		}
 		else if (unassignedPlayers.contains(p)) {
 			unassignedPlayers.remove(p);
 		}
-        // Remember the team they were on, so they get put there if they re-join
-        loggedPlayers.put(p.getName(), getPlayerTeam(p));
 	}
 
 	void begin() {
@@ -372,23 +372,28 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 		Player[] players = Bukkit.getServer().getOnlinePlayers();
 
 		for(Player player : players){
-			if(player.getLocation().getWorld().getName().equalsIgnoreCase("survival")){
+            if (getPlayerTeam(player) == null) {
+                // Ignore anyone not in the war
+                continue;
+            }
+            if(player.getLocation().getWorld().getName().equalsIgnoreCase("survival")){
 
 				for (WarNode node : nodes) {
 					if (node.conquered) {
 						continue;
 					}
 					if (player.getLocation().distanceSquared(node.location) < 3*3){  
+						if(node.captureTeamTemp == Contested){
+							continue;
+						}
+						else if( getPlayerTeam(player) == node.owner ) {
+							node.captureTeamTemp = getPlayerTeam(player);
+							continue;
+						}
 						if(node.captureTeamTemp == null){
 							node.captureTeamTemp = getPlayerTeam(player);
 							node.captureCounter++;
 							player.sendMessage(ChatColor.GOLD+"Taking point. "+node.captureCounter+"/30");
-						}
-						else if(node.captureTeamTemp == Contested){
-							continue;
-						}
-						else if( getPlayerTeam(player) == node.owner ) {
-							continue;
 						}
 						else if( getPlayerTeam(player) == node.captureTeamTemp ) {
 							node.captureCounter++;
@@ -411,7 +416,7 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 				if((node.captureTeamTemp != null) && (node.captureTeamTemp != Contested) && node.captureCounter >= 30) {
 					node.owner = node.captureTeamTemp;
 					node.captureCounter = 0;
-					Bukkit.getServer().broadcastMessage("" + ChatColor.RED + node.owner.getName() + " has taken control of " + node.name + "!");
+					Bukkit.getServer().broadcastMessage("The " + ChatColor.RED + node.owner.getName() + " have taken control of " + node.name + "!");
 
 					if (!node.teamCounters.containsKey(node.owner)) {
 						node.teamCounters.put(node.owner, 0);
