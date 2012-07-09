@@ -142,19 +142,17 @@ public class BeyondPlayerListener implements Listener {
 		Block block = event.getClickedBlock();
 		Player player = event.getPlayer();
 
-		for (Perk p : Conflict.perks) {
-			if (p instanceof BlockPerk) {
-				if (p.getNode() == null) { 
-					continue; 
-				}
-				if (!block.getLocation().equals(p.getNode().getLocation())) { continue; }
-				if (!Conflict.playerCanUsePerk(event.getPlayer(), p)) { 
-					event.getPlayer().sendMessage(Conflict.NOTICECOLOR + "You can't use this perk!");
-					continue;
-				}
-				((BlockPerk)p).activate(event.getPlayer());
-			}
-		}
+        for (Node n : Conflict.nodes) {
+            if (!block.getLocation().equals(n.getLocation())) { continue; }
+            for (Perk p : n.getPerks()) {
+                if (!(p instanceof BlockPerk)) { continue; }
+                if (!Conflict.playerCanUsePerk(event.getPlayer(), p)) { 
+                    event.getPlayer().sendMessage(Conflict.NOTICECOLOR + "You can't use this perk!");
+                    continue;
+                }
+                ((BlockPerk)p).activate(event.getPlayer());
+            }
+        }
 		for (City city:Conflict.cities) {
 
 			if(block.getLocation().equals(city.getLocation().getBlock().getLocation())){
