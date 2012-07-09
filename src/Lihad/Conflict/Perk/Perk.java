@@ -50,8 +50,8 @@ public class Perk implements org.bukkit.event.Listener {
     }
 
     public boolean load(org.bukkit.configuration.ConfigurationSection section) {
-        purchasable = section.getBoolean("purchasable", false);
-        if (purchasable) { purchaseCost = section.getInt("purchasecost", 500); }
+        //purchasable = section.getBoolean("purchasable", false);
+        //if (purchasable) { purchaseCost = section.getInt("purchasecost", 500); }
         useCost = section.getInt("usecost", 0);
         useCostUnowned = section.getInt("usecostunowned", 0);
         return true;

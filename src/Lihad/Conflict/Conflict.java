@@ -405,10 +405,6 @@ public class Conflict extends JavaPlugin {
 			severe("Unable to find all Capital Locations.  Booted in SAFE MODE for Listeners");
 			PluginManager pm = getServer().getPluginManager();
 			pm.registerEvents(safeListener, this);
-		}else if(Blacksmith.getNode() == null || Potions.getNode() == null || Enchantments.getNode() == null || MystPortal.getNode() == null){
-			PluginManager pm = getServer().getPluginManager();
-			pm.registerEvents(safeListener, this);
-			severe("Unable to find all warzone Locations.  Booted in SAFE MODE for Listeners");
 		}else if(Abatton.getSpongeLocation() == null || Oceian.getSpongeLocation() == null || Savania.getSpongeLocation() == null){
 			PluginManager pm = getServer().getPluginManager();
 			pm.registerEvents(safeListener, this);

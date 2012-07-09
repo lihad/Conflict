@@ -461,7 +461,6 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 				}
 			}
 
-			//Bukkit.getServer().broadcastMessage("" + ChatColor.GOLD + winner.getName() + ChatColor.GRAY + " has won the " + node.name + ", and gains the " + ChatColor.LIGHT_PURPLE + prize + ChatColor.GRAY + " perk!");
 			Bukkit.getServer().broadcastMessage("" + ChatColor.GOLD + winner.getName() + ChatColor.GRAY + " has won the " + node.name);
 
 			// Reward is a stack of gold ingots

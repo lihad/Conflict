@@ -29,7 +29,6 @@ public class City extends Node {
 	Location spawnLocation;
 	Location drifterLocation;
 	Set<String> mayors = new HashSet<String>();
-	Set<Perk> perks = new HashSet<Perk>();
 	
 	/**
 	 * The password to enter the city's chat channel.
