@@ -56,7 +56,6 @@ public class Conflict extends JavaPlugin {
     public static Perk Blacksmith = new BlacksmithPerk("blacksmith");
     public static Perk Potions = new PotionPerk("potions");
     public static Perk Enchantments = new EnchantmentPerk("enchantments");
-    public static Perk RichPortal = new PortalPerk("richportal");
     public static Perk MystPortal = new PortalPerk("mystportal");
     public static Perk WeaponDrop = new WeaponDropPerk();
     public static Perk ArmorDrop = new ArmorDropPerk();
@@ -69,7 +68,7 @@ public class Conflict extends JavaPlugin {
     public static Perk GoldDrop = new GoldDropPerk();
     public static Perk Tpa = new TpaPerk();
     
-    public static Perk[] perks = {Blacksmith, Potions, Enchantments, RichPortal, MystPortal, WeaponDrop, ArmorDrop, PotionDrop, ToolDrop, BowDrop, Shield, Strike, EnchantUp, GoldDrop, Tpa};
+    public static Perk[] perks = {Blacksmith, Potions, Enchantments, MystPortal, WeaponDrop, ArmorDrop, PotionDrop, ToolDrop, BowDrop, Shield, Strike, EnchantUp, GoldDrop};
     
     public static List<Node> nodes = new LinkedList<Node>();
 
@@ -197,8 +196,8 @@ public class Conflict extends JavaPlugin {
     	return returnMe;
     }
     
-    public static boolean playerCanUsePerk(String playerName, Perk perk) {
-        City c = getPlayerCity(playerName);
+    public static boolean playerCanUsePerk(Player player, Perk perk) {
+        City c = getPlayerCity(player.getName());
         if (c != null)
         	return (c.getPerks().contains(perk));
         return false;
@@ -406,8 +405,7 @@ public class Conflict extends JavaPlugin {
 			severe("Unable to find all Capital Locations.  Booted in SAFE MODE for Listeners");
 			PluginManager pm = getServer().getPluginManager();
 			pm.registerEvents(safeListener, this);
-		}else if(Blacksmith.getNode() == null || Potions.getNode() == null || Enchantments.getNode() == null
-				|| RichPortal.getNode() == null || MystPortal.getNode() == null){
+		}else if(Blacksmith.getNode() == null || Potions.getNode() == null || Enchantments.getNode() == null || MystPortal.getNode() == null){
 			PluginManager pm = getServer().getPluginManager();
 			pm.registerEvents(safeListener, this);
 			severe("Unable to find all warzone Locations.  Booted in SAFE MODE for Listeners");
@@ -423,6 +421,7 @@ public class Conflict extends JavaPlugin {
 			pm.registerEvents(entityListener, this);
 			pm.registerEvents(safeListener, this);
             pm.registerEvents(new War(), this);
+            pm.registerEvents(new Perk("eventHandlerPerk"), this);
 		}
         
         // Init perks

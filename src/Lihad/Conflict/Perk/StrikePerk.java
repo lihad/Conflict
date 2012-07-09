@@ -2,20 +2,30 @@ package Lihad.Conflict.Perk;
 
 import org.bukkit.entity.Player;
 
+import Lihad.Conflict.*;
+
 public class StrikePerk extends PassivePerk {
 
-    public StrikePerk() { super("Strike"); }
+    int extraDamage = 1;
 
-    public void Initialize(org.bukkit.plugin.Plugin plugin) {
-        //plugin.getServer().getPluginManager().registerEvents(this, plugin);
+    public StrikePerk() {
+        super("Strike"); 
+        purchasable = true;
     }
 
-    @org.bukkit.event.EventHandler
+    @Override
+    public void save(org.bukkit.configuration.ConfigurationSection section) {
+        super.save(section);
+        section.set("extradamage", extraDamage);
+    }
+    
+    @Override
     public void onEntityDamageByEntity(org.bukkit.event.entity.EntityDamageByEntityEvent event){
         if(event.getDamager() instanceof Player){
             Player player = (Player) event.getDamager();
-            //if (Conflict.playerCanUsePerk(
-            event.setDamage(event.getDamage()+1);
+            if (Conflict.playerCanUsePerk(player, this)) {
+                event.setDamage(event.getDamage()+extraDamage);
+            }
         }
     }
 };

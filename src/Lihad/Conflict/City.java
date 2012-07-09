@@ -231,7 +231,7 @@ public class City extends Node {
 			else
 				info += ", " + iter.next();
 		}
-		info += Conflict.TEXTCOLOR + "Mini-perks: " + Conflict.PERKCOLOR + getPerks();
+		info += Conflict.TEXTCOLOR + "Mini-perks: " + Conflict.PERKCOLOR + Perk.getPerkNameList(getPerks(), false);
 		info += Conflict.TEXTCOLOR + "Treasury: " + Conflict.MONEYCOLOR + this.getMoney();
 		if (listPlayers)
 			info += Conflict.TEXTCOLOR + "Players (" + Conflict.PLAYERCOLOR + players.size() + Conflict.TEXTCOLOR + "): " + Conflict.PLAYERCOLOR + this.getFormattedPlayersList();

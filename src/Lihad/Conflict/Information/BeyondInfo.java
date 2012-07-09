@@ -22,27 +22,23 @@ public class BeyondInfo {
         Conflict.Oceian .load(Conflict.information.getConfigurationSection("Capitals.Oceian"));
         Conflict.Savania.load(Conflict.information.getConfigurationSection("Capitals.Savania"));
 
-        // TODO: New config format will store names with nodes. For now, they're all nameless.
-        org.bukkit.World survival = org.bukkit.Bukkit.getServer().getWorld("survival");
-        Conflict.Blacksmith     .setNode(new Node("", toLocation(Conflict.information, "Trades.blacksmith", new Location(survival, -807,6,-587))));
-        Conflict.Potions        .setNode(new Node("", toLocation(Conflict.information, "Trades.potions", new Location(survival, 998,115,7))));
-        Conflict.Enchantments   .setNode(new Node("", toLocation(Conflict.information, "Trades.enchantments", new Location(survival, 311,76,-955))));
-        Conflict.MystPortal     .setNode(new Node("", toLocation(Conflict.information, "Trades.mystportal", new Location(survival, -809,66,589))));
-        Conflict.RichPortal     .setNode(new Node("", toLocation(Conflict.information, "Trades.richportal", new Location(survival, 303,28,960))));
-
-        // TODO: New config format needs to store node radius too.
-        Conflict.Blacksmith     .getNode().setRadius(200);
-        Conflict.Potions        .getNode().setRadius(200);
-        Conflict.Enchantments   .getNode().setRadius(200);
-        Conflict.MystPortal     .getNode().setRadius(200);
-        Conflict.RichPortal     .getNode().setRadius(200);
+        // Nodes are hardcoded.  Nodes, trades, and perks in information.yaml is deprecated
+        // TODO: Load from node.xml, once files are pre-populated
         
         Conflict.nodes.clear();
-        Conflict.nodes.add(new Node(Conflict.information.getString("Nodes.0.Name", "Tower"),   toLocation(Conflict.information, "Nodes.0.Location", Conflict.Potions.getNode().getLocation())));
-        Conflict.nodes.add(new Node(Conflict.information.getString("Nodes.1.Name", "Cavern"),  toLocation(Conflict.information, "Nodes.1.Location", Conflict.RichPortal.getNode().getLocation())));
-        Conflict.nodes.add(new Node(Conflict.information.getString("Nodes.2.Name", "Fort"),    toLocation(Conflict.information, "Nodes.2.Location", Conflict.MystPortal.getNode().getLocation())));
-        Conflict.nodes.add(new Node(Conflict.information.getString("Nodes.3.Name", "Pit"),     toLocation(Conflict.information, "Nodes.3.Location", Conflict.Blacksmith.getNode().getLocation())));
-        Conflict.nodes.add(new Node(Conflict.information.getString("Nodes.4.Name", "Castle"),  toLocation(Conflict.information, "Nodes.4.Location", Conflict.Enchantments.getNode().getLocation())));
+        org.bukkit.World survival = org.bukkit.Bukkit.getServer().getWorld("survival");
+
+        // Warzones
+        Conflict.nodes.add(new Warzone("Tower",   new Location(survival, 998,115,7), 200));
+        Conflict.nodes.add(new Warzone("Cavern",  new Location(survival, 303,28,960), 200));
+        Conflict.nodes.add(new Warzone("Fort",    new Location(survival, -809,66,589), 200));
+        Conflict.nodes.add(new Warzone("Pit",     new Location(survival, -807,6,-587), 200));
+        Conflict.nodes.add(new Warzone("Castle",  new Location(survival, 311,76,-955), 200));
+        
+        // Block nodes
+        Node node = new Node("LihadCityBlacksmith", new Location(survival, 157,69,-70), 10);
+        node.addPerk(Conflict.Blacksmith);
+        Conflict.nodes.add(node);
 	}
 
 	public static void saveConfig() {
@@ -55,19 +51,6 @@ public class BeyondInfo {
         Conflict.Oceian .save(Conflict.information.getConfigurationSection("Capitals.Oceian"));
         Conflict.Savania.save(Conflict.information.getConfigurationSection("Capitals.Savania"));
     
-        Conflict.information.set("Trades.blacksmith", toString(Conflict.Blacksmith.getNode().getLocation()));
-        Conflict.information.set("Trades.potions", toString(Conflict.Potions.getNode().getLocation()));
-        Conflict.information.set("Trades.enchantments", toString(Conflict.Enchantments.getNode().getLocation()));
-        //Conflict.information.set("Trades.richportal", toString(Conflict.TRADE_RICHPORTAL));
-        Conflict.information.set("Trades.mystportal", toString(Conflict.MystPortal.getNode().getLocation()));
-        
-        int i = 0;
-        for (Node n : Conflict.nodes) {
-            Conflict.information.set("Nodes." + i + ".Name", n.getName());
-            Conflict.information.set("Nodes." + i + ".Location", toString(n.getLocation()));
-            i++;
-        }
-        
         //---------------
         // New-style save
 
@@ -102,7 +85,7 @@ public class BeyondInfo {
                 perk.save(section);
             }
             File perksConfigFile = new File(Conflict.plugin.getDataFolder(), "perks.yml");
-            perksConfig.save(nodesConfigFile);
+            perksConfig.save(perksConfigFile);
 
             // config.yml
             FileConfiguration defaultConfig = Conflict.plugin.getConfig();

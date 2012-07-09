@@ -14,10 +14,10 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import Lihad.Conflict.Conflict;
+import Lihad.Conflict.*;
 
 public class BeyondBlockListener implements Listener {
-	public BeyondBlockListener() {	}
+	public BeyondBlockListener() { }
     
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event){
@@ -28,16 +28,17 @@ public class BeyondBlockListener implements Listener {
 					|| (!Conflict.Savania.getMayors().contains(player.getName()) && Conflict.Savania.getLocation().distance(event.getBlock().getLocation()) < Conflict.Savania.getProtectionRadius())
 			)&& !player.isOp() && !Conflict.handler.has(player, "conflict.debug")){
 				event.setCancelled(true);
+                return;
 			}
-			if(!player.isOp() && !Conflict.handler.has(player, "conflict.debug") && (
-                   (Conflict.Blacksmith     .getNode().isInRadius(event.getBlock().getLocation()))
-                || (Conflict.MystPortal     .getNode().isInRadius(event.getBlock().getLocation()))
-                || (Conflict.Enchantments   .getNode().isInRadius(event.getBlock().getLocation()))
-                || (Conflict.RichPortal     .getNode().isInRadius(event.getBlock().getLocation()))
-                || (Conflict.Potions        .getNode().isInRadius(event.getBlock().getLocation())))
-			){
-				event.setCancelled(true);
-			}
+            
+            if(!player.isOp() && !Conflict.handler.has(player, "conflict.debug")) {
+                for (Node n : Conflict.nodes) {
+                    if (n.isBlockProtected() && n.isInRadius(event.getBlock().getLocation())) {
+                        event.setCancelled(true);
+                        return;
+                    }
+                }
+            }
 		}
 	}
 	@EventHandler
@@ -49,46 +50,39 @@ public class BeyondBlockListener implements Listener {
 					|| (!Conflict.Savania.getMayors().contains(player.getName()) && Conflict.Savania.getLocation().distance(event.getBlock().getLocation()) < Conflict.Savania.getProtectionRadius()))
 					&& !player.isOp() && !Conflict.handler.has(player, "conflict.debug")){
 				event.setCancelled(true);
+                return;
 			}
-			if(!player.isOp() && !Conflict.handler.has(player, "conflict.debug") && (
-                   (Conflict.Blacksmith     .getNode().isInRadius(event.getBlock().getLocation()))
-                || (Conflict.MystPortal     .getNode().isInRadius(event.getBlock().getLocation()))
-                || (Conflict.Enchantments   .getNode().isInRadius(event.getBlock().getLocation()))
-                || (Conflict.RichPortal     .getNode().isInRadius(event.getBlock().getLocation()))
-                || (Conflict.Potions        .getNode().isInRadius(event.getBlock().getLocation())))
-			){
-				event.setCancelled(true);
+            if(!player.isOp() && !Conflict.handler.has(player, "conflict.debug")) {
+                for (Node n : Conflict.nodes) {
+                    if (n.isBlockProtected() && n.isInRadius(event.getBlock().getLocation())) {
+                        event.setCancelled(true);
+                        return;
+                    }
+                }
 			}
 		}
 	}	
 	@EventHandler
 	public void onEntityExplode(EntityExplodeEvent event){
 		if(event.getLocation().getWorld().getName().equals("survival")){
-			if(
-                   (Conflict.Blacksmith     .getNode().isInRadius(event.getLocation()))
-                || (Conflict.MystPortal     .getNode().isInRadius(event.getLocation()))
-                || (Conflict.Enchantments   .getNode().isInRadius(event.getLocation()))
-                || (Conflict.RichPortal     .getNode().isInRadius(event.getLocation()))
-                || (Conflict.Potions        .getNode().isInRadius(event.getLocation()))
-			){
-				event.setCancelled(true);
-			}
-		}
-	}
+            for (Node n : Conflict.nodes) {
+                if (n.isBlockProtected() && n.isInRadius(event.getLocation())) {
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+        }
+    }
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event){
-		if(event.getPlayer().getWorld().getName().equals("survival") && event.getPlayer().getItemInHand() != null 
-				&& (event.getPlayer().getItemInHand().getType() == Material.LAVA_BUCKET 
-				|| event.getPlayer().getItemInHand().getType() == Material.WATER_BUCKET)){
-			if(
-                   (Conflict.Blacksmith     .getNode().isInRadius(event.getPlayer().getLocation()))
-                || (Conflict.MystPortal     .getNode().isInRadius(event.getPlayer().getLocation()))
-                || (Conflict.Enchantments   .getNode().isInRadius(event.getPlayer().getLocation()))
-                || (Conflict.RichPortal     .getNode().isInRadius(event.getPlayer().getLocation()))
-                || (Conflict.Potions        .getNode().isInRadius(event.getPlayer().getLocation()))
-			){
-				event.setCancelled(true);
-			}
+        org.bukkit.inventory.ItemStack item = event.getPlayer().getItemInHand();
+		if(event.getPlayer().getWorld().getName().equals("survival") && item != null && (item.getType() == Material.LAVA_BUCKET || item.getType() == Material.WATER_BUCKET)) {
+            for (Node n : Conflict.nodes) {
+                if (n.isBlockProtected() && n.isInRadius(event.getClickedBlock().getLocation())) {
+                    event.setCancelled(true);
+                    return;
+                }
+            }
 		}
 	}
 }

@@ -10,7 +10,10 @@ import Lihad.Conflict.Conflict;
 
 public class PotionPerk extends BlockPerk {
 
-    public PotionPerk(String n) { super(n); }
+    public PotionPerk(String n) {
+        super(n); 
+        purchasable = true;
+    }
 
     Map<String, Integer> playerUses = new HashMap<String, Integer>();
 

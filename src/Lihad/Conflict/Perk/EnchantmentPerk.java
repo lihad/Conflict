@@ -11,7 +11,10 @@ import Lihad.Conflict.Conflict;
 
 public class EnchantmentPerk extends BlockPerk {
 
-    public EnchantmentPerk(String n) { super(n); }
+    public EnchantmentPerk(String n) {
+        super(n);
+        purchasable = true;
+    }
 
     Map<String, Integer> playerUses = new HashMap<String, Integer>();
 

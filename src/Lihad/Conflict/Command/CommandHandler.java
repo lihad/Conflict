@@ -218,7 +218,7 @@ public class CommandHandler implements CommandExecutor {
 			return false;
 		}
 		sender.sendMessage(Conflict.CITYCOLOR + city.getName() + Conflict.TEXTCOLOR
-				+ " perks: " + Conflict.PERKCOLOR + city.getPerks());
+				+ " perks: " + Conflict.PERKCOLOR + Perk.getPerkNameList(city.getPerks(), false));
 		return true;
 	}
 
@@ -234,8 +234,8 @@ public class CommandHandler implements CommandExecutor {
             City city = Conflict.getPlayerCity(sender.getName());
             if(city != null && city.getMayors().contains(sender.getName())){
                 Perk perk = Perk.getPerkByName(arg[0]);
-                if (perk == null) {
-                    sender.sendMessage(Conflict.ERRORCOLOR + "Invalid perk.  Possible perks: " + Conflict.PERKCOLOR + "weapondrops, armordrops, potiondrops, tooldrops, bowdrops, shield, strike, endergrenade, enchantup, golddrops");
+                if (perk == null || !perk.isPurchasable()) {
+                    sender.sendMessage(Conflict.ERRORCOLOR + "Invalid perk.  Possible perks: " + Conflict.PERKCOLOR + Perk.getPerkNameList(java.util.Arrays.asList(Conflict.perks), true));
                     return true;
                 }
                 if (city.getPerks().contains(perk)) {
@@ -251,11 +251,12 @@ public class CommandHandler implements CommandExecutor {
                 }
                 city.addPerk(perk);
                 city.subtractMoney(perk.getPurchaseCost());
+                sender.sendMessage(Conflict.PERKCOLOR + perk.getName() + Conflict.TEXTCOLOR + " purchased. Remaining balance " + Conflict.MONEYCOLOR + city.getMoney());
 
             }else
                 sender.sendMessage(Conflict.ERRORCOLOR + "Unable to use this command");
         }else
-            sender.sendMessage(Conflict.TEXTCOLOR + "Possible perks: " + Conflict.PERKCOLOR + "weapondrops, armordrops, potiondrops, tooldrops, bowdrops, shield, strike, endergrenade, enchantup, golddrops");
+            sender.sendMessage(Conflict.TEXTCOLOR + "Possible perks: " + Conflict.PERKCOLOR + Perk.getPerkNameList(java.util.Arrays.asList(Conflict.perks), true));
         return true;
     }
 
@@ -532,8 +533,7 @@ public class CommandHandler implements CommandExecutor {
 				sender.sendMessage(Conflict.PROMPTCOLOR + "Selection turned off");
 				Conflict.PLAYER_SET_SELECT.remove(sender.getName());
 			}else if(Conflict.getCity(arg[1]) != null
-					|| arg[1].equalsIgnoreCase("blacksmith") || arg[1].equalsIgnoreCase("potions") || arg[1].equalsIgnoreCase("enchantments")
-					|| arg[1].equalsIgnoreCase("richportal") || arg[1].equalsIgnoreCase("mystportal")
+					|| arg[1].equalsIgnoreCase("blacksmith") || arg[1].equalsIgnoreCase("potions") || arg[1].equalsIgnoreCase("enchantments") || arg[1].equalsIgnoreCase("mystportal")
 					|| (arg[1].length() > 7 
 							&& arg[1].substring(0, 7).equalsIgnoreCase("drifter") 
 							&& Conflict.getCity(arg[1].substring(7)) != null)) {

@@ -30,7 +30,6 @@ public class BeyondSafeModeListener implements Listener {
 			else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("blacksmith"))Conflict.Blacksmith.getNode().setLocation(event.getClickedBlock().getLocation());
 			else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("potions"))Conflict.Potions.getNode().setLocation(event.getClickedBlock().getLocation());
 			else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("enchantments"))Conflict.Enchantments.getNode().setLocation(event.getClickedBlock().getLocation());
-			else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("richportal"))Conflict.RichPortal.getNode().setLocation(event.getClickedBlock().getLocation());
 			else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("mystportal"))Conflict.MystPortal.getNode().setLocation(event.getClickedBlock().getLocation());
 			else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("drifterabatton"))Conflict.Abatton.setSpongeLocation(event.getClickedBlock().getLocation());
 			else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("drifteroceian"))Conflict.Oceian.setSpongeLocation(event.getClickedBlock().getLocation());

@@ -10,7 +10,10 @@ import Lihad.Conflict.*;
 
 public class BlacksmithPerk extends BlockPerk {
 
-    public BlacksmithPerk(String n) { super(n); }
+    public BlacksmithPerk(String n) {
+        super(n); 
+        purchasable = true;
+    }
 
     Map<String, Integer> playerUses = new HashMap<String, Integer>();
 
@@ -30,10 +33,10 @@ public class BlacksmithPerk extends BlockPerk {
             }
 
             player.getItemInHand().setDurability((short) 0);
+            player.updateInventory();
             uses++;
             
             playerUses.put(player.getName(), uses);
-            player.updateInventory();
             return true;
         }
 

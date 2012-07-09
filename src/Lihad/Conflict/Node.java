@@ -14,7 +14,7 @@ import Lihad.Conflict.Perk.*;
 public class Node {
 
     public Node(String n) { name = n; }
-    public Node(String n, Location l) { name = n; center = l;}
+    public Node(String n, Location l, int r) { name = n; center = l; setRadius(r);}
 
     String name;
 
@@ -22,6 +22,8 @@ public class Node {
 
     int radius;
     int radiusSquared;
+    
+    boolean blockProtected = false;
 
     public int getRadius() { return this.radius; }
     public void setRadius(int r) { radius = r; radiusSquared = r*r; }
@@ -31,6 +33,7 @@ public class Node {
         }
         return (center.distanceSquared(l) <= radiusSquared); 
     }
+    public boolean isBlockProtected() { return blockProtected; }
 
     Location center;
 
@@ -53,8 +56,9 @@ public class Node {
         }
         setLocation(l);
         
-        // Radius
+        // optional attributes
         setRadius(section.getInt("radius", 10));
+        blockProtected = section.getBoolean("preventblockedits", false);
         
         // Perks attached to this node
         List<String> perkNames = section.getStringList("perks");
@@ -76,6 +80,7 @@ public class Node {
         section.set("location", BeyondInfo.toString(center));
         section.set("radius", radius);
         section.set("type", "Node");
+        section.set("preventblockedits", blockProtected);
 
         if (perks.size() > 0) {
             List<String> perkNames = new LinkedList<String>();

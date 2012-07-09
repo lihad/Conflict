@@ -79,7 +79,7 @@ public class BeyondPlayerListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public static void onPlayerPortal(PlayerPortalEvent event){
 		if(event.getCause().equals(TeleportCause.NETHER_PORTAL) && event.getFrom().getWorld().getName().equals("survival") && Conflict.MystPortal.getNode().getLocation().distance(event.getFrom()) < 10){
-			if( Conflict.playerCanUsePerk(event.getPlayer().getName(), Conflict.MystPortal) ) {
+			if( Conflict.playerCanUsePerk(event.getPlayer(), Conflict.MystPortal) ) {
 				event.getPlayer().sendMessage("Shaaaaazaaam!");
 				event.getPlayer().teleport(new Location(Bukkit.getServer().getWorld("mystworld"), 0.0, 0.0, 0.0));
 				event.setTo(new Location(Bukkit.getServer().getWorld("mystworld"), 0.0, 0.0, 0.0));
@@ -107,40 +107,6 @@ public class BeyondPlayerListener implements Listener {
 						event.setCancelled(true);
 						return;
 					}
-				}
-			}
-		}
-	}
-
-	@EventHandler
-	public static void onPlayerInteractEntity(PlayerInteractEntityEvent event){
-		//if(event.getRightClicked() instanceof Villager && event.getPlayer().getInventory().contains(Material.DIAMOND_BLOCK)
-		City city = Conflict.getPlayerCity(event.getPlayer().getName());
-		if(event.getRightClicked() instanceof Villager && event.getPlayer().getLevel() >= 25
-				&& (city != null && city.getPerks().contains("enchantup"))){
-			if(event.getPlayer().getItemInHand() != null){
-				if(!event.getPlayer().getItemInHand().getEnchantments().isEmpty()){
-					Enchantment enchantment = (Enchantment) event.getPlayer().getItemInHand().getEnchantments().keySet().toArray()[(Conflict.random.nextInt(event.getPlayer().getItemInHand().getEnchantments().size()))];
-					if(event.getPlayer().getItemInHand().getEnchantmentLevel(enchantment) < BeyondUtil.maxEnchantLevel(enchantment)){
-						event.getPlayer().getItemInHand().addUnsafeEnchantment(enchantment, event.getPlayer().getItemInHand().getEnchantmentLevel(enchantment)+1);
-						event.getPlayer().sendMessage(Conflict.PERKCOLOR + "WOOT!! "+enchantment.toString()+" is now level "+event.getPlayer().getItemInHand().getEnchantmentLevel(enchantment));
-						//ItemStack stack = event.getPlayer().getInventory().getItem(event.getPlayer().getInventory().first(Material.DIAMOND_BLOCK));
-						//if(stack.getAmount() <= 1){
-						//	stack.setTypeId(0);
-						//}else{
-						//	stack.setAmount(stack.getAmount()-1);
-						//}
-						//event.getPlayer().getInventory().setItem(event.getPlayer().getInventory().first(Material.DIAMOND_BLOCK),stack);
-						event.getPlayer().setLevel(event.getPlayer().getLevel() - 25);
-						event.getPlayer().updateInventory();
-					}
-					else{
-						event.getPlayer().getItemInHand().addUnsafeEnchantment(enchantment, 1);
-						event.getPlayer().sendMessage(Conflict.PERKCOLOR + "Oh no!  That enchant was way too high for me to handle...");
-						event.getPlayer().setLevel(event.getPlayer().getLevel() - 10);
-					}
-				}else{
-					event.getPlayer().sendMessage(Conflict.PERKCOLOR + "MMMhmm.  It would seem as if this item has no enchants on it for me to upgrade.");
 				}
 			}
 		}
@@ -182,7 +148,7 @@ public class BeyondPlayerListener implements Listener {
 					continue; 
 				}
 				if (!block.getLocation().equals(p.getNode().getLocation())) { continue; }
-				if (!Conflict.playerCanUsePerk(event.getPlayer().getName(), p)) { 
+				if (!Conflict.playerCanUsePerk(event.getPlayer(), p)) { 
 					event.getPlayer().sendMessage(Conflict.NOTICECOLOR + "You can't use this perk!");
 					continue;
 				}
@@ -244,7 +210,6 @@ public class BeyondPlayerListener implements Listener {
 				Conflict.Potions.getNode().isInRadius(event.getRespawnLocation()) || 
 				Conflict.Enchantments.getNode().isInRadius(event.getRespawnLocation()) || 
 				Conflict.MystPortal.getNode().isInRadius(event.getRespawnLocation()) || 
-				Conflict.RichPortal.getNode().isInRadius(event.getRespawnLocation()) ||
 				event.getRespawnLocation().equals(event.getPlayer().getWorld().getSpawnLocation()))) 
 		{
 			City city = Conflict.getPlayerCity(event.getPlayer().getName());

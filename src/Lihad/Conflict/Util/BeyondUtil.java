@@ -14,7 +14,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.potion.Potion.Tier;
 import org.bukkit.potion.PotionType;
 
 import Lihad.Conflict.Conflict;
@@ -243,11 +242,11 @@ public class BeyondUtil {
 		}
 		return PotionType.SPEED;
 	}
-	public static Tier potionTierRandomizer(){
+	public static int potionTierRandomizer(){
 		int next = Conflict.random.nextInt(3);
 		if(next < 2){
-			return Tier.ONE;
-		}else return Tier.TWO;
+			return 1;
+		}else return 2;
 	}
 	public static boolean potionSplashRandomizer(){
 		int next = Conflict.random.nextInt(2);
@@ -378,6 +377,9 @@ public class BeyondUtil {
             case IRON_PICKAXE:
             case IRON_SPADE:
             case IRON_HOE:
+            case STONE_PICKAXE:
+            case STONE_SPADE:
+            case STONE_HOE:
             case WOOD_PICKAXE:
             case WOOD_SPADE:
             case WOOD_HOE:
