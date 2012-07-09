@@ -76,19 +76,21 @@ public class BeyondPlayerListener implements Listener {
         Conflict.checkPlayerCityPermissions(event.getPlayer());
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public static void onPlayerPortal(PlayerPortalEvent event){
-		if(event.getCause().equals(TeleportCause.NETHER_PORTAL) && event.getFrom().getWorld().getName().equals("survival") && Conflict.MystPortal.getNode().getLocation().distance(event.getFrom()) < 10){
-			if( Conflict.playerCanUsePerk(event.getPlayer(), Conflict.MystPortal) ) {
-				event.getPlayer().sendMessage("Shaaaaazaaam!");
-				event.getPlayer().teleport(new Location(Bukkit.getServer().getWorld("mystworld"), 0.0, 0.0, 0.0));
-				event.setTo(new Location(Bukkit.getServer().getWorld("mystworld"), 0.0, 0.0, 0.0));
-				event.setCancelled(true);
-			}else{
-				event.getPlayer().sendMessage("Epic Fail");
-			}
-		}
-	}
+    // MystPortal code
+	// @EventHandler(priority = EventPriority.HIGHEST)
+	// public static void onPlayerPortal(PlayerPortalEvent event){
+		// if(event.getCause().equals(TeleportCause.NETHER_PORTAL) && event.getFrom().getWorld().getName().equals("survival") && Conflict.MystPortal.getNode().getLocation().distance(event.getFrom()) < 10){
+			// if( Conflict.playerCanUsePerk(event.getPlayer(), Conflict.MystPortal) ) {
+				// event.getPlayer().sendMessage("Shaaaaazaaam!");
+				// event.getPlayer().teleport(new Location(Bukkit.getServer().getWorld("mystworld"), 0.0, 0.0, 0.0));
+				// event.setTo(new Location(Bukkit.getServer().getWorld("mystworld"), 0.0, 0.0, 0.0));
+				// event.setCancelled(true);
+			// }else{
+				// event.getPlayer().sendMessage("Epic Fail");
+			// }
+		// }
+	// }
+    
 	@EventHandler   
 	public static void onPlayerTeleport(PlayerTeleportEvent event){
 
@@ -199,20 +201,6 @@ public class BeyondPlayerListener implements Listener {
 					// This is cute.
 				}
 			}
-		}
-	}
-	@EventHandler
-	public static void onPlayerRespawn(PlayerRespawnEvent event){
-		if(event.getPlayer().getWorld().getName().equals("survival") && (
-				Conflict.Blacksmith.getNode().isInRadius(event.getRespawnLocation()) || 
-				Conflict.Potions.getNode().isInRadius(event.getRespawnLocation()) || 
-				Conflict.Enchantments.getNode().isInRadius(event.getRespawnLocation()) || 
-				Conflict.MystPortal.getNode().isInRadius(event.getRespawnLocation()) || 
-				event.getRespawnLocation().equals(event.getPlayer().getWorld().getSpawnLocation()))) 
-		{
-			City city = Conflict.getPlayerCity(event.getPlayer().getName());
-			if (city != null)
-				event.setRespawnLocation(city.getSpawn());
 		}
 	}
 

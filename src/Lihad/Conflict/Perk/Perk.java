@@ -14,10 +14,6 @@ public class Perk implements org.bukkit.event.Listener {
     String name;
     public String getName() { return name; }
     
-    Node node;
-    public Node getNode() { return node; }
-    public void setNode(Node n) { node = n; }
-
     boolean purchasable = false;
     int purchaseCost = 500;
     int useCost = 0;

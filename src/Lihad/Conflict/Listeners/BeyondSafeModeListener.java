@@ -27,10 +27,10 @@ public class BeyondSafeModeListener implements Listener {
 			if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("Abatton"))Conflict.Abatton.setLocation(event.getClickedBlock().getLocation());
 			else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("Oceian"))Conflict.Oceian.setLocation(event.getClickedBlock().getLocation());
 			else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("Savania"))Conflict.Savania.setLocation(event.getClickedBlock().getLocation());
-			else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("blacksmith"))Conflict.Blacksmith.getNode().setLocation(event.getClickedBlock().getLocation());
-			else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("potions"))Conflict.Potions.getNode().setLocation(event.getClickedBlock().getLocation());
-			else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("enchantments"))Conflict.Enchantments.getNode().setLocation(event.getClickedBlock().getLocation());
-			else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("mystportal"))Conflict.MystPortal.getNode().setLocation(event.getClickedBlock().getLocation());
+			// else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("blacksmith"))Conflict.Blacksmith.getNode().setLocation(event.getClickedBlock().getLocation());
+			// else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("potions"))Conflict.Potions.getNode().setLocation(event.getClickedBlock().getLocation());
+			// else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("enchantments"))Conflict.Enchantments.getNode().setLocation(event.getClickedBlock().getLocation());
+			// else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("mystportal"))Conflict.MystPortal.getNode().setLocation(event.getClickedBlock().getLocation());
 			else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("drifterabatton"))Conflict.Abatton.setSpongeLocation(event.getClickedBlock().getLocation());
 			else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("drifteroceian"))Conflict.Oceian.setSpongeLocation(event.getClickedBlock().getLocation());
 			else if(Conflict.PLAYER_SET_SELECT.get(event.getPlayer().getName()).equalsIgnoreCase("driftersavania"))Conflict.Savania.setSpongeLocation(event.getClickedBlock().getLocation());
