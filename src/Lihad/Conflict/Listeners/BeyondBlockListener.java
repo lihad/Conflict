@@ -75,8 +75,9 @@ public class BeyondBlockListener implements Listener {
     }
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event){
+        if (event.getClickedBlock() == null) { return; }
         org.bukkit.inventory.ItemStack item = event.getPlayer().getItemInHand();
-		if(event.getPlayer().getWorld().getName().equals("survival") && item != null && (item.getType() == Material.LAVA_BUCKET || item.getType() == Material.WATER_BUCKET)) {
+        if(event.getPlayer().getWorld().getName().equals("survival") && item != null && (item.getType() == Material.LAVA_BUCKET || item.getType() == Material.WATER_BUCKET)) {
             for (Node n : Conflict.nodes) {
                 if (n.isBlockProtected() && n.isInRadius(event.getClickedBlock().getLocation())) {
                     event.setCancelled(true);
