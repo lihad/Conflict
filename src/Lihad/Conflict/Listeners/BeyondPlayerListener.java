@@ -180,8 +180,10 @@ public class BeyondPlayerListener implements Listener {
 					if(Conflict.handler.inGroup(player.getWorld().getName(), player.getName(), "Drifter")
 							&& !Conflict.handler.inGroup(player.getWorld().getName(), player.getName(), "Peasant")){
 						boolean successful = Conflict.joinCity(player, player.getName(), city.getName(), false);
-						if (!successful)
+						if (!successful){
 							player.sendMessage(Conflict.NOTICECOLOR + "Sorry you couldn't join a city, ask for help with the above error messages?");
+							return;
+						}
 						System.out.println("-------------------UPGRADE-DEBUG-----------");
 						System.out.println("Sponge hit by player: "+player);
 						Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "pex promote "+player.getName());
@@ -198,7 +200,8 @@ public class BeyondPlayerListener implements Listener {
 					}
 				}catch(NullPointerException e)
 				{
-					// This is cute.
+					System.out.println("EXCEPTION - Player trying to join a city failed");
+					e.printStackTrace();
 				}
 			}
 		}
