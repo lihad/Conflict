@@ -465,6 +465,14 @@ public class CommandHandler implements CommandExecutor {
 				plugin.reset(sender, arg[1]);
 				return true;
 			}
+            else if (arg.length >= 2 && arg[0].equalsIgnoreCase("war") && arg[1].equalsIgnoreCase("start")) {
+                // Start a war.  Set the next war time to now
+                Conflict.nextWartime = new java.util.Date();
+                if (arg.length >= 3) {
+                    Conflict.nextWarDuration = Integer.parseInt(arg[2]);
+                }
+                sender.sendMessage("War will start in " + (Conflict.nextWarDuration / 10) + " minutes, and last " + Conflict.nextWarDuration + " minutes.");
+            }
 			return true;
 		}
 		return false;

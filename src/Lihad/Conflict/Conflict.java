@@ -76,7 +76,8 @@ public class Conflict extends JavaPlugin {
 	public static Map<String, String> PLAYER_SET_SELECT = new HashMap<String, String>();
 
     public static War war = null;
-    static Date nextWartime = null;
+    public static Date nextWartime = null;
+    public static int nextWarDuration = 60;
 
 	public static int TASK_ID_EVENT;
 
@@ -352,11 +353,12 @@ public class Conflict extends JavaPlugin {
                     if(war == null){
                         if (nextWartime == null) {
                             nextWartime = War.getNextWartime();
+                            nextWarDuration = 60;
                         }
 
                         Date now = new Date();
                         if (now.after(nextWartime)) {
-                            war = new War();
+                            war = new War((int)java.lang.Math.ceil((double)nextWarDuration / 10.0), nextWarDuration);
                             nextWartime = null;
                         }
                     }

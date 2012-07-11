@@ -123,17 +123,20 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 	ArrayList<WarNode> nodes = new ArrayList<WarNode>();
 	List<Team> teams = new ArrayList<Team>();
 	boolean allNodesConquered = false;
+    int ticksToConquer = 0;
     Date beginTime = null;
     Date endTime = null;
     Map<String, Team> loggedPlayers = new HashMap<String, Team>();
 
-	static final Team Contested = new Team("Contested");
+    static final Team Contested = new Team("Contested");
 
     static final int PREP_TIME_IN_MINS = 15;
     
 	// -------------------------------------
 	// Constructor --------------------
-	public War() {
+	public War() { } // Empty ctor creates a War that doesn't do anything, because Bukkit listeners require an instance
+    
+    public War(int startDelayMinutes, int durationMinutes) {
 
 		for (Node n : Conflict.nodes) {
             if (n instanceof Warzone) {
@@ -142,14 +145,15 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
             }
         }
 
-        // War starts in 10 mins, and ends 60 mins after that
         Calendar c = Calendar.getInstance();
-        c.add(Calendar.MINUTE, 10);
+        c.add(Calendar.MINUTE, startDelayMinutes);
         beginTime = c.getTime();
-        c.add(Calendar.MINUTE, 60);
+        c.add(Calendar.MINUTE, durationMinutes);
         endTime = c.getTime();
 
-		postWarPendingNotice();
+        ticksToConquer = durationMinutes * 30;
+        
+        postWarPendingNotice();
 	}
 
 	// -------------------------------------
@@ -181,7 +185,7 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 		if (t != null) {
 			t.removePlayer(p);
 	        // Remember the team they were on, so they get put there if they re-join
-	        loggedPlayers.put(p.getName(), getPlayerTeam(p));
+	        loggedPlayers.put(p.getName(), t);
 		}
 		else if (unassignedPlayers.contains(p)) {
 			unassignedPlayers.remove(p);
@@ -250,14 +254,16 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
                         team = t;
                     }
                 }
-                team.addPlayer(p);
             }
-			if (broadcastAdditions) {
-                String message = "" + ChatColor.AQUA + p.getName();
-                message = message + ChatColor.GRAY + " has joined the war on team ";
-                message = message + ChatColor.GOLD + team.getName();
-				Bukkit.getServer().broadcastMessage(message);
-			}
+            if (team != null) {
+                team.addPlayer(p);
+                if (broadcastAdditions) {
+                    String message = "" + ChatColor.AQUA + p.getName();
+                    message = message + ChatColor.GRAY + " has joined the war on team ";
+                    message = message + ChatColor.GOLD + team.getName();
+                    Bukkit.getServer().broadcastMessage(message);
+                }
+            }
 		}
 	}
 
@@ -483,7 +489,7 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
     // If you need any War members or methods, you need to use Conflict.war (and check for null first)
     
 	@org.bukkit.event.EventHandler
-	public void onEntityDamageByEntity(org.bukkit.event.entity.EntityDamageByEntityEvent event){
+	public static void onEntityDamageByEntity(org.bukkit.event.entity.EntityDamageByEntityEvent event){
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//
 		// PvP rules
@@ -553,8 +559,7 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 	}
 
 	@org.bukkit.event.EventHandler
-	public void onPlayerQuit(org.bukkit.event.player.PlayerQuitEvent event) {
-		// Players that quit during war may switch teams...  Not sure how to fix this.
+	public static void onPlayerQuit(org.bukkit.event.player.PlayerQuitEvent event) {
 		if (Conflict.war != null) {
             Conflict.war.unregisterPlayer(event.getPlayer());
 		}
@@ -586,6 +591,15 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 				else if (arg[0].equalsIgnoreCase("teams")) {
 					Conflict.war.postWarTeams(sender);
 				}
+                else if (arg[0].equalsIgnoreCase("debug")) {
+                    sender.sendMessage("Unassigned players = " + Conflict.war.unassignedPlayers);
+                    String message = "Logged players: ";
+                    for (Map.Entry entry : Conflict.war.loggedPlayers.entrySet()) {
+                        Team t = (Team)entry.getValue();
+                        message += (String)entry.getKey() + "(" + (t != null ? t.getName() : null) + ")";
+                    }
+                    sender.sendMessage(message);
+                }
 			}
 			return true;
 		}
