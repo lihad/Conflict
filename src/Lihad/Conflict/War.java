@@ -433,7 +433,7 @@ public class War implements org.bukkit.event.Listener, org.bukkit.command.Comman
 					int counter = node.teamCounters.get(node.owner);
 					counter++;
 
-					if (counter > 3600) {
+					if (counter > ticksToConquer) {
 						node.conquered = true;
 					}
 					node.teamCounters.put(node.owner, counter);
