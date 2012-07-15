@@ -136,7 +136,6 @@ public class City extends Node {
 	        }
         }
         
-        center = BeyondInfo.toLocation(section, "Location");
         spawnLocation = BeyondInfo.toLocation(section, "Spawn");
         drifterLocation = BeyondInfo.toLocation(section, "Drifter");
 
@@ -154,9 +153,31 @@ public class City extends Node {
         java.util.List<String> setAsList = null;
         setAsList = new java.util.ArrayList<String>(players);
 
-        section.createSection("Members");
+        section.createSection("members");
         
-        ConfigurationSection members = section.getConfigurationSection("Members");
+        ConfigurationSection members = section.createSection("members");
+        for (Iterator <String> iter = setAsList.iterator(); iter.hasNext();) {
+            String playerName = iter.next();
+            Map <String, Object> map = new HashMap<String, Object>();
+            map.put("mayor", mayors.contains(playerName));
+            map.put("joined", getJoinedTime(playerName));
+            members.createSection(playerName, map);
+        }
+        section.set("spawn", BeyondInfo.toString(spawnLocation));
+        section.set("drifter", BeyondInfo.toString(drifterLocation));
+        section.set("worth", bankBalance);
+        section.set("protection", spawnProtectRadius);
+        section.set("password", getPassword());
+        section.set("type", "City");
+        
+        // Deprecated keys - remove later
+        section.set("Spawn", BeyondInfo.toString(spawnLocation));
+        section.set("Drifter", BeyondInfo.toString(drifterLocation));
+        section.set("Worth", bankBalance);
+        section.set("Protection", spawnProtectRadius);
+        section.set("Password", getPassword());
+        section.set("type", "City");
+        members = section.createSection("Members");
         for (Iterator <String> iter = setAsList.iterator(); iter.hasNext();) {
         	String playerName = iter.next();
         	Map <String, Object> map = new HashMap<String, Object>();
@@ -164,13 +185,6 @@ public class City extends Node {
         	map.put("joined", getJoinedTime(playerName));
         	members.createSection(playerName, map);
         }
-        section.set("Location", BeyondInfo.toString(center));
-        section.set("Spawn", BeyondInfo.toString(spawnLocation));
-        section.set("Drifter", BeyondInfo.toString(drifterLocation));
-        section.set("Worth", bankBalance);
-        section.set("Protection", spawnProtectRadius);
-        section.set("Password", getPassword());
-        section.set("type", "City");
         
         super.save(section);
     }

@@ -198,10 +198,11 @@ public class Conflict extends JavaPlugin {
     }
     
     public static boolean playerCanUsePerk(Player player, Perk perk) {
-        City c = getPlayerCity(player.getName());
-        if (c != null)
-        	return (c.getPerks().contains(perk));
-        return false;
+        return true;
+        // City c = getPlayerCity(player.getName());
+        // if (c != null)
+        //    return (c.getPerks().contains(perk));
+        // return false;
     }
     
     /**
