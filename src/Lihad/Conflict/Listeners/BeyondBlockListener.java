@@ -22,15 +22,7 @@ public class BeyondBlockListener implements Listener {
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event){
         Player player = event.getPlayer();
-		if(event.getBlock().getWorld().getName().equals("survival")){
-            if (((!Conflict.Abatton.getMayors().contains(player.getName()) && Conflict.Abatton.getLocation().distance(event.getBlock().getLocation()) < Conflict.Abatton.getProtectionRadius())
-					|| (!Conflict.Oceian.getMayors().contains(player.getName()) && Conflict.Oceian.getLocation().distance(event.getBlock().getLocation()) < Conflict.Oceian.getProtectionRadius())
-					|| (!Conflict.Savania.getMayors().contains(player.getName()) && Conflict.Savania.getLocation().distance(event.getBlock().getLocation()) < Conflict.Savania.getProtectionRadius())
-			)&& !player.isOp() && !Conflict.handler.has(player, "conflict.debug")){
-				event.setCancelled(true);
-                return;
-			}
-            
+        if(event.getBlock().getWorld().getName().equals("survival")){
             if(!player.isOp() && !Conflict.handler.has(player, "conflict.debug")) {
                 for (Node n : Conflict.nodes) {
                     if (n.isBlockProtected() && n.isInRadius(event.getBlock().getLocation())) {
@@ -45,13 +37,6 @@ public class BeyondBlockListener implements Listener {
 	public void onBlockPlace(BlockPlaceEvent event){
         Player player = event.getPlayer();
 		if(event.getBlock().getWorld().getName().equals("survival")){
-            if(((!Conflict.Abatton.getMayors().contains(player.getName()) && Conflict.Abatton.getLocation().distance(event.getBlock().getLocation()) < Conflict.Abatton.getProtectionRadius())
-					|| (!Conflict.Oceian.getMayors().contains(player.getName()) && Conflict.Oceian.getLocation().distance(event.getBlock().getLocation()) < Conflict.Oceian.getProtectionRadius())
-					|| (!Conflict.Savania.getMayors().contains(player.getName()) && Conflict.Savania.getLocation().distance(event.getBlock().getLocation()) < Conflict.Savania.getProtectionRadius()))
-					&& !player.isOp() && !Conflict.handler.has(player, "conflict.debug")){
-				event.setCancelled(true);
-                return;
-			}
             if(!player.isOp() && !Conflict.handler.has(player, "conflict.debug")) {
                 for (Node n : Conflict.nodes) {
                     if (n.isBlockProtected() && n.isInRadius(event.getBlock().getLocation())) {

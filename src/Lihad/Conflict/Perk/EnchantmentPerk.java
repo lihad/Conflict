@@ -11,8 +11,8 @@ import Lihad.Conflict.Conflict;
 
 public class EnchantmentPerk extends BlockPerk {
 
-    public EnchantmentPerk(String n) {
-        super(n);
+    public EnchantmentPerk() {
+        super("EnchantmentBlock");
         purchasable = true;
     }
 

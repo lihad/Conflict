@@ -18,7 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import Lihad.Conflict.Conflict;
 import Lihad.Conflict.City;
 import Lihad.Conflict.Util.BeyondUtil;
-import Lihad.Conflict.Information.BeyondInfo;
+import Lihad.Conflict.BeyondInfo;
 import Lihad.Conflict.Perk.Perk;
 
 public class CommandHandler implements CommandExecutor {
@@ -34,9 +34,7 @@ public class CommandHandler implements CommandExecutor {
 		// // Console can't send Conflict commands.  Sorry.
 		// return false;
 		// }
-		if(cmd.getName().equalsIgnoreCase("point")) {
-			return handlePoint(sender, arg);
-		}else if(cmd.getName().equalsIgnoreCase("cwho")) {
+        if(cmd.getName().equalsIgnoreCase("cwho")) {
 			return handleCWho(sender, arg);
 		}else if(cmd.getName().equalsIgnoreCase("rarity")) {
 			return handleRarity(sender, arg);
@@ -60,8 +58,6 @@ public class CommandHandler implements CommandExecutor {
 			return handleJoinCity(sender, arg);
 		}else if(cmd.getName().equalsIgnoreCase("spawn")) {
 			return handleSpawn(sender, arg);
-		}else if(cmd.getName().equalsIgnoreCase("nulls")) {
-			return handleNulls(sender, arg);
 		}else if(cmd.getName().equalsIgnoreCase("setcityspawn")) {
 			return handleSetCitySpawn(sender, arg);
 		}else if(cmd.getName().equalsIgnoreCase("purchase")) {
@@ -94,21 +90,6 @@ public class CommandHandler implements CommandExecutor {
                     return true;
                 }
 			}
-		}
-		return false;
-	}
-
-	/**
-	 * Processes a /nulls command.
-	 * @param sender - The sender of the command.
-	 * @param arg - The arguments.
-	 * @return boolean - True if responded to, false if not.
-	 */
-	private boolean handleNulls(CommandSender sender, String[] arg) {
-		if (sender.isOp() && sender instanceof Player) {
-			Player player = (Player) sender;
-			player.teleport(player.getWorld().getSpawnLocation());
-			return true;
 		}
 		return false;
 	}
@@ -366,8 +347,8 @@ public class CommandHandler implements CommandExecutor {
 		if (sender.isOp()){
 			if(arg.length == 1 && arg[0].equalsIgnoreCase("count")){
 				sender.sendMessage("Count:");
-				for (int i=0; i<Conflict.cities.length; i++) {
-					sender.sendMessage(Conflict.cities[i].getName() + " - " + Conflict.cities[i].getPopulation());
+                for (City c : Conflict.cities) {
+                    sender.sendMessage(c.getName() + " - " + c.getPopulation());
 				}
 			}else if(arg.length == 3 && arg[0].equalsIgnoreCase("cmove")){
 				plugin.joinCity(sender, arg[2], arg[1], true);
@@ -431,8 +412,8 @@ public class CommandHandler implements CommandExecutor {
 				}
 			}else if(arg.length == 1 && arg[0].equalsIgnoreCase("worth")){
 				sender.sendMessage("Worth:");
-				for (int i=0; i<Conflict.cities.length; i++) {
-					sender.sendMessage(Conflict.cities[i].getName() + " - " + Conflict.cities[i].getMoney());
+                for (City c : Conflict.cities) {
+                    sender.sendMessage(c.getName() + " - " + c.getMoney());
 				}
 			}else if(arg.length == 4 && arg[0].equalsIgnoreCase("worth") && arg[1].equalsIgnoreCase("modify")){
 				City city = Conflict.getCity(arg[2]);
@@ -452,14 +433,12 @@ public class CommandHandler implements CommandExecutor {
 							+ " is an invalid city.  Try one of: " + Conflict.CITYCOLOR + Conflict.cities);
 				}
 			}else if(arg.length == 1 && arg[0].equalsIgnoreCase("mayors")){
-				for (int i=0; i<Conflict.cities.length; i++) {
-					sender.sendMessage(Conflict.CITYCOLOR + Conflict.cities[i].getName() + Conflict.TEXTCOLOR + " - "
-							+ Conflict.MAYORCOLOR + Conflict.cities[i].getMayors());
+                for (City c : Conflict.cities) {
+					sender.sendMessage(Conflict.CITYCOLOR + c.getName() + Conflict.TEXTCOLOR + " - " + Conflict.MAYORCOLOR + c.getMayors());
 				}
 			}else if(arg.length == 1 && arg[0].equalsIgnoreCase("save")){
-				Conflict.saveInfoFile();
+				BeyondInfo.saveConfig();
 			}else if(arg.length == 1 && arg[0].equalsIgnoreCase("reload")){
-				Conflict.loadInfoFile(Conflict.information, Conflict.infoFile);
 				BeyondInfo.loadConfig();
 			}else if(arg.length == 2 && arg[0].equalsIgnoreCase("reset")){
 				plugin.reset(sender, arg[1]);
@@ -524,30 +503,6 @@ public class CommandHandler implements CommandExecutor {
                     player.teleport(loc);
 				}
 			} else player.sendMessage(Conflict.ERRORCOLOR + "You are not in the correct world to use this command");
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Processes a /point command.
-	 * @param sender - The sender of the command.
-	 * @param arg - The arguments.
-	 * @return boolean - True if responded to, false if not.
-	 */
-	private boolean handlePoint(CommandSender sender, String[] arg) {
-		if (sender instanceof Player && sender.isOp() && arg.length == 2 && arg[0].equalsIgnoreCase("set")) {
-			if(!Conflict.PLAYER_SET_SELECT.isEmpty() && Conflict.PLAYER_SET_SELECT.containsKey(sender.getName())){
-				sender.sendMessage(Conflict.PROMPTCOLOR + "Selection turned off");
-				Conflict.PLAYER_SET_SELECT.remove(sender.getName());
-			}else if(Conflict.getCity(arg[1]) != null
-					|| arg[1].equalsIgnoreCase("blacksmith") || arg[1].equalsIgnoreCase("potions") || arg[1].equalsIgnoreCase("enchantments") || arg[1].equalsIgnoreCase("mystportal")
-					|| (arg[1].length() > 7 
-							&& arg[1].substring(0, 7).equalsIgnoreCase("drifter") 
-							&& Conflict.getCity(arg[1].substring(7)) != null)) {
-				sender.sendMessage(Conflict.PROMPTCOLOR + "Please select a position");
-				Conflict.PLAYER_SET_SELECT.put(sender.getName(), arg[1]);
-			}
 			return true;
 		}
 		return false;

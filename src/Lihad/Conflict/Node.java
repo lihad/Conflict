@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 
-import Lihad.Conflict.Information.BeyondInfo;
+import Lihad.Conflict.BeyondInfo;
 import Lihad.Conflict.Perk.*;
 
 public class Node {

@@ -10,8 +10,8 @@ import Lihad.Conflict.*;
 
 public class BlacksmithPerk extends BlockPerk {
 
-    public BlacksmithPerk(String n) {
-        super(n); 
+    public BlacksmithPerk() {
+        super("Blacksmith"); 
         purchasable = true;
     }
 

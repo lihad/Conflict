@@ -10,8 +10,8 @@ import Lihad.Conflict.Conflict;
 
 public class PotionPerk extends BlockPerk {
 
-    public PotionPerk(String n) {
-        super(n); 
+    public PotionPerk() {
+        super("Potions"); 
         purchasable = true;
     }
 

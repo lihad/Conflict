@@ -25,7 +25,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import ru.tehkode.permissions.PermissionManager;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 import Lihad.Conflict.Command.CommandHandler;
-import Lihad.Conflict.Information.BeyondInfo;
 import Lihad.Conflict.Listeners.*;
 import Lihad.Conflict.Perk.*;
 import Lihad.Conflict.Util.BeyondUtil;
@@ -42,20 +41,15 @@ public class Conflict extends JavaPlugin {
     // Plugin instance
     public static Conflict plugin;
     
-	public static YamlConfiguration information;
-	
 	public static PermissionHandler handler;
 	public static PermissionManager ex;
 	private static Logger log = Logger.getLogger("Minecraft");
 
-    public static City Abatton = new City("Abatton");
-    public static City Oceian = new City("Oceian");
-    public static City Savania = new City("Savania");
-    public static City[] cities = {Abatton, Oceian, Savania};
+    public static List<City> cities = new java.util.ArrayList<City>();
     
-    public static Perk Blacksmith = new BlacksmithPerk("blacksmith");
-    public static Perk Potions = new PotionPerk("potions");
-    public static Perk Enchantments = new EnchantmentPerk("enchantments");
+    public static Perk Blacksmith = new BlacksmithPerk();
+    public static Perk Potions = new PotionPerk();
+    public static Perk Enchantments = new EnchantmentPerk();
     public static Perk MystPortal = new PortalPerk("mystportal");
     public static Perk WeaponDrop = new WeaponDropPerk();
     public static Perk ArmorDrop = new ArmorDropPerk();
@@ -159,9 +153,11 @@ public class Conflict extends JavaPlugin {
     public static long switchCooldown = 1209600000;
 
     public static City getPlayerCity(String playerName) {
-    	for (int i=0; i<cities.length; i++)
-    		if (cities[i].hasPlayer(playerName))
-    			return cities [i];
+        for (City c : cities) {
+            if (c.hasPlayer(playerName)) {
+                return c;
+            }
+        }
         return null;
     }
     
@@ -172,9 +168,11 @@ public class Conflict extends JavaPlugin {
      * @return City - The City with the given name, or null if not found.
      */
     public static City getCity(String cityName) {
-    	for (int i=0; i<cities.length; i++)
-    		if (cities[i].getName().equalsIgnoreCase(cityName))
-    			return cities [i];
+        for (City c : cities) {
+            if (c.getName().equalsIgnoreCase(cityName)) {
+                return c;
+            }
+        }
         return null;
     }
     
@@ -224,15 +222,6 @@ public class Conflict extends JavaPlugin {
     		return false;
     	}
     	if (!force) {
-			int least = Integer.MAX_VALUE;
-			for (int i=0; i<Conflict.cities.length; i++) {
-				if (Conflict.cities[i].getPopulation() < least)
-					least = Conflict.cities[i].getPopulation();
-			}
-			if (least < (city.getPopulation() - 10)) {
-				sender.sendMessage(CITYCOLOR + city.getName() + TEXTCOLOR + " is over capacity!  Try one of the others, or wait and try again later.");
-				return false;
-			}
 			if (!isUnassigned(playerName) && !Conflict.cooldownExpired(playerName))
 			{
 				sender.sendMessage(Conflict.getFormattedRemainingCooldown(playerName));
@@ -244,8 +233,7 @@ public class Conflict extends JavaPlugin {
     		oldCity = Conflict.getPlayerCity(playerName);
     		if (oldCity != null) {
     			if (oldCity.equals(city)) {
-    				sender.sendMessage(TEXTCOLOR + "Already a member of "
-    						+ CITYCOLOR + city.getName() + TEXTCOLOR + "!");
+    				sender.sendMessage(TEXTCOLOR + "Already a member of " + CITYCOLOR + city.getName() + TEXTCOLOR + "!");
     				return false;
     			}
     			oldCity.removePlayer(playerName);
@@ -306,14 +294,13 @@ public class Conflict extends JavaPlugin {
 	private final BeyondBlockListener blockListener = new BeyondBlockListener();
 	private final BeyondPlayerListener playerListener = new BeyondPlayerListener();
 	private final BeyondEntityListener entityListener = new BeyondEntityListener();
-	private final BeyondSafeModeListener safeListener = new BeyondSafeModeListener();
 
 	public static File infoFile = new File("plugins/Conflict/information.yml");
 
 
 	@Override
 	public void onDisable() {
-        saveInfoFile();
+        BeyondInfo.saveConfig();
 	}
 	@Override
 	public void onEnable() {
@@ -321,21 +308,18 @@ public class Conflict extends JavaPlugin {
         // Global plugin instance
         plugin = this;
 
-		//InfoManager
-		information = new YamlConfiguration();
-        loadInfoFile(information, infoFile);
         BeyondInfo.loadConfig();
 		//TimerManager
         boolean safeMode = false;
-        for (int i=0; i<cities.length; i++) {
-        	if (cities[i].getLocation() == null) {
-        		safeMode = true;
-        		severe("Unable to find capital location for " + cities[i].name);
-        	}
-        	else if (cities[i].getSpongeLocation() == null) {
-        		safeMode = true;
-        		severe("Unable to find drifter location for " + cities[i].name);
-        	}
+        for (City c : cities) {
+            if (c.getLocation() == null) {
+                safeMode = true;
+                severe("Unable to find capital location for " + c.name);
+            }
+            else if (c.getSpongeLocation() == null) {
+                safeMode = true;
+                severe("Unable to find drifter location for " + c.name);
+            }
         }
 		if (!safeMode) {
 			this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
@@ -345,7 +329,7 @@ public class Conflict extends JavaPlugin {
                         war.executeMaintenanceTick();
                     }
                     purgeInactivePlayers();
-                    saveInfoFile();
+                    BeyondInfo.saveConfig();
 				}
 			},1200L, 5500L);
 			this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
@@ -376,10 +360,6 @@ public class Conflict extends JavaPlugin {
 		}
 		//CommandManager
 		cmd = new CommandHandler(this);
-		getCommand("abatton").setExecutor(cmd);
-		getCommand("oceian").setExecutor(cmd);
-		getCommand("savania").setExecutor(cmd);
-		getCommand("point").setExecutor(cmd);
 		getCommand("purchase").setExecutor(cmd);
 		getCommand("spawn").setExecutor(cmd);
 		getCommand("setcityspawn").setExecutor(cmd);
@@ -390,7 +370,6 @@ public class Conflict extends JavaPlugin {
 		getCommand("cc").setExecutor(cmd);
 		getCommand("cca").setExecutor(cmd);
 		getCommand("ccd").setExecutor(cmd);
-		getCommand("nulls").setExecutor(cmd);
 		getCommand("protectcity").setExecutor(cmd);
 		getCommand("myst").setExecutor(cmd);
 		getCommand("cwho").setExecutor(cmd);
@@ -403,25 +382,14 @@ public class Conflict extends JavaPlugin {
 		setupPermissions();
 		setupPermissionsEx();
 
-		//PluginManager
-		if(Abatton.getLocation() == null || Oceian.getLocation() == null || Savania.getLocation() == null){
-			severe("Unable to find all Capital Locations.  Booted in SAFE MODE for Listeners");
-			PluginManager pm = getServer().getPluginManager();
-			pm.registerEvents(safeListener, this);
-		}else if(Abatton.getSpongeLocation() == null || Oceian.getSpongeLocation() == null || Savania.getSpongeLocation() == null){
-			PluginManager pm = getServer().getPluginManager();
-			pm.registerEvents(safeListener, this);
-			severe("Unable to find all Drifter Locations.  Booted in SAFE MODE for Listeners");
-		}else{
-			PluginManager pm = getServer().getPluginManager();
-			pm.registerEvents(blockListener, this);
-			pm.registerEvents(pluginListener, this);
-			pm.registerEvents(playerListener, this);
-			pm.registerEvents(entityListener, this);
-			pm.registerEvents(safeListener, this);
-            pm.registerEvents(new War(), this);
-            pm.registerEvents(new Perk("eventHandlerPerk"), this);
-		}
+        //PluginManager
+        PluginManager pm = getServer().getPluginManager();
+        pm.registerEvents(blockListener, this);
+        pm.registerEvents(pluginListener, this);
+        pm.registerEvents(playerListener, this);
+        pm.registerEvents(entityListener, this);
+        pm.registerEvents(new War(), this);
+        pm.registerEvents(new Perk("eventHandlerPerk"), this);
         
         // Init perks
         for (Perk p : perks) {
@@ -493,27 +461,7 @@ public class Conflict extends JavaPlugin {
 	{
 		log.log(level, header + message);
 	}
-	public static void saveInfoFile() {
-		try {
-            BeyondInfo.saveConfig();
-            information.save(infoFile);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
     
-    public static void loadInfoFile(YamlConfiguration config, File file) {
-        try {
-            config.load(file);
-        } catch (java.io.FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InvalidConfigurationException e) {
-            e.printStackTrace();
-        }
-    }
-
     public static String theerror = "error not set";
     
     private static boolean purgeHasRunAlready = false;
@@ -521,9 +469,9 @@ public class Conflict extends JavaPlugin {
         // Only need to do this once per server restart.
         if (purgeHasRunAlready) return;
 
-        Abatton.purgeInactivePlayers();
-        Oceian.purgeInactivePlayers();
-        Savania.purgeInactivePlayers();
+        for (City c : cities) {
+            c.purgeInactivePlayers();
+        }
 
         purgeHasRunAlready = true;
     }
@@ -626,8 +574,8 @@ public class Conflict extends JavaPlugin {
     		}
     	};
     	
-    	for (int i=0; i < cities.length; i++) {
-    		leaveChat(playerName, cities[i].getName());
+        for (City c : cities) {
+            leaveChat(playerName, c.getName());
     	}
     	
     	//Remove all entries first, then add correctly capitalized entry (just in case)

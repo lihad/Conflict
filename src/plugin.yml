@@ -1,20 +1,8 @@
 name: Conflict
 main: Lihad.Conflict.Conflict
-version: 1.7.2
+version: 1.7.3
 commands:
-  abatton:
-    description: Invalid Command
-    usage: Invalid Command
-  oceian:
-    description: Invalid Command
-    usage: Invalid Command
-  savania:
-    description: Invalid Command
-    usage: Invalid Command
   join:
-    description: Invalid Command
-    usage: Invalid Command
-  point:
     description: Invalid Command
     usage: Invalid Command
   purchase:
@@ -45,9 +33,6 @@ commands:
     description: Invalid Command
     usage: Invalid Command
   ccd:
-    description: Invalid Command
-    usage: Invalid Command
-  nulls:
     description: Invalid Command
     usage: Invalid Command
   protectcity:

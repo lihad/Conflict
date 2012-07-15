@@ -12,16 +12,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 
-import Lihad.Conflict.Information.BeyondInfo;
+import Lihad.Conflict.BeyondInfo;
 import Lihad.Conflict.Perk.*;
 
 public class City extends Node {
 
     public City(String n) { 
         super(n); 
-        
-        // HACK HACK - Read this from conf, once it's in
-        setRadius(500);
     }
 
 	Set<String> players = new HashSet<String>();
@@ -121,14 +118,14 @@ public class City extends Node {
         players.clear();
         mayors.clear();
         
-        ConfigurationSection members = section.getConfigurationSection("Members");
+        ConfigurationSection members = section.getConfigurationSection("members");
         Set<String> list = members.getKeys(false);
         if (list != null && !list.isEmpty()) {
 	        for (Iterator <String> iter = list.iterator(); iter.hasNext();) {
 	        	String playerName = iter.next();
 	        	players.add(playerName);
 	        	ConfigurationSection member = members.getConfigurationSection(playerName);
-	        	boolean isMayor = member.getBoolean("isMayor", false);
+	        	boolean isMayor = member.getBoolean("mayor", false);
 	        	joins.put(playerName, member.getLong("joined"));
 	        	if (isMayor) {
 	        		mayors.add(playerName);
@@ -136,13 +133,13 @@ public class City extends Node {
 	        }
         }
         
-        spawnLocation = BeyondInfo.toLocation(section, "Spawn");
-        drifterLocation = BeyondInfo.toLocation(section, "Drifter");
+        spawnLocation = BeyondInfo.toLocation(section, "spawn");
+        drifterLocation = BeyondInfo.toLocation(section, "drifter");
 
-        bankBalance = section.getInt("Worth");
-        spawnProtectRadius = section.getInt("Protection");
+        bankBalance = section.getInt("worth");
+        spawnProtectRadius = section.getInt("protection");
         
-        setPassword(section.getString("Password"));
+        setPassword(section.getString("password"));
 
         return super.load(section);
     }
@@ -170,22 +167,6 @@ public class City extends Node {
         section.set("password", getPassword());
         section.set("type", "City");
         
-        // Deprecated keys - remove later
-        section.set("Spawn", BeyondInfo.toString(spawnLocation));
-        section.set("Drifter", BeyondInfo.toString(drifterLocation));
-        section.set("Worth", bankBalance);
-        section.set("Protection", spawnProtectRadius);
-        section.set("Password", getPassword());
-        section.set("type", "City");
-        members = section.createSection("Members");
-        for (Iterator <String> iter = setAsList.iterator(); iter.hasNext();) {
-        	String playerName = iter.next();
-        	Map <String, Object> map = new HashMap<String, Object>();
-        	map.put("isMayor", mayors.contains(playerName));
-        	map.put("joined", getJoinedTime(playerName));
-        	members.createSection(playerName, map);
-        }
-        
         super.save(section);
     }
     
@@ -203,7 +184,7 @@ public class City extends Node {
             
             // Purge anyone who hasn't logged in the last four weeks
             if (days > 28) {
-                Conflict.info("Removing " + name + " from Abatton (last seen " + days + " days ago)");
+                Conflict.info("Removing " + name + " (last seen " + days + " days ago)");
     			removeThese.add(name);
             }            
         }
